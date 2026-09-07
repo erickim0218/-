@@ -1,0 +1,6 @@
+{
+  "name": "기획자 J의 스펙 리포지셔닝",
+  "description": "스펙은 바꾸지 않습니다. 읽히는 방식을 바꿉니다. 브랜딩의 원리로 기업이 선택할 이유를 설계하는 회원제 취업교육 및 리포지셔닝 플랫폼",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
