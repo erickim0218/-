@@ -265,7 +265,7 @@ export const NonMemberBlockGate: React.FC<NonMemberBlockGateProps> = ({
                 <input
                   type="password"
                   required
-                  placeholder="비밀번호를 입력하세요"
+                  placeholder="비밀번호를 입력해 주세요"
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-[#FFD600]"

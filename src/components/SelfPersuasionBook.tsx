@@ -409,7 +409,7 @@ export const SelfPersuasionBook: React.FC = () => {
             <div className="flex items-center gap-2 mt-2">
               <input
                 type="text"
-                placeholder="이름을 입력하세요"
+                placeholder="이름을 입력해 주세요"
                 value={data.userName}
                 onChange={(e) => setData({ ...data, userName: e.target.value })}
                 className="bg-[#27272A]/60 border border-[#3F3F46] focus:border-[#FFD600] text-white px-3 py-1 rounded-lg text-xs w-36 outline-none transition"
@@ -540,7 +540,7 @@ export const SelfPersuasionBook: React.FC = () => {
                 </span>
               </div>
               <p className="text-xs text-zinc-400">
-                작성을 시작하기 전, 아래 문장을 소리 내어 읽고 하나씩 동의 체크하세요.
+                작성을 시작하기 전, 아래 문장을 소리 내어 읽고 하나씩 동의를 체크해 주세요.
               </p>
 
               <div className="space-y-3 pt-2">
@@ -612,7 +612,7 @@ export const SelfPersuasionBook: React.FC = () => {
                     자소서 질문 문항 {qIdx + 1}
                   </label>
                   <textarea
-                    placeholder={`자소서 질문 ${qIdx + 1}번을 입력하세요 (예: 지원동기 및 직무를 수행하기 위해 본인이 기울인 노력에 대해...)`}
+                    placeholder={`자소서 질문 ${qIdx + 1}번을 입력해 주세요 (예: 지원동기 및 직무를 수행하기 위해 본인이 기울인 노력에 대해...)`}
                     value={data.basic.q[qIdx]}
                     onChange={(e) => {
                       const nextQ = [...data.basic.q];
@@ -676,7 +676,7 @@ export const SelfPersuasionBook: React.FC = () => {
                   "이 자리가 비어 있으면 가장 먼저 터지는 문제는?", "이 직무가 중요한 이유는?"
                 </span>
                 <textarea
-                  placeholder="답을 입력하세요"
+                  placeholder="답변을 입력해 주세요"
                   value={data.needs.why1}
                   onChange={(e) => setData({ ...data, needs: { ...data.needs, why1: e.target.value } })}
                   className="w-full bg-[#09090B] border border-[#27272A] focus:border-[#FFD600] text-white text-xs p-3 rounded-xl outline-none h-16"
@@ -692,7 +692,7 @@ export const SelfPersuasionBook: React.FC = () => {
                   "왜 하필 지금 뽑나? (신규 사업, 조직 개편, 지표 하락, 경쟁 과열, 정책 변화 등)"
                 </span>
                 <textarea
-                  placeholder="답을 입력하세요"
+                  placeholder="답변을 입력해 주세요"
                   value={data.needs.why2}
                   onChange={(e) => setData({ ...data, needs: { ...data.needs, why2: e.target.value } })}
                   className="w-full bg-[#09090B] border border-[#27272A] focus:border-[#FFD600] text-white text-xs p-3 rounded-xl outline-none h-16"
@@ -708,7 +708,7 @@ export const SelfPersuasionBook: React.FC = () => {
                   "그 문제는 매출, 시간, 리스크, 유저 이탈 중 무엇을 손실시키나?"
                 </span>
                 <textarea
-                  placeholder="답을 입력하세요"
+                  placeholder="답변을 입력해 주세요"
                   value={data.needs.why3}
                   onChange={(e) => setData({ ...data, needs: { ...data.needs, why3: e.target.value } })}
                   className="w-full bg-[#09090B] border border-[#27272A] focus:border-[#FFD600] text-white text-xs p-3 rounded-xl outline-none h-16"
@@ -724,7 +724,7 @@ export const SelfPersuasionBook: React.FC = () => {
                   "손실이 발생하는 구체적 장면 1개 (회의, 보고서, 마케팅 집행, 운영 CS 등)"
                 </span>
                 <textarea
-                  placeholder="답을 입력하세요"
+                  placeholder="답변을 입력해 주세요"
                   value={data.needs.why4}
                   onChange={(e) => setData({ ...data, needs: { ...data.needs, why4: e.target.value } })}
                   className="w-full bg-[#09090B] border border-[#27272A] focus:border-[#FFD600] text-white text-xs p-3 rounded-xl outline-none h-16"
@@ -944,7 +944,7 @@ export const SelfPersuasionBook: React.FC = () => {
               <div>
                 <label className="block text-xs font-bold text-zinc-300 mb-1">직독직답 (주장)</label>
                 <span className="text-[11px] text-zinc-400 block mb-1.5">
-                  질문 의도를 고려하여 문항에 대한 답(주장)을 첫 문장에 바로 제시하세요.
+                  질문 의도를 고려하여 문항에 대한 답(주장)을 첫 문장에 바로 제시해 주세요.
                 </span>
                 <textarea
                   placeholder="예: 고객 이탈의 근본 원인을 데이터로 재정의하여 전환율을 34% 끌어올린 기획자입니다."

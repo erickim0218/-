@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Star, Sparkles, CheckCircle2, MessageSquareQuote } from 'lucide-react';
 import { BOOTCAMP_REVIEWS } from '../data/bootcampReviews';
 
 export const SlidingReviewsMarquee: React.FC = () => {
+  const [isPaused, setIsPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mediaQuery.matches);
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
+
   // Reviews list with tags prioritized
   const taggedReviews = BOOTCAMP_REVIEWS.filter(r => r.highlightTag || r.title.length > 10);
   
@@ -10,8 +21,26 @@ export const SlidingReviewsMarquee: React.FC = () => {
   const row1 = [...taggedReviews, ...taggedReviews];
   const row2 = [...BOOTCAMP_REVIEWS.slice().reverse(), ...BOOTCAMP_REVIEWS.slice().reverse()];
 
+  const handlePause = () => setIsPaused(true);
+  const handleResume = () => setIsPaused(false);
+
+  const playState = (isPaused || reducedMotion) ? 'paused' : 'running';
+
   return (
-    <div className="w-full bg-zinc-900 border-y border-zinc-800 py-6 overflow-hidden relative select-none">
+    <div
+      className="w-full bg-zinc-900 border-y border-zinc-800 py-6 overflow-hidden relative select-none"
+      style={{ touchAction: 'pan-y' }}
+      onMouseEnter={handlePause}
+      onMouseLeave={handleResume}
+      onFocusCapture={handlePause}
+      onBlurCapture={handleResume}
+      onTouchStart={handlePause}
+      onTouchEnd={handleResume}
+      onTouchCancel={handleResume}
+      onPointerDown={handlePause}
+      onPointerUp={handleResume}
+      onPointerCancel={handleResume}
+    >
       
       {/* Background Subtle Ambient Glow */}
       <div className="absolute inset-0 bg-zinc-950/40 pointer-events-none" />
@@ -39,7 +68,7 @@ export const SlidingReviewsMarquee: React.FC = () => {
             ))}
           </div>
           <span className="font-bold text-[#FFD600]">5.0 / 5.0</span>
-          <span className="text-zinc-500 text-[11px]">(마우스 올리면 멈춤)</span>
+          <span className="text-zinc-500 text-[11px]">(마우스 올리거나 누르면 멈춤)</span>
         </div>
       </div>
 
@@ -49,11 +78,15 @@ export const SlidingReviewsMarquee: React.FC = () => {
         <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#0D0D11] to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0D0D11] to-transparent z-10 pointer-events-none" />
 
-        <div className="animate-marquee flex gap-4 hover:[animation-play-state:paused]">
+        <div
+          className="animate-marquee flex gap-4"
+          style={{ animationPlayState: playState }}
+        >
           {row1.map((review, idx) => (
             <div
               key={`row1-${review.id}-${idx}`}
-              className="w-80 sm:w-96 shrink-0 p-4 rounded-2xl bg-[#16161B] border border-zinc-800 hover:border-[#FFD600]/60 transition-all shadow-lg flex flex-col justify-between"
+              tabIndex={0}
+              className="w-80 sm:w-96 shrink-0 p-4 rounded-2xl bg-[#16161B] border border-zinc-800 hover:border-[#FFD600]/60 transition-all shadow-lg flex flex-col justify-between focus:outline-none focus:border-[#FFD600]"
             >
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -96,11 +129,15 @@ export const SlidingReviewsMarquee: React.FC = () => {
         <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#0D0D11] to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0D0D11] to-transparent z-10 pointer-events-none" />
 
-        <div className="animate-marquee-slow flex gap-4 hover:[animation-play-state:paused]">
+        <div
+          className="animate-marquee-slow flex gap-4"
+          style={{ animationPlayState: playState }}
+        >
           {row2.map((review, idx) => (
             <div
               key={`row2-${review.id}-${idx}`}
-              className="w-80 sm:w-96 shrink-0 p-4 rounded-2xl bg-[#141418] border border-zinc-800/90 hover:border-[#FFD600]/60 transition-all shadow-md flex flex-col justify-between"
+              tabIndex={0}
+              className="w-80 sm:w-96 shrink-0 p-4 rounded-2xl bg-[#141418] border border-zinc-800/90 hover:border-[#FFD600]/60 transition-all shadow-md flex flex-col justify-between focus:outline-none focus:border-[#FFD600]"
             >
               <div>
                 <div className="flex items-center justify-between mb-2">

@@ -21,14 +21,19 @@ interface HomeSectionsProps {
 /* 1. Hero Section - Ultra Clean & Direct */
 export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeatures }) => {
   const [isClassEnabled, setIsClassEnabled] = useState<boolean>(false);
+  const [isBootcampEnabled, setIsBootcampEnabled] = useState<boolean>(true);
   const [showClassTooltip, setShowClassTooltip] = useState<boolean>(false);
   const classTooltipId = useId();
 
   useEffect(() => {
     if (siteFeatures) {
       setIsClassEnabled(siteFeatures.repositioning_class === true);
+      setIsBootcampEnabled(siteFeatures.bootcamp !== false);
     } else {
-      fetchSiteFeatures().then(f => setIsClassEnabled(f.repositioning_class === true));
+      fetchSiteFeatures().then(f => {
+        setIsClassEnabled(f.repositioning_class === true);
+        setIsBootcampEnabled(f.bootcamp !== false);
+      });
     }
   }, [siteFeatures]);
 
@@ -111,10 +116,11 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
 
           <button
             onClick={() => onTabChange('bootcamp')}
-            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#141418] hover:bg-[#1C1C22] text-white border border-[#27272A] font-extrabold text-sm sm:text-base rounded-xl transition flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-sm sm:text-base rounded-xl transition flex items-center justify-center gap-2 shadow-lg cursor-pointer"
           >
-            <span>부트캠프 8기</span>
-            <ArrowRight className="w-4 h-4 text-[#FFD600] shrink-0" />
+            <Sparkles className="w-4 h-4 text-[#09090B] shrink-0" />
+            <span>{isBootcampEnabled ? '부트캠프 8기 신청하기' : '모집 마감 (다음 기수 예약)'}</span>
+            <ArrowRight className="w-4 h-4 text-[#09090B] shrink-0" />
           </button>
         </div>
 
@@ -662,7 +668,7 @@ export const BootcampCurriculumPreview: React.FC<{
 
         <div className="p-6 bg-[#18181C] border border-[#FFD600]/30 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="space-y-1">
-            <span className="text-[#FFD600] font-black text-sm block">🚀 8기 이번 달 모집 (11일(금) 21:00 마감 · 선착순 10명)</span>
+            <span className="text-[#FFD600] font-black text-sm block">리포지셔닝 부트캠프 8기 모집 안내 · 모집 마감: 9월 18일(금) 오후 9시 · 선착순 10명</span>
             <p className="text-xs text-zinc-300">1회차 컨설팅 만족 불발 시 24시간 이내 전액 환불 보장</p>
           </div>
           <button
@@ -684,14 +690,19 @@ export const FinalConversionSection: React.FC<{
   siteFeatures?: Record<string, boolean>;
 }> = ({ onTabChange, siteFeatures }) => {
   const [isClassEnabled, setIsClassEnabled] = useState<boolean>(false);
+  const [isBootcampEnabled, setIsBootcampEnabled] = useState<boolean>(true);
   const [showClassTooltip, setShowClassTooltip] = useState<boolean>(false);
   const classTooltipId = useId();
 
   useEffect(() => {
     if (siteFeatures) {
       setIsClassEnabled(siteFeatures.repositioning_class === true);
+      setIsBootcampEnabled(siteFeatures.bootcamp !== false);
     } else {
-      fetchSiteFeatures().then(f => setIsClassEnabled(f.repositioning_class === true));
+      fetchSiteFeatures().then(f => {
+        setIsClassEnabled(f.repositioning_class === true);
+        setIsBootcampEnabled(f.bootcamp !== false);
+      });
     }
   }, [siteFeatures]);
 
@@ -758,9 +769,11 @@ export const FinalConversionSection: React.FC<{
 
           <button
             onClick={() => onTabChange('bootcamp')}
-            className="px-8 py-4 bg-[#141418] hover:bg-[#1C1C22] text-white border border-[#27272A] font-extrabold text-base rounded-xl transition"
+            className="w-full sm:w-auto px-8 py-4 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-base rounded-xl transition flex items-center justify-center gap-2 shadow-lg cursor-pointer"
           >
-            부트캠프 8기 신청하기
+            <Sparkles className="w-5 h-5 text-[#09090B] shrink-0" />
+            <span>{isBootcampEnabled ? '부트캠프 8기 신청하기' : '모집 마감 (다음 기수 예약)'}</span>
+            <ArrowRight className="w-5 h-5 text-[#09090B] shrink-0" />
           </button>
         </div>
       </div>

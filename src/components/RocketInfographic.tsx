@@ -64,12 +64,12 @@ export const RocketInfographic: React.FC = () => {
                 </linearGradient>
               </defs>
 
-              {/* ===== 노드 1: 현재 너의 상황 (x=130, y=202) ===== */}
+              {/* ===== 노드 1: 현재 상황 (x=130, y=202) ===== */}
               <line x1="130" y1="202" x2="130" y2="240" stroke="#3F3F46" strokeWidth="2" strokeDasharray="4 4" />
               <g transform="translate(130, 160)">
                 <rect x="-65" y="-13" width="130" height="24" rx="6" fill="#18181B" stroke="#3F3F46" strokeWidth="1" />
                 <text x="0" y="3" textAnchor="middle" fill="#A1A1AA" fontSize="11" fontWeight="700" fontFamily="sans-serif">
-                  01. 현재 너의 상황
+                  01. 현재 상황
                 </text>
               </g>
               <g>
@@ -118,7 +118,7 @@ export const RocketInfographic: React.FC = () => {
           {/* 그래프 상단 노드들과 1:1 매핑되는 3단계 카드 */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-left relative z-10">
             
-            {/* [01] 현재 너의 상황 */}
+            {/* [01] 현재 상황 */}
             <div className="p-5 bg-zinc-900/90 border border-zinc-800 rounded-2xl space-y-3 relative hover:border-zinc-700 transition-all">
               <div className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-950/80 border border-red-800/80 text-red-400 text-[11px] font-bold rounded-md">
@@ -129,7 +129,7 @@ export const RocketInfographic: React.FC = () => {
 
               <div>
                 <h4 className="text-base font-bold text-white leading-snug">
-                  01. 현재 너의 상황
+                  01. 현재 상황
                 </h4>
                 <p className="text-xs text-red-400 font-semibold mt-0.5">
                   비전략적인 열정 소비

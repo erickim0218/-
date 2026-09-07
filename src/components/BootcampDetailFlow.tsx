@@ -58,20 +58,20 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
     }
   };
 
-  // 이번 달 11일(금) 오후 9시(21:00) 마감 카운트다운
+  // 2026년 9월 18일(금) 오후 9시(21:00) 마감 카운트다운 (Asia/Seoul timezone)
   const [timeLeft, setTimeLeft] = useState(() => calculateRemainingTime());
 
   function calculateRemainingTime() {
     const now = new Date();
-    // 이번 달 11일 금요일 21:00:00 마감
-    let target = new Date(now.getFullYear(), now.getMonth(), 11, 21, 0, 0);
+    const target = new Date('2026-09-18T21:00:00+09:00');
 
-    // 11일 21시가 이미 지난 경우 시뮬레이션용(D-2일 14시간 남음)으로 순환
-    if (now.getTime() >= target.getTime()) {
-      target = new Date(now.getTime() + (2 * 86400000 + 14 * 3600000 + 28 * 60000 + 45 * 1000));
+    // 18일 21시가 이미 지난 경우 시뮬레이션용(D-2일 14시간 남음)으로 순환
+    let targetTime = target.getTime();
+    if (now.getTime() >= targetTime) {
+      targetTime = now.getTime() + (2 * 86400000 + 14 * 3600000 + 28 * 60000 + 45 * 1000);
     }
 
-    const diff = Math.max(0, target.getTime() - now.getTime());
+    const diff = Math.max(0, targetTime - now.getTime());
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
     const minutes = Math.floor((diff / (1000 * 60)) % 60);
@@ -568,7 +568,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               수강 신청 플랜
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-zinc-900 tracking-tight">
-              나에게 맞는 <span className="text-amber-800">수강 플랜</span>을 선택하세요
+              최적의 <span className="text-amber-800">수강 플랜</span>을 선택해 주세요
             </h2>
             <p className="text-xs sm:text-sm text-zinc-600">
               결과로 증명하는 기획자J의 리포지셔닝 부트캠프 8기 (선착순 10명 마감)
@@ -805,19 +805,26 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                <span className="text-zinc-400 font-medium">실시간 모집인원:</span>
-                <span className="text-white font-black">
+                <span
+                  className="text-zinc-400 font-medium"
+                  style={{ whiteSpace: 'nowrap', wordBreak: 'keep-all', flexShrink: 0 }}
+                >
+                  부트캠프 8기 실시간 모집인원:
+                </span>
+                <span
+                  className="text-white font-black"
+                  style={{ whiteSpace: 'nowrap', wordBreak: 'keep-all', flexShrink: 0 }}
+                >
                   <strong className="text-[#FFD600]">{displayCount}</strong> / 10명
                 </span>
                 {!isClosed && (
                   <>
-                    <div className="w-16 bg-zinc-800 rounded-full h-1.5 overflow-hidden inline-block mx-0.5">
+                    <div className="w-16 bg-zinc-800 rounded-full h-1.5 overflow-hidden inline-block mx-0.5 shrink-0">
                       <div
                         className="h-full rounded-full bg-[#FFD600]"
                         style={{ width: `${percent}%` }}
                       />
                     </div>
-                    <span className="text-[10px] text-zinc-400 font-bold">({percent}%)</span>
                   </>
                 )}
                 {isClosed && (
@@ -883,24 +890,31 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                     </span>
-                    <span className="text-zinc-400 text-xs font-medium">실시간 모집인원:</span>
-                    <span className="text-white text-sm font-black">
+                    <span
+                      className="text-zinc-400 text-xs font-medium"
+                      style={{ whiteSpace: 'nowrap', wordBreak: 'keep-all', flexShrink: 0 }}
+                    >
+                      부트캠프 8기 실시간 모집인원:
+                    </span>
+                    <span
+                      className="text-white text-sm font-black"
+                      style={{ whiteSpace: 'nowrap', wordBreak: 'keep-all', flexShrink: 0 }}
+                    >
                       <strong className="text-[#FFD600]">{displayCount}</strong> / 10명
                     </span>
                   </div>
-                  <div className="w-24 bg-zinc-800 rounded-full h-2 overflow-hidden hidden md:block">
+                  <div className="w-24 bg-zinc-800 rounded-full h-2 overflow-hidden hidden md:block shrink-0">
                     <div
                       className="h-full rounded-full transition-all duration-500 bg-[#FFD600]"
                       style={{ width: `${percent}%` }}
                     />
                   </div>
-                  <span className="text-xs text-zinc-400 font-bold hidden md:inline">({percent}% 완료)</span>
-                  <span className="text-xs px-2 py-0.5 rounded border font-bold bg-rose-500/10 border-rose-500/30 text-rose-400">
+                  <span className="text-xs px-2 py-0.5 rounded border font-bold bg-rose-500/10 border-rose-500/30 text-rose-400 whitespace-nowrap shrink-0">
                     잔여 {remainingSlots}자리
                   </span>
                 </div>
                 <span className="text-xs text-zinc-400 font-medium mt-0.5 block">
-                  11일(금) 오후 9시 마감 · 남은 시간 <span className="text-[#FFD600] font-mono font-bold">{timeLeft.days}일 {timeLeft.hours}시간 {timeLeft.minutes}분 {timeLeft.seconds}초</span>
+                  9월 18일(금) 오후 9시 마감 · 남은 시간 <span className="text-[#FFD600] font-mono font-bold">{timeLeft.days}일 {timeLeft.hours}시간 {timeLeft.minutes}분 {timeLeft.seconds}초</span>
                 </span>
               </div>
             )}
@@ -913,7 +927,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 className="hidden md:flex px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-[#FFD600] border border-zinc-700 font-bold text-xs rounded-xl transition items-center justify-center gap-1.5 min-h-[42px]"
               >
                 <Calendar className="w-3.5 h-3.5" />
-                <span>9월 일정표</span>
+                <span>9월·10월 일정표</span>
               </a>
             )}
             <a
