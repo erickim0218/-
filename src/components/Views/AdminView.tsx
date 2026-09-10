@@ -21,17 +21,20 @@ import {
   ToggleLeft,
   ToggleRight,
   Layers,
-  Settings2
+  Settings2,
+  BarChart3
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { CombinedMember, checkIsPro } from '../../lib/userAccess';
 import { fetchSiteFeatures, updateSiteFeature } from '../../lib/siteFeatures';
+import { AnalyticsAdminTab } from './AnalyticsAdminTab';
 
 interface AdminViewProps {
   onTabChange: (tab: string) => void;
 }
 
 export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
+  const [adminActiveTab, setAdminActiveTab] = useState<'members' | 'analytics'>('members');
   // Guard & Loading State
   const [authStatus, setAuthStatus] = useState<'loading' | 'authorized' | 'unauthorized'>('loading');
   const [currentAdminEmail, setCurrentAdminEmail] = useState<string>('');
@@ -452,8 +455,39 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
           </div>
         )}
 
-        {/* Summary Statistics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* Admin Navigation Tabs */}
+        <div className="flex items-center gap-2 border-b border-zinc-800 pb-4">
+          <button
+            onClick={() => setAdminActiveTab('members')}
+            className={`px-5 py-2.5 rounded-2xl text-xs font-black transition cursor-pointer flex items-center gap-2 ${
+              adminActiveTab === 'members'
+                ? 'bg-[#FFD600] text-zinc-950 shadow-lg shadow-yellow-500/10'
+                : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>회원 및 사이트 관리</span>
+          </button>
+          
+          <button
+            onClick={() => setAdminActiveTab('analytics')}
+            className={`px-5 py-2.5 rounded-2xl text-xs font-black transition cursor-pointer flex items-center gap-2 ${
+              adminActiveTab === 'analytics'
+                ? 'bg-[#FFD600] text-zinc-950 shadow-lg shadow-yellow-500/10'
+                : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+            }`}
+          >
+            <BarChart3 className="w-4 h-4" />
+            <span>방문·전환 통계</span>
+          </button>
+        </div>
+
+        {adminActiveTab === 'analytics' ? (
+          <AnalyticsAdminTab />
+        ) : (
+          <>
+            {/* Summary Statistics Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* 1. 전체 회원 수 */}
           <div className="bg-[#121216] border border-[#27272A] rounded-2xl p-5 space-y-2">
             <div className="flex items-center justify-between text-zinc-400">
@@ -979,6 +1013,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
             <span>최신 가입순 정렬됨</span>
           </div>
         </div>
+          </>
+        )}
 
       </div>
 

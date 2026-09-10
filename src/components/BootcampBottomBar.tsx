@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sparkles, Calendar, ArrowRight } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
+import { trackAnalyticsEvent } from '../lib/analytics';
 import { MemberTier } from '../types';
 
 interface BootcampBottomBarProps {
@@ -104,7 +105,10 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
               잔여 {remainingSpots}자리
             </span>
             <button
-              onClick={() => onTabChange('bootcamp')}
+              onClick={() => {
+                trackAnalyticsEvent({ event_name: 'bootcamp_click', page_path: currentTab, button_location: 'bottom_fixed_inquiry', bootcamp_cohort: 8 });
+                onTabChange('bootcamp');
+              }}
               className="px-3 py-1.5 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-xs rounded-xl transition shadow flex items-center justify-center min-h-[34px] whitespace-nowrap cursor-pointer"
             >
               <span>{isBootcampEnabled ? '부트캠프 8기 신청하기' : '다음 기수 예약 문의'}</span>
@@ -147,7 +151,10 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
           </button>
           
           <button
-            onClick={() => onTabChange('bootcamp')}
+            onClick={() => {
+              trackAnalyticsEvent({ event_name: 'bootcamp_click', page_path: currentTab, button_location: 'bottom_fixed_inquiry', bootcamp_cohort: 8 });
+              onTabChange('bootcamp');
+            }}
             className="px-4 py-2 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-xs sm:text-sm rounded-xl transition shadow-lg flex items-center gap-1.5 cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />

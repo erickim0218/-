@@ -24,6 +24,7 @@ import standardRocketImg from '../assets/images/standard_rocket_launch_178807950
 import { BootcampReview } from '../data/bootcampReviews';
 import { supabase } from '../lib/supabase';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
+import { trackInquiryClickAndNavigate } from '../lib/analytics';
 
 interface BootcampDetailFlowProps {
   onTabChange?: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;

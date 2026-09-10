@@ -17,6 +17,7 @@ import { MemberTier, UserProfile, Course, PaymentRecord, ManagedUser } from './t
 import { supabase, supabaseApi } from './lib/supabase';
 import { checkIsPro } from './lib/userAccess';
 import { fetchSiteFeatures } from './lib/siteFeatures';
+import { trackAnalyticsEvent } from './lib/analytics';
 
 const STORAGE_USERS_KEY = 'reposition_db_managed_users';
 const STORAGE_PAYMENTS_KEY = 'reposition_db_payments';
@@ -234,6 +235,10 @@ export default function App() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    trackAnalyticsEvent({ event_name: 'page_view', page_path: currentTab });
+    if (currentTab === 'bootcamp') {
+      trackAnalyticsEvent({ event_name: 'bootcamp_detail_view', page_path: 'bootcamp' });
+    }
   }, [currentTab, practicalSubTab]);
 
   // Guard against navigating to disabled features
