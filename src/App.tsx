@@ -235,10 +235,12 @@ export default function App() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
-    trackAnalyticsEvent({ event_name: 'page_view', page_path: currentTab });
-    if (currentTab === 'bootcamp') {
-      trackAnalyticsEvent({ event_name: 'bootcamp_detail_view', page_path: 'bootcamp' });
-    }
+    const isBootcampDetailPage = currentTab === 'bootcamp';
+    trackAnalyticsEvent({
+      eventName: isBootcampDetailPage
+        ? 'bootcamp_detail_view'
+        : 'page_view'
+    });
   }, [currentTab, practicalSubTab]);
 
   // Guard against navigating to disabled features

@@ -1,37 +1,34 @@
 import { supabase } from './supabase';
 
-export type AnalyticsEventName = 'page_view' | 'bootcamp_click' | 'bootcamp_detail_view' | 'inquiry_click';
-export type ButtonLocation = 'home_bootcamp_cta' | 'home_inquiry' | 'bootcamp_detail_inquiry' | 'bottom_fixed_inquiry' | 'membership_inquiry';
-export type DeviceType = 'pc' | 'mobile' | 'tablet';
-
-interface AnalyticsPayload {
-  event_name: AnalyticsEventName;
-  page_path: string;
-  referrer_path?: string;
-  button_location?: ButtonLocation;
-  bootcamp_cohort?: number;
+interface TrackEventParams {
+  eventName: string;
+  buttonLocation?: string | null;
+  bootcampCohort?: number | null;
 }
 
-// Generate or get persistent anonymous visitor ID
-function getVisitorId(): string {
+// Validate UUID format
+function isValidUUID(uuid: string | null): boolean {
+  if (!uuid) return false;
+  const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return regex.test(uuid);
+}
+
+// Get or create persistent anonymous visitor ID (UUID)
+function getOrCreateVisitorId(): string {
   try {
     let visitorId = localStorage.getItem('reposition_visitor_id');
-    if (!visitorId) {
-      visitorId = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        const r = (Math.random() * 16) | 0;
-        const v = c === 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      });
+    if (!isValidUUID(visitorId)) {
+      visitorId = crypto.randomUUID();
       localStorage.setItem('reposition_visitor_id', visitorId);
     }
     return visitorId;
   } catch {
-    return '00000000-0000-0000-0000-000000000000';
+    return crypto.randomUUID();
   }
 }
 
-// Manage 30-min session ID in sessionStorage
-function getSessionId(): string {
+// Get or create session ID with 30-min inactivity timeout
+function getOrCreateSessionId(): string {
   try {
     const now = Date.now();
     const sessionData = sessionStorage.getItem('reposition_session_info');
@@ -39,19 +36,16 @@ function getSessionId(): string {
     let lastActive = 0;
 
     if (sessionData) {
-      const parsed = JSON.parse(sessionData);
-      sessionId = parsed.sessionId;
-      lastActive = parsed.lastActive;
+      try {
+        const parsed = JSON.parse(sessionData);
+        sessionId = parsed.sessionId;
+        lastActive = parsed.lastActive;
+      } catch {}
     }
 
-    // 30 minutes inactivity timeout (30 * 60 * 1000 ms)
     const thirtyMinutes = 30 * 60 * 1000;
-    if (!sessionId || !lastActive || now - lastActive > thirtyMinutes) {
-      sessionId = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        const r = (Math.random() * 16) | 0;
-        const v = c === 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      });
+    if (!isValidUUID(sessionId) || !lastActive || now - lastActive > thirtyMinutes) {
+      sessionId = crypto.randomUUID();
     }
 
     sessionStorage.setItem('reposition_session_info', JSON.stringify({
@@ -61,41 +55,39 @@ function getSessionId(): string {
 
     return sessionId;
   } catch {
-    return '00000000-0000-0000-0000-000000000000';
+    return crypto.randomUUID();
   }
 }
 
-// Capture and persist UTM & Referrer traffic source info in sessionStorage
-function getTrafficSourceInfo() {
+function getPreviousPath(): string | null {
   try {
-    let traffic = sessionStorage.getItem('reposition_traffic_source');
-    if (!traffic) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const utm_source = urlParams.get('utm_source');
-      const utm_medium = urlParams.get('utm_medium');
-      const utm_campaign = urlParams.get('utm_campaign');
-      const utm_content = urlParams.get('utm_content');
-      const referrer = document.referrer || null;
-
-      const sourceInfo = {
-        utm_source: utm_source || (referrer ? new URL(referrer).hostname : 'direct'),
-        utm_medium: utm_medium || (referrer ? 'referral' : 'direct'),
-        utm_campaign: utm_campaign || null,
-        utm_content: utm_content || null,
-        referrer: referrer
-      };
-
-      sessionStorage.setItem('reposition_traffic_source', JSON.stringify(sourceInfo));
-      return sourceInfo;
-    }
-    return JSON.parse(traffic);
+    return sessionStorage.getItem('reposition_prev_path') || null;
   } catch {
-    return { utm_source: 'direct', utm_medium: 'direct', utm_campaign: null, utm_content: null, referrer: null };
+    return null;
   }
 }
 
-// Detect device type
-function getDeviceType(): DeviceType {
+function setPreviousPath(path: string) {
+  try {
+    sessionStorage.setItem('reposition_prev_path', path);
+  } catch {}
+}
+
+function getStoredUtm(key: string): string | null {
+  try {
+    const searchParams = new URLSearchParams(window.location.search);
+    let val = searchParams.get(key);
+    if (val) {
+      sessionStorage.setItem(`reposition_${key}`, val);
+      return val;
+    }
+    return sessionStorage.getItem(`reposition_${key}`) || null;
+  } catch {
+    return null;
+  }
+}
+
+function getDeviceType(): string {
   const ua = navigator.userAgent;
   const width = window.innerWidth;
   if (/tablet|ipad|playbook|silk/i.test(ua) || (width >= 768 && width < 1024)) {
@@ -107,147 +99,106 @@ function getDeviceType(): DeviceType {
   return 'pc';
 }
 
-// Check if current environment should be excluded from analytics
-async function shouldExcludeAnalytics(): Promise<boolean> {
+// Exclude only localhost, 127.0.0.1, and ais-dev (Cloudflare production & re-position.co.kr are tracked)
+function shouldExcludeEnvironment(): boolean {
   const hostname = window.location.hostname;
-  if (/localhost|127\.0\.0\.1|ais-dev|ais-pre/.test(hostname)) {
-    return true; // Exclude dev/preview/local as requested
+  if (/localhost|127\.0\.0\.1|ais-dev/.test(hostname)) {
+    return true;
   }
-
-  // Also check if logged in user is admin
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { data: access } = await supabase
-        .from('user_access')
-        .select('app_role')
-        .eq('user_id', user.id)
-        .single();
-      if (access?.app_role === 'admin') {
-        return true; // Exclude admin visits
-      }
-    }
-  } catch {
-    // ignore
-  }
-
   return false;
 }
 
-// Track event with duplicate prevention in session
-const sentEventCache = new Set<string>();
-
-export async function trackAnalyticsEvent(payload: AnalyticsPayload): Promise<void> {
+// Check if confirmed logged in as admin (never block while loading or for non-admins)
+async function isConfirmedAdmin(): Promise<boolean> {
   try {
-    if (await shouldExcludeAnalytics()) {
-      return;
-    }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return false;
 
-    const visitor_id = getVisitorId();
-    const session_id = getSessionId();
-    const traffic = getTrafficSourceInfo();
-    const device_type = getDeviceType();
+    const { data: access } = await supabase
+      .from('user_access')
+      .select('app_role')
+      .eq('user_id', user.id)
+      .single();
 
-    // Prevent duplicate event firing for exact same action signature within session
-    const uniqueKey = `${session_id}_${payload.event_name}_${payload.page_path}_${payload.button_location || ''}_${payload.bootcamp_cohort || ''}`;
-    if (sentEventCache.has(uniqueKey) && payload.event_name === 'page_view') {
-      return; // Skip duplicate page views in same session/path
-    }
-    sentEventCache.add(uniqueKey);
-
-    const event_id = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = (Math.random() * 16) | 0;
-      const v = c === 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
-
-    const rpcArgs = {
-      p_event_name: payload.event_name,
-      p_visitor_id: visitor_id,
-      p_session_id: session_id,
-      p_page_path: payload.page_path,
-      p_referrer_path: document.referrer || null,
-      p_button_location: payload.button_location || null,
-      p_bootcamp_cohort: payload.bootcamp_cohort || null,
-      p_device_type: device_type,
-      p_referrer: traffic.referrer,
-      p_utm_source: traffic.utm_source,
-      p_utm_medium: traffic.utm_medium,
-      p_utm_campaign: traffic.utm_campaign,
-      p_utm_content: traffic.utm_content,
-      p_event_id: event_id
-    };
-
-    const { error } = await supabase.rpc('record_analytics_event', rpcArgs);
-    if (error) {
-      console.warn('Analytics record error:', error.message);
-    }
-  } catch (err) {
-    console.warn('Analytics tracking error:', err);
+    return access?.app_role === 'admin';
+  } catch {
+    return false;
   }
 }
 
-// Special handler for inquiry button clicks (Kakao / external links) using beacon or async non-blocking
-export function trackInquiryClickAndNavigate(
-  buttonLocation: ButtonLocation,
-  cohort?: number,
-  targetUrl?: string
-) {
-  const visitor_id = getVisitorId();
-  const session_id = getSessionId();
-  const traffic = getTrafficSourceInfo();
-  const device_type = getDeviceType();
-  const event_id = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-
-  const payload = {
-    p_event_name: 'inquiry_click',
-    p_visitor_id: visitor_id,
-    p_session_id: session_id,
-    p_page_path: window.location.pathname || 'home',
-    p_referrer_path: document.referrer || null,
-    p_button_location: buttonLocation,
-    p_bootcamp_cohort: cohort || 8,
-    p_device_type: device_type,
-    p_referrer: traffic.referrer,
-    p_utm_source: traffic.utm_source,
-    p_utm_medium: traffic.utm_medium,
-    p_utm_campaign: traffic.utm_campaign,
-    p_utm_content: traffic.utm_content,
-    p_event_id: event_id
-  };
-
-  // Try sendBeacon or async call
+// Main trackAnalyticsEvent function as requested
+export async function trackAnalyticsEvent({
+  eventName,
+  buttonLocation = null,
+  bootcampCohort = null
+}: TrackEventParams) {
   try {
-    // If we want to call supabase rpc via fetch or sendBeacon
-    const supabaseUrl = 'https://ftsmgwfwibehtrywqter.supabase.co/rest/v1/rpc/record_analytics_event';
-    const supabaseKey = 'sb_publishable_rUYX3fevE0-pygmQnfdc5g_OtXG7K2M';
-    
-    if (navigator.sendBeacon) {
-      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-      navigator.sendBeacon(supabaseUrl, blob);
-    } else {
-      fetch(supabaseUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`
-        },
-        body: JSON.stringify(payload),
-        keepalive: true
-      }).catch(() => {});
+    if (shouldExcludeEnvironment()) {
+      return;
     }
-  } catch {
-    // ignore
-  }
 
-  if (targetUrl) {
-    setTimeout(() => {
-      window.open(targetUrl, '_blank', 'noopener,noreferrer');
-    }, 150);
+    if (await isConfirmedAdmin()) {
+      return;
+    }
+
+    const visitorId = getOrCreateVisitorId();
+    const sessionId = getOrCreateSessionId();
+    const prevPath = getPreviousPath();
+
+    setPreviousPath(window.location.pathname);
+
+    // React StrictMode / fast re-render deduplication window (3 seconds for page views)
+    const now = Date.now();
+    const dedupKey = `reposition_dedup_${eventName}_${window.location.pathname}_${buttonLocation || ''}`;
+    const lastTime = Number(sessionStorage.getItem(dedupKey) || 0);
+    if ((eventName === 'page_view' || eventName === 'bootcamp_detail_view') && now - lastTime < 3000) {
+      return;
+    }
+    sessionStorage.setItem(dedupKey, String(now));
+
+    const { error } = await supabase
+      .from('analytics_events')
+      .insert({
+        event_id: crypto.randomUUID(),
+        event_name: eventName,
+        visitor_id: visitorId,
+        session_id: sessionId,
+        page_path: window.location.pathname,
+        referrer_path: prevPath,
+        button_location: buttonLocation,
+        bootcamp_cohort: bootcampCohort,
+        device_type: getDeviceType(),
+        referrer: document.referrer || null,
+        utm_source: getStoredUtm('utm_source'),
+        utm_medium: getStoredUtm('utm_medium'),
+        utm_campaign: getStoredUtm('utm_campaign'),
+        utm_content: getStoredUtm('utm_content')
+      });
+
+    if (error) {
+      console.error('[Analytics insert failed]', {
+        eventName,
+        code: error.code,
+        message: error.message
+      });
+    }
+  } catch (err) {
+    console.error('[Analytics error]', err);
   }
+}
+
+// Safe inquiry click helper for external links (KakaoTalk etc.)
+export function trackInquiryClickAndOpen(
+  buttonLocation: 'home_inquiry' | 'bootcamp_detail_inquiry' | 'bottom_fixed_inquiry' | 'kakao_inquiry',
+  targetUrl: string = 'https://open.kakao.com/o/sEgVEi0h'
+) {
+  trackAnalyticsEvent({
+    eventName: 'inquiry_click',
+    buttonLocation,
+    bootcampCohort: 8
+  }).catch(() => {});
+
+  setTimeout(() => {
+    window.open(targetUrl, '_blank', 'noopener,noreferrer');
+  }, 100);
 }

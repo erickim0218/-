@@ -24,7 +24,7 @@ import standardRocketImg from '../assets/images/standard_rocket_launch_178807950
 import { BootcampReview } from '../data/bootcampReviews';
 import { supabase } from '../lib/supabase';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
-import { trackInquiryClickAndNavigate } from '../lib/analytics';
+import { trackInquiryClickAndOpen } from '../lib/analytics';
 
 interface BootcampDetailFlowProps {
   onTabChange?: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
@@ -46,6 +46,11 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
   const [applicantTargetJob, setApplicantTargetJob] = useState('');
   const [applicantMotivation, setApplicantMotivation] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleInquiryClick = (e: React.MouseEvent, location: 'bootcamp_detail_inquiry' | 'kakao_inquiry' = 'bootcamp_detail_inquiry') => {
+    e.preventDefault();
+    trackInquiryClickAndOpen(location, 'https://open.kakao.com/o/sEgVEi0h');
+  };
 
   // 실시간 확정 수강생 수 관리 (RPC get_bootcamp_stats 연동)
   const [confirmedCount, setConfirmedCount] = useState<number>(7);
@@ -193,7 +198,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
 
   const handleOpenPlanModal = (plan: '코어' | '프로' | '퍼스트클래스') => {
     if (isClosed) {
-      window.open('https://open.kakao.com/o/sEgVEi0h', '_blank');
+      trackInquiryClickAndOpen('bootcamp_detail_inquiry', 'https://open.kakao.com/o/sEgVEi0h');
       return;
     }
     setSelectedPlan(plan);
@@ -278,6 +283,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 href="https://open.kakao.com/o/sEgVEi0h"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={handleInquiryClick}
                 className="w-full sm:w-auto px-6 py-3 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-sm rounded-xl transition shadow-lg flex items-center justify-center gap-2 shrink-0 transform active:scale-95"
               >
                 <span>💬 문의하기</span>
@@ -617,6 +623,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   href="https://open.kakao.com/o/sEgVEi0h"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={handleInquiryClick}
                   className="w-full py-3 font-black text-xs rounded-xl bg-[#FFD600] hover:bg-[#ffe033] text-zinc-950 shadow-md text-center transition flex items-center justify-center gap-1.5"
                 >
                   <span>💬 다음 기수 예약 문의</span>
@@ -667,6 +674,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   href="https://open.kakao.com/o/sEgVEi0h"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={handleInquiryClick}
                   className="w-full py-3 font-black text-xs rounded-xl bg-[#FFD600] hover:bg-[#ffe033] text-zinc-950 shadow-md text-center transition flex items-center justify-center gap-1.5"
                 >
                   <span>💬 다음 기수 예약 문의</span>
@@ -731,6 +739,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   href="https://open.kakao.com/o/sEgVEi0h"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={handleInquiryClick}
                   className="w-full py-3 font-black text-xs rounded-xl bg-[#FFD600] hover:bg-[#ffe033] text-zinc-950 shadow-md text-center transition flex items-center justify-center gap-1.5"
                 >
                   <span>💬 다음 기수 예약 문의</span>
@@ -774,6 +783,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 href="https://open.kakao.com/o/sEgVEi0h"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={handleInquiryClick}
                 className="w-full sm:w-auto px-8 py-4 bg-[#FFD600] hover:bg-[#ffe033] text-zinc-950 font-black text-base rounded-2xl transition shadow-xl transform active:scale-95 flex items-center justify-center gap-2"
               >
                 💬 문의하기
@@ -853,6 +863,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   href="https://open.kakao.com/o/sEgVEi0h"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={(e) => handleInquiryClick(e, 'kakao_inquiry')}
                   className="px-3 py-1.5 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-xs rounded-xl transition shadow flex items-center justify-center min-h-[38px] whitespace-nowrap"
                 >
                   <span>{isClosed ? '💬 예약 문의' : '💬 신청 문의'}</span>
@@ -935,6 +946,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               href="https://open.kakao.com/o/sEgVEi0h"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => handleInquiryClick(e, 'kakao_inquiry')}
               className="px-5 py-2.5 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-xs rounded-xl transition shadow-lg flex items-center justify-center gap-1.5 min-h-[42px] whitespace-nowrap"
             >
               <span>{isClosed ? '💬 다음 기수 예약 문의' : '💬 신청 문의'}</span>

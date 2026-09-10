@@ -106,7 +106,11 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
             </span>
             <button
               onClick={() => {
-                trackAnalyticsEvent({ event_name: 'bootcamp_click', page_path: currentTab, button_location: 'bottom_fixed_inquiry', bootcamp_cohort: 8 });
+                trackAnalyticsEvent({
+                  eventName: 'bootcamp_click',
+                  buttonLocation: 'bottom_fixed_inquiry',
+                  bootcampCohort: 8
+                });
                 onTabChange('bootcamp');
               }}
               className="px-3 py-1.5 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-xs rounded-xl transition shadow flex items-center justify-center min-h-[34px] whitespace-nowrap cursor-pointer"
@@ -152,7 +156,11 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
           
           <button
             onClick={() => {
-              trackAnalyticsEvent({ event_name: 'bootcamp_click', page_path: currentTab, button_location: 'bottom_fixed_inquiry', bootcamp_cohort: 8 });
+              trackAnalyticsEvent({
+                eventName: 'bootcamp_click',
+                buttonLocation: 'bottom_fixed_inquiry',
+                bootcampCohort: 8
+              });
               onTabChange('bootcamp');
             }}
             className="px-4 py-2 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-xs sm:text-sm rounded-xl transition shadow-lg flex items-center gap-1.5 cursor-pointer"

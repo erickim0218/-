@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { BRAND_INFO, REPOSITIONING_EXAMPLES, CASE_STUDIES, REVIEWS } from '../data/mockData';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
+import { trackAnalyticsEvent } from '../lib/analytics';
 
 interface HomeSectionsProps {
   onTabChange: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
@@ -115,7 +116,14 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
           )}
 
           <button
-            onClick={() => onTabChange('bootcamp')}
+            onClick={() => {
+              trackAnalyticsEvent({
+                eventName: 'bootcamp_click',
+                buttonLocation: 'home_bootcamp_cta',
+                bootcampCohort: 8
+              });
+              onTabChange('bootcamp');
+            }}
             className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-sm sm:text-base rounded-xl transition flex items-center justify-center gap-2 shadow-lg cursor-pointer"
           >
             <Sparkles className="w-4 h-4 text-[#09090B] shrink-0" />
@@ -768,7 +776,14 @@ export const FinalConversionSection: React.FC<{
           )}
 
           <button
-            onClick={() => onTabChange('bootcamp')}
+            onClick={() => {
+              trackAnalyticsEvent({
+                eventName: 'bootcamp_click',
+                buttonLocation: 'home_bootcamp_cta',
+                bootcampCohort: 8
+              });
+              onTabChange('bootcamp');
+            }}
             className="w-full sm:w-auto px-8 py-4 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-base rounded-xl transition flex items-center justify-center gap-2 shadow-lg cursor-pointer"
           >
             <Sparkles className="w-5 h-5 text-[#09090B] shrink-0" />
