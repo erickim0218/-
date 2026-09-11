@@ -229,11 +229,13 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
 
   // Open edit modal for selected user
   const handleOpenEditModal = (member: CombinedMember) => {
+    setIsUpdating(false);
+    setShowConfirmModal(false);
+    setUpdateError('');
+    setUpdateSuccessMsg('');
     setSelectedMember(member);
     setEditTier(member.membership_tier);
     setEditCohort(member.bootcamp_cohort || '');
-    setUpdateError('');
-    setUpdateSuccessMsg('');
 
     if (['pro', 'bootcamp'].includes(member.membership_tier)) {
       if (!member.membership_expires_at) {
@@ -284,7 +286,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
 
   // Submit update
   const handleConfirmUpdate = async () => {
-    if (!selectedMember) return;
+    if (!selectedMember || isUpdating) return;
 
     setIsUpdating(true);
     setUpdateError('');
@@ -330,8 +332,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
       window.dispatchEvent(new CustomEvent('bootcamp_stats_updated'));
     } catch (err: any) {
       console.error('Update user_access error:', err);
-      setIsUpdating(false);
       setUpdateError(`멤버십 변경 실패: ${err.message || '오류가 발생했습니다.'}`);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
