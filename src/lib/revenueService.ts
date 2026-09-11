@@ -355,11 +355,50 @@ export const adminAssignMemberships = async (params: {
   memo?: string | null;
 }): Promise<{ success: boolean; error?: string }> => {
   try {
+    let finalPlanCode = params.planCode;
+    if (params.membershipTier !== 'free' && (!finalPlanCode || finalPlanCode.trim() === '')) {
+      const products = await fetchRevenueProducts();
+      const group = params.membershipTier === 'bootcamp' ? 'bootcamp' : 'pro_membership';
+      const matching = products.find(p => p.product_group === group && p.is_active);
+      if (matching) {
+        finalPlanCode = matching.plan_code;
+      } else if (products.length > 0) {
+        finalPlanCode = products[0].plan_code;
+      } else {
+        finalPlanCode = params.membershipTier === 'bootcamp' ? 'bootcamp_standard' : 'pro_monthly';
+      }
+    }
+
+    if (params.membershipTier !== 'free' && finalPlanCode) {
+      try {
+        const { data: existingProd } = await supabase
+          .from('revenue_products')
+          .select('plan_code')
+          .eq('plan_code', finalPlanCode)
+          .maybeSingle();
+
+        if (!existingProd) {
+          await supabase.from('revenue_products').insert([{
+            product_group: params.membershipTier === 'bootcamp' ? 'bootcamp' : 'pro_membership',
+            plan_code: finalPlanCode,
+            plan_name: finalPlanCode === 'pro_monthly' ? 'PRO Monthly' : finalPlanCode === 'bootcamp_standard' ? '부트캠프 스탠다드' : finalPlanCode,
+            default_price: params.amountOverride > 0 ? params.amountOverride : (params.membershipTier === 'bootcamp' ? 500000 : 99000),
+            is_active: true,
+            sort_order: 1,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }]);
+        }
+      } catch (prodErr) {
+        console.warn('Auto-ensuring revenue product warning:', prodErr);
+      }
+    }
+
     const { error } = await supabase.rpc('admin_assign_memberships', {
       p_user_ids: params.userIds,
       p_membership_tier: params.membershipTier,
       p_request_id: params.requestId,
-      p_plan_code: params.planCode || null,
+      p_plan_code: params.membershipTier === 'free' ? null : (finalPlanCode || 'pro_monthly'),
       p_expires_at: params.expiresAt || null,
       p_bootcamp_cohort: params.bootcampCohort || null,
       p_grant_type: params.grantType,

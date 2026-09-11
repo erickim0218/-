@@ -257,13 +257,13 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
     setShowAssignConfirmModal(false);
 
     const group = defaultTier === 'bootcamp' ? 'bootcamp' : 'pro_membership';
-    const matchingProd = productsList.find(p => p.product_group === group && p.is_active);
+    const matchingProd = productsList.find(p => p.product_group === group && p.is_active) || productsList[0];
     if (matchingProd) {
       setAssignPlanCode(matchingProd.plan_code);
       setAssignAmountOverride(matchingProd.default_price);
     } else {
-      setAssignPlanCode('');
-      setAssignAmountOverride(0);
+      setAssignPlanCode(defaultTier === 'bootcamp' ? 'bootcamp_standard' : 'pro_monthly');
+      setAssignAmountOverride(defaultTier === 'bootcamp' ? 500000 : 99000);
     }
 
     setIsAssignModalOpen(true);
@@ -276,13 +276,13 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
       setAssignAmountOverride(0);
     } else {
       const group = newTier === 'bootcamp' ? 'bootcamp' : 'pro_membership';
-      const matchingProd = productsList.find(p => p.product_group === group && p.is_active);
+      const matchingProd = productsList.find(p => p.product_group === group && p.is_active) || productsList[0];
       if (matchingProd) {
         setAssignPlanCode(matchingProd.plan_code);
         setAssignAmountOverride(matchingProd.default_price);
       } else {
-        setAssignPlanCode('');
-        setAssignAmountOverride(0);
+        setAssignPlanCode(newTier === 'bootcamp' ? 'bootcamp_standard' : 'pro_monthly');
+        setAssignAmountOverride(newTier === 'bootcamp' ? 500000 : 99000);
       }
     }
   };

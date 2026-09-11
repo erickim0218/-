@@ -28,6 +28,7 @@ export const BRAND_INFO = {
       { label: '누적 수강생', value: '2,400+' },
       { label: '합격률 전환', value: '3.8배' },
       { label: '부트캠프 만족도', value: '98.6%' },
+      { label: 'Threads 팔로워', value: '10,000+' },
     ],
   },
 };

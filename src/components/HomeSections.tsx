@@ -134,12 +134,30 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto pt-6">
-          {BRAND_INFO.plannerJ.summaryStats.map((st, idx) => (
-            <div key={idx} className="p-4 bg-[#121215] border border-[#222228] rounded-xl text-center space-y-1">
-              <span className="text-2xl sm:text-3xl font-black text-[#FFD600] block tracking-tight">{st.value}</span>
-              <span className="text-xs font-bold text-zinc-400 block">{st.label}</span>
-            </div>
-          ))}
+          {BRAND_INFO.plannerJ.summaryStats.map((st, idx) => {
+            const isThreads = idx === 3 || st.label === 'Threads 팔로워';
+            if (isThreads) {
+              return (
+                <a
+                  key={idx}
+                  href="https://www.threads.com/@j_positioning"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="기획자 J Threads 계정 방문하기"
+                  className="p-4 bg-[#121215] border border-[#222228] rounded-xl text-center space-y-1 cursor-pointer transition duration-200 hover:-translate-y-1 hover:border-zinc-500 hover:text-amber-300 block"
+                >
+                  <span className="text-2xl sm:text-3xl font-black text-[#FFD600] block tracking-tight">{st.value}</span>
+                  <span className="text-xs font-bold text-zinc-400 block">{st.label}</span>
+                </a>
+              );
+            }
+            return (
+              <div key={idx} className="p-4 bg-[#121215] border border-[#222228] rounded-xl text-center space-y-1">
+                <span className="text-2xl sm:text-3xl font-black text-[#FFD600] block tracking-tight">{st.value}</span>
+                <span className="text-xs font-bold text-zinc-400 block">{st.label}</span>
+              </div>
+            );
+          })}
         </div>
 
       </div>
