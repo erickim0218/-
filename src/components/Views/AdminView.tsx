@@ -22,19 +22,23 @@ import {
   ToggleRight,
   Layers,
   Settings2,
-  BarChart3
+  BarChart3,
+  DollarSign
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { CombinedMember, checkIsPro } from '../../lib/userAccess';
 import { fetchSiteFeatures, updateSiteFeature } from '../../lib/siteFeatures';
+import { adminAssignMemberships } from '../../lib/revenueService';
+import { RevenueProduct } from '../../types';
 import { AnalyticsAdminTab } from './AnalyticsAdminTab';
+import { RevenueAdminTab } from './RevenueAdminTab';
 
 interface AdminViewProps {
   onTabChange: (tab: string) => void;
 }
 
 export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
-  const [adminActiveTab, setAdminActiveTab] = useState<'members' | 'analytics'>('members');
+  const [adminActiveTab, setAdminActiveTab] = useState<'members' | 'analytics' | 'revenue'>('members');
   // Guard & Loading State
   const [authStatus, setAuthStatus] = useState<'loading' | 'authorized' | 'unauthorized'>('loading');
   const [currentAdminEmail, setCurrentAdminEmail] = useState<string>('');
@@ -49,18 +53,39 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
   const [searchEmail, setSearchEmail] = useState<string>('');
   const [tierFilter, setTierFilter] = useState<'all' | 'free' | 'pro' | 'bootcamp' | 'expired'>('all');
 
-  // Edit Modal States
-  const [selectedMember, setSelectedMember] = useState<CombinedMember | null>(null);
-  const [editTier, setEditTier] = useState<'free' | 'pro' | 'bootcamp'>('free');
-  const [editCohort, setEditCohort] = useState<string>('');
-  const [editExpireMode, setEditExpireMode] = useState<'indefinite' | '1month' | '3month' | '6month' | '1year' | 'custom'>('indefinite');
-  const [customExpireDate, setCustomExpireDate] = useState<string>('');
+  // Filtered members calculation
+  const filteredMembers = members.filter((m) => {
+    // Name search
+    if (searchName.trim()) {
+      const q = searchName.trim().toLowerCase();
+      if (!m.full_name.toLowerCase().includes(q)) return false;
+    }
 
-  // Confirmation Modal States
-  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
-  const [isUpdating, setIsUpdating] = useState<boolean>(false);
-  const [updateError, setUpdateError] = useState<string>('');
+    // Email search
+    if (searchEmail.trim()) {
+      const q = searchEmail.trim().toLowerCase();
+      if (!m.email.toLowerCase().includes(q)) return false;
+    }
+
+    // Tier filter
+    if (tierFilter === 'free') {
+      if (m.membership_tier !== 'free') return false;
+    } else if (tierFilter === 'pro') {
+      if (m.membership_tier !== 'pro' || !m.isProActive) return false;
+    } else if (tierFilter === 'bootcamp') {
+      if (m.membership_tier !== 'bootcamp' || !m.isProActive) return false;
+    } else if (tierFilter === 'expired') {
+      if (!m.isProExpired) return false;
+    }
+
+    return true;
+  });
+
+  // Success Message State
   const [updateSuccessMsg, setUpdateSuccessMsg] = useState<string>('');
+
+  // Bulk Selection State
+  const [selectedMemberIds, setSelectedMemberIds] = useState<Set<string>>(new Set());
 
   // Site Features States
   const [siteFeatures, setSiteFeatures] = useState<Record<string, boolean>>({
@@ -138,6 +163,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
           setCurrentAdminEmail(user.email || '');
           setAuthStatus('authorized');
           fetchMembersList();
+          fetchProductsAndTransactions();
           loadFeatures();
         }
       } catch (err) {
@@ -155,6 +181,192 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
       isMounted = false;
     };
   }, []);
+
+  const getKoreaTodayDate = () => {
+    const now = new Date();
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const krTime = new Date(utc + (9 * 3600000));
+    return krTime.toISOString().slice(0, 10);
+  };
+
+  const [productsList, setProductsList] = useState<RevenueProduct[]>([]);
+  const [memberTransactionsMap, setMemberTransactionsMap] = useState<Record<string, { plan_name?: string; grant_type?: string }>>({});
+
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [assignTargetUserIds, setAssignTargetUserIds] = useState<string[]>([]);
+  const [assignRequestId, setAssignRequestId] = useState<string>(crypto.randomUUID());
+  const [assignTier, setAssignTier] = useState<'free' | 'pro' | 'bootcamp'>('pro');
+  const [assignPlanCode, setAssignPlanCode] = useState<string>('');
+  const [assignGrantType, setAssignGrantType] = useState<'paid' | 'promotion' | 'access_only'>('paid');
+  const [assignSaleDate, setAssignSaleDate] = useState<string>(getKoreaTodayDate());
+  const [assignAmountOverride, setAssignAmountOverride] = useState<number>(0);
+  const [assignPaymentMethod, setAssignPaymentMethod] = useState<'card' | 'bank_transfer' | 'cash' | 'other'>('card');
+  const [assignMemo, setAssignMemo] = useState<string>('');
+  const [assignCohort, setAssignCohort] = useState<string>('');
+  const [assignExpireMode, setAssignExpireMode] = useState<'indefinite' | '1month' | '3month' | '6month' | '1year' | 'custom'>('1month');
+  const [assignCustomExpireDate, setAssignCustomExpireDate] = useState<string>('');
+  const [showAssignConfirmModal, setShowAssignConfirmModal] = useState<boolean>(false);
+  const [isAssigning, setIsAssigning] = useState<boolean>(false);
+  const [assignError, setAssignError] = useState<string>('');
+
+  const fetchProductsAndTransactions = async () => {
+    try {
+      const { data: prodData } = await supabase.from('revenue_products').select('*').order('sort_order', { ascending: true });
+      if (prodData) {
+        setProductsList(prodData);
+        const activePro = prodData.find(p => p.product_group === 'pro_membership' && p.is_active);
+        if (activePro && !assignPlanCode) {
+          setAssignPlanCode(activePro.plan_code);
+          setAssignAmountOverride(activePro.default_price);
+        }
+      }
+
+      const { data: txData } = await supabase
+        .from('revenue_transactions')
+        .select('member_user_id, grant_type, revenue_products(plan_name)')
+        .order('sale_date', { ascending: false });
+
+      if (txData) {
+        const map: Record<string, { plan_name?: string; grant_type?: string }> = {};
+        txData.forEach((t: any) => {
+          if (t.member_user_id && !map[t.member_user_id]) {
+            map[t.member_user_id] = {
+              plan_name: t.revenue_products?.plan_name || '-',
+              grant_type: t.grant_type || 'paid'
+            };
+          }
+        });
+        setMemberTransactionsMap(map);
+      }
+    } catch (e) {
+      console.error('fetchProductsAndTransactions error:', e);
+    }
+  };
+
+  const handleOpenAssignModal = (userIds: string[], defaultTier: 'free' | 'pro' | 'bootcamp' = 'pro', defaultCohort?: string | null) => {
+    if (userIds.length === 0) return;
+    setAssignTargetUserIds(userIds);
+    setAssignTier(defaultTier);
+    setAssignGrantType('paid');
+    setAssignSaleDate(getKoreaTodayDate());
+    setAssignMemo('');
+    setAssignCohort(defaultCohort || '');
+    setAssignExpireMode('1month');
+    setAssignCustomExpireDate('');
+    setAssignError('');
+    setShowAssignConfirmModal(false);
+
+    const group = defaultTier === 'bootcamp' ? 'bootcamp' : 'pro_membership';
+    const matchingProd = productsList.find(p => p.product_group === group && p.is_active);
+    if (matchingProd) {
+      setAssignPlanCode(matchingProd.plan_code);
+      setAssignAmountOverride(matchingProd.default_price);
+    } else {
+      setAssignPlanCode('');
+      setAssignAmountOverride(0);
+    }
+
+    setIsAssignModalOpen(true);
+  };
+
+  const handleAssignTierChange = (newTier: 'free' | 'pro' | 'bootcamp') => {
+    setAssignTier(newTier);
+    if (newTier === 'free') {
+      setAssignPlanCode('');
+      setAssignAmountOverride(0);
+    } else {
+      const group = newTier === 'bootcamp' ? 'bootcamp' : 'pro_membership';
+      const matchingProd = productsList.find(p => p.product_group === group && p.is_active);
+      if (matchingProd) {
+        setAssignPlanCode(matchingProd.plan_code);
+        setAssignAmountOverride(matchingProd.default_price);
+      } else {
+        setAssignPlanCode('');
+        setAssignAmountOverride(0);
+      }
+    }
+  };
+
+  const handleAssignPlanChange = (planCode: string) => {
+    setAssignPlanCode(planCode);
+    const prod = productsList.find(p => p.plan_code === planCode);
+    if (prod) {
+      setAssignAmountOverride(prod.default_price);
+    }
+  };
+
+  const calculateExpiresAtForAssign = (): string | null => {
+    if (assignTier === 'free') return null;
+    if (assignExpireMode === 'indefinite') return null;
+
+    const now = new Date();
+    if (assignExpireMode === '1month') {
+      now.setMonth(now.getMonth() + 1);
+      return now.toISOString();
+    }
+    if (assignExpireMode === '3month') {
+      now.setMonth(now.getMonth() + 3);
+      return now.toISOString();
+    }
+    if (assignExpireMode === '6month') {
+      now.setMonth(now.getMonth() + 6);
+      return now.toISOString();
+    }
+    if (assignExpireMode === '1year') {
+      now.setFullYear(now.getFullYear() + 1);
+      return now.toISOString();
+    }
+    if (assignExpireMode === 'custom' && assignCustomExpireDate) {
+      const selected = new Date(`${assignCustomExpireDate}T23:59:59.999Z`);
+      return selected.toISOString();
+    }
+    return null;
+  };
+
+  const handleExecuteAssign = async () => {
+    if (isAssigning || assignTargetUserIds.length === 0) return;
+
+    setIsAssigning(true);
+    setAssignError('');
+
+    try {
+      const actualAmount = assignGrantType === 'promotion' ? 0 : (assignGrantType === 'access_only' ? 0 : Number(assignAmountOverride));
+      const expiresAt = calculateExpiresAtForAssign();
+
+      const result = await adminAssignMemberships({
+        userIds: assignTargetUserIds,
+        membershipTier: assignTier,
+        requestId: assignRequestId,
+        planCode: assignTier === 'free' ? null : assignPlanCode,
+        expiresAt,
+        bootcampCohort: assignTier === 'bootcamp' ? (assignCohort.trim() || null) : null,
+        grantType: assignGrantType,
+        amountOverride: actualAmount,
+        paymentMethod: assignPaymentMethod,
+        saleDate: assignSaleDate,
+        memo: assignMemo.trim() || null
+      });
+
+      if (!result.success) {
+        throw new Error(result.error || '멤버십 부여에 실패했습니다.');
+      }
+
+      setIsAssignModalOpen(false);
+      setShowAssignConfirmModal(false);
+      setSelectedMemberIds(new Set());
+      setAssignRequestId(crypto.randomUUID());
+      await fetchMembersList();
+      await fetchProductsAndTransactions();
+      setUpdateSuccessMsg('선택하신 회원의 멤버십 및 매출 정보가 성공적으로 반영되었습니다.');
+      setTimeout(() => setUpdateSuccessMsg(''), 4000);
+      window.dispatchEvent(new CustomEvent('bootcamp_stats_updated'));
+    } catch (err: any) {
+      console.error('handleExecuteAssign error:', err);
+      setAssignError(err.message || '처리 중 오류가 발생했습니다.');
+    } finally {
+      setIsAssigning(false);
+    }
+  };
 
   // 2. Fetch Member List from profiles & user_access
   const fetchMembersList = async () => {
@@ -227,146 +439,28 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
     }
   };
 
-  // Open edit modal for selected user
-  const handleOpenEditModal = (member: CombinedMember) => {
-    setIsUpdating(false);
-    setShowConfirmModal(false);
-    setUpdateError('');
-    setUpdateSuccessMsg('');
-    setSelectedMember(member);
-    setEditTier(member.membership_tier);
-    setEditCohort(member.bootcamp_cohort || '');
+  const filteredMemberIds = filteredMembers.map((m) => m.id);
+  const allFilteredSelected = filteredMemberIds.length > 0 && filteredMemberIds.every((id) => selectedMemberIds.has(id));
 
-    if (['pro', 'bootcamp'].includes(member.membership_tier)) {
-      if (!member.membership_expires_at) {
-        setEditExpireMode('indefinite');
-        setCustomExpireDate('');
-      } else {
-        setEditExpireMode('custom');
-        const dateObj = new Date(member.membership_expires_at);
-        const formatted = dateObj.toISOString().slice(0, 10);
-        setCustomExpireDate(formatted);
-      }
+  const handleSelectAllFiltered = () => {
+    const nextSet = new Set(selectedMemberIds);
+    if (allFilteredSelected) {
+      filteredMemberIds.forEach((id) => nextSet.delete(id));
     } else {
-      setEditExpireMode('indefinite');
-      setCustomExpireDate('');
+      filteredMemberIds.forEach((id) => nextSet.add(id));
     }
+    setSelectedMemberIds(nextSet);
   };
 
-  // Calculate target expires_at based on form settings
-  const calculateExpiresAt = (): string | null => {
-    if (editTier === 'free') return null;
-
-    if (editExpireMode === 'indefinite') return null;
-
-    const now = new Date();
-    if (editExpireMode === '1month') {
-      now.setMonth(now.getMonth() + 1);
-      return now.toISOString();
+  const handleToggleMember = (id: string) => {
+    const nextSet = new Set(selectedMemberIds);
+    if (nextSet.has(id)) {
+      nextSet.delete(id);
+    } else {
+      nextSet.add(id);
     }
-    if (editExpireMode === '3month') {
-      now.setMonth(now.getMonth() + 3);
-      return now.toISOString();
-    }
-    if (editExpireMode === '6month') {
-      now.setMonth(now.getMonth() + 6);
-      return now.toISOString();
-    }
-    if (editExpireMode === '1year') {
-      now.setFullYear(now.getFullYear() + 1);
-      return now.toISOString();
-    }
-    if (editExpireMode === 'custom' && customExpireDate) {
-      const selected = new Date(`${customExpireDate}T23:59:59.999Z`);
-      return selected.toISOString();
-    }
-
-    return null;
+    setSelectedMemberIds(nextSet);
   };
-
-  // Submit update
-  const handleConfirmUpdate = async () => {
-    if (!selectedMember || isUpdating) return;
-
-    setIsUpdating(true);
-    setUpdateError('');
-
-    const targetUserId = selectedMember.id;
-    const nextTier = editTier;
-    const expiresAt = calculateExpiresAt();
-    const cohortValue = nextTier === 'bootcamp' ? (editCohort.trim() || null) : null;
-
-    try {
-      let updatePayload: any = {
-        membership_tier: nextTier,
-        membership_expires_at: expiresAt,
-        bootcamp_cohort: cohortValue,
-        updated_at: new Date().toISOString()
-      };
-
-      let { error } = await supabase
-        .from('user_access')
-        .update(updatePayload)
-        .eq('user_id', targetUserId);
-
-      if (error && error.message?.includes('bootcamp_cohort')) {
-        delete updatePayload.bootcamp_cohort;
-        const retry = await supabase
-          .from('user_access')
-          .update(updatePayload)
-          .eq('user_id', targetUserId);
-        error = retry.error;
-      }
-
-      if (error) {
-        throw error;
-      }
-
-      setUpdateSuccessMsg(`${selectedMember.full_name} 님의 멤버십 정보가 성공적으로 변경되었습니다.`);
-      setShowConfirmModal(false);
-      setSelectedMember(null);
-      await fetchMembersList();
-      setTimeout(() => setUpdateSuccessMsg(''), 4000);
-
-      // Dispatch event for bootcamp stats auto-update
-      window.dispatchEvent(new CustomEvent('bootcamp_stats_updated'));
-    } catch (err: any) {
-      console.error('Update user_access error:', err);
-      setUpdateError(`멤버십 변경 실패: ${err.message || '오류가 발생했습니다.'}`);
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  // Filtered members calculation
-  const filteredMembers = members.filter((m) => {
-    // Name search
-    if (searchName.trim()) {
-      const q = searchName.trim().toLowerCase();
-      if (!m.full_name.toLowerCase().includes(q)) return false;
-    }
-
-    // Email search
-    if (searchEmail.trim()) {
-      const q = searchEmail.trim().toLowerCase();
-      if (!m.email.toLowerCase().includes(q)) return false;
-    }
-
-    // Tier filter
-    if (tierFilter === 'free') {
-      if (m.membership_tier !== 'free') return false;
-    } else if (tierFilter === 'pro') {
-      if (m.membership_tier !== 'pro' || !m.isProActive) return false;
-    } else if (tierFilter === 'bootcamp') {
-      if (m.membership_tier !== 'bootcamp' || !m.isProActive) return false;
-    } else if (tierFilter === 'expired') {
-      if (!m.isProExpired) return false;
-    }
-
-    return true;
-  });
-
-  // Statistical counts
   const totalCount = members.length;
   const freeCount = members.filter((m) => m.membership_tier === 'free').length;
   const activeProCount = members.filter((m) => m.membership_tier === 'pro' && m.isProActive).length;
@@ -459,10 +553,10 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
         )}
 
         {/* Admin Navigation Tabs */}
-        <div className="flex items-center gap-2 border-b border-zinc-800 pb-4">
+        <div className="flex items-center gap-2 border-b border-zinc-800 pb-4 overflow-x-auto">
           <button
             onClick={() => setAdminActiveTab('members')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-black transition cursor-pointer flex items-center gap-2 ${
+            className={`px-5 py-2.5 rounded-2xl text-xs font-black transition cursor-pointer flex items-center gap-2 shrink-0 ${
               adminActiveTab === 'members'
                 ? 'bg-[#FFD600] text-zinc-950 shadow-lg shadow-yellow-500/10'
                 : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
@@ -474,7 +568,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
           
           <button
             onClick={() => setAdminActiveTab('analytics')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-black transition cursor-pointer flex items-center gap-2 ${
+            className={`px-5 py-2.5 rounded-2xl text-xs font-black transition cursor-pointer flex items-center gap-2 shrink-0 ${
               adminActiveTab === 'analytics'
                 ? 'bg-[#FFD600] text-zinc-950 shadow-lg shadow-yellow-500/10'
                 : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
@@ -483,10 +577,24 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
             <BarChart3 className="w-4 h-4" />
             <span>방문·전환 통계</span>
           </button>
+
+          <button
+            onClick={() => setAdminActiveTab('revenue')}
+            className={`px-5 py-2.5 rounded-2xl text-xs font-black transition cursor-pointer flex items-center gap-2 shrink-0 ${
+              adminActiveTab === 'revenue'
+                ? 'bg-[#FFD600] text-zinc-950 shadow-lg shadow-yellow-500/10'
+                : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+            }`}
+          >
+            <DollarSign className="w-4 h-4" />
+            <span>매출 관리</span>
+          </button>
         </div>
 
         {adminActiveTab === 'analytics' ? (
           <AnalyticsAdminTab />
+        ) : adminActiveTab === 'revenue' ? (
+          <RevenueAdminTab adminEmail={currentAdminEmail} />
         ) : (
           <>
             {/* Summary Statistics Cards */}
@@ -791,6 +899,34 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
         </div>
 
         {/* Member List Section (Mobile Card View & Desktop Table View) */}
+        {selectedMemberIds.size > 0 && (
+          <div className="bg-[#121216] border border-[#FFD600]/40 rounded-2xl p-4 shadow-xl flex items-center justify-between gap-4 sticky top-4 z-40 animate-fade-in mb-4">
+            <div className="flex items-center gap-3">
+              <span className="w-8 h-8 rounded-xl bg-[#FFD600] text-zinc-950 font-black flex items-center justify-center text-xs">
+                {selectedMemberIds.size}
+              </span>
+              <span className="text-xs font-bold text-white">
+                {selectedMemberIds.size}명 선택됨
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSelectedMemberIds(new Set())}
+                className="px-3.5 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 text-xs font-bold rounded-xl transition cursor-pointer"
+              >
+                선택 해제
+              </button>
+              <button
+                onClick={() => handleOpenAssignModal(Array.from(selectedMemberIds), 'pro')}
+                className="px-4 py-2 bg-[#FFD600] hover:bg-[#ffe033] text-zinc-950 text-xs font-black rounded-xl shadow-md transition cursor-pointer flex items-center gap-1.5"
+              >
+                <Crown className="w-3.5 h-3.5" />
+                <span>멤버십 및 매출 일괄 부여</span>
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="bg-[#121216] border border-[#27272A] rounded-2xl overflow-hidden shadow-2xl">
           
           {/* Mobile Member Cards View (< 768px) */}
@@ -807,9 +943,17 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
             ) : (
               filteredMembers.map((m) => (
                 <div key={m.id} className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-4 space-y-3 font-sans">
-                  {/* 1. 이름 */}
+                  {/* Top row: Checkbox & Name */}
                   <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
-                    <span className="text-xs text-zinc-400 font-medium">이름</span>
+                    <div className="flex items-center gap-2.5">
+                      <input
+                        type="checkbox"
+                        checked={selectedMemberIds.has(m.id)}
+                        onChange={() => handleToggleMember(m.id)}
+                        className="rounded bg-zinc-900 border-zinc-700 text-[#FFD600] focus:ring-0 cursor-pointer w-4 h-4"
+                      />
+                      <span className="text-xs text-zinc-400 font-medium">선택</span>
+                    </div>
                     <span className="text-sm font-bold text-white">{m.full_name}</span>
                   </div>
 
@@ -833,7 +977,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
                     )}
                   </div>
 
-                  {/* 4. FREE / PRO / BOOTCAMP 등급 */}
+                  {/* 4. 회원 등급 */}
                   <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
                     <span className="text-xs text-zinc-400 font-medium">회원 등급</span>
                     {m.isProActive ? (
@@ -860,6 +1004,20 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
                     )}
                   </div>
 
+                  {/* 4.5 현재 플랜 / 부여 방식 */}
+                  <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
+                    <span className="text-xs text-zinc-400 font-medium">현재 플랜 / 부여 방식</span>
+                    <span className="text-xs font-mono text-zinc-300 text-right">
+                      {(() => {
+                        const txInfo = memberTransactionsMap[m.id];
+                        const tierStr = m.membership_tier.toUpperCase();
+                        const planStr = txInfo?.plan_name || (m.membership_tier === 'free' ? '-' : '직접 부여');
+                        const grantStr = txInfo?.grant_type === 'promotion' ? '프로모션' : txInfo?.grant_type === 'paid' ? '유료 결제' : txInfo?.grant_type === 'manual' ? '수기 등록' : m.membership_tier === 'free' ? '무료 회원' : '권한 변경';
+                        return `${tierStr} / ${planStr} / ${grantStr}`;
+                      })()}
+                    </span>
+                  </div>
+
                   {/* 5. 만료일 */}
                   <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
                     <span className="text-xs text-zinc-400 font-medium">PRO 만료일</span>
@@ -881,11 +1039,11 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
                   {/* 6. 등급 변경 버튼 */}
                   <div className="pt-1 flex justify-end">
                     <button
-                      onClick={() => handleOpenEditModal(m)}
+                      onClick={() => handleOpenAssignModal([m.id], m.membership_tier, m.bootcamp_cohort)}
                       className="w-full py-2 bg-zinc-800 hover:bg-[#FFD600] hover:text-zinc-950 text-zinc-200 font-bold text-xs rounded-xl transition border border-zinc-700 cursor-pointer flex items-center justify-center gap-1.5 min-h-[44px]"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
-                      <span>멤버십 / 등급 변경</span>
+                      <span>멤버십 / 매출 부여</span>
                     </button>
                   </div>
                 </div>
@@ -898,11 +1056,20 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-zinc-900/80 border-b border-zinc-800 text-zinc-400 uppercase tracking-wider font-bold">
+                  <th className="py-3.5 px-4 w-10">
+                    <input
+                      type="checkbox"
+                      checked={allFilteredSelected}
+                      onChange={handleSelectAllFiltered}
+                      className="rounded bg-zinc-900 border-zinc-700 text-[#FFD600] focus:ring-0 cursor-pointer"
+                    />
+                  </th>
                   <th className="py-3.5 px-4">이름</th>
                   <th className="py-3.5 px-4">이메일 주소</th>
                   <th className="py-3.5 px-4">가입일</th>
-                  <th className="py-3.5 px-4">역할 (app_role)</th>
+                  <th className="py-3.5 px-4">역할</th>
                   <th className="py-3.5 px-4">멤버십 상태</th>
+                  <th className="py-3.5 px-4">현재 플랜 / 부여 방식</th>
                   <th className="py-3.5 px-4">PRO 만료일</th>
                   <th className="py-3.5 px-4 text-right">멤버십 관리</th>
                 </tr>
@@ -910,14 +1077,14 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
               <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
                 {isLoadingMembers ? (
                   <tr>
-                    <td colSpan={7} className="py-12 text-center text-zinc-500">
+                    <td colSpan={9} className="py-12 text-center text-zinc-500">
                       <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#FFD600]" />
                       <span>회원 목록을 불러오는 중입니다...</span>
                     </td>
                   </tr>
                 ) : filteredMembers.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-12 text-center text-zinc-500">
+                    <td colSpan={9} className="py-12 text-center text-zinc-500">
                       검색 조건에 해당되는 회원이 없습니다.
                     </td>
                   </tr>
@@ -925,6 +1092,16 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
                   filteredMembers.map((m) => (
                     <tr key={m.id} className="hover:bg-zinc-900/50 transition">
                       
+                      {/* Checkbox */}
+                      <td className="py-3.5 px-4 w-10">
+                        <input
+                          type="checkbox"
+                          checked={selectedMemberIds.has(m.id)}
+                          onChange={() => handleToggleMember(m.id)}
+                          className="rounded bg-zinc-900 border-zinc-700 text-[#FFD600] focus:ring-0 cursor-pointer"
+                        />
+                      </td>
+
                       {/* 이름 */}
                       <td className="py-3.5 px-4 font-bold text-white">
                         {m.full_name}
@@ -979,6 +1156,17 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
                         )}
                       </td>
 
+                      {/* 현재 플랜 / 부여 방식 */}
+                      <td className="py-3.5 px-4 font-mono text-xs text-zinc-300">
+                        {(() => {
+                          const txInfo = memberTransactionsMap[m.id];
+                          const tierStr = m.membership_tier.toUpperCase();
+                          const planStr = txInfo?.plan_name || (m.membership_tier === 'free' ? '-' : '직접 부여');
+                          const grantStr = txInfo?.grant_type === 'promotion' ? '프로모션' : txInfo?.grant_type === 'paid' ? '유료 결제' : txInfo?.grant_type === 'manual' ? '수기 등록' : m.membership_tier === 'free' ? '무료 회원' : '권한 변경';
+                          return `${tierStr} / ${planStr} / ${grantStr}`;
+                        })()}
+                      </td>
+
                       {/* 만료일 */}
                       <td className="py-3.5 px-4 font-mono text-xs">
                         {['pro', 'bootcamp'].includes(m.membership_tier) ? (
@@ -997,11 +1185,11 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
                       {/* Action Button */}
                       <td className="py-3.5 px-4 text-right">
                         <button
-                          onClick={() => handleOpenEditModal(m)}
+                          onClick={() => handleOpenAssignModal([m.id], m.membership_tier, m.bootcamp_cohort)}
                           className="px-3 py-1.5 bg-zinc-800 hover:bg-[#FFD600] hover:text-zinc-950 text-zinc-200 font-bold rounded-lg transition border border-zinc-700 cursor-pointer inline-flex items-center gap-1.5"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
-                          <span>PRO 설정</span>
+                          <span>등급 및 매출</span>
                         </button>
                       </td>
 
@@ -1016,77 +1204,77 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
             <span>최신 가입순 정렬됨</span>
           </div>
         </div>
+
+        {/* Mobile Fixed Bottom Bar for Bulk Action */}
+        {selectedMemberIds.size > 0 && (
+          <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#121216] border-t border-[#FFD600]/40 p-4 shadow-2xl flex items-center justify-between gap-3 md:hidden">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-[#FFD600] text-zinc-950 font-black flex items-center justify-center text-xs">
+                {selectedMemberIds.size}
+              </span>
+              <span className="text-xs font-bold text-white">
+                {selectedMemberIds.size}명 선택됨
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSelectedMemberIds(new Set())}
+                className="px-3 py-2 bg-zinc-900 text-zinc-300 border border-zinc-700 text-xs font-bold rounded-xl"
+              >
+                선택 해제
+              </button>
+              <button
+                onClick={() => handleOpenAssignModal(Array.from(selectedMemberIds), 'pro')}
+                className="px-4 py-2 bg-[#FFD600] text-zinc-950 text-xs font-black rounded-xl shadow-md"
+              >
+                멤버십 일괄 부여
+              </button>
+            </div>
+          </div>
+        )}
           </>
         )}
 
       </div>
 
-      {/* PRO Membership Edit Modal */}
-      {selectedMember && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#121216] border border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-6 shadow-2xl relative animate-fade-in text-white">
+      {/* Unified Membership & Revenue Assignment Modal */}
+      {isAssignModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#121216] border border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-xl w-full space-y-6 shadow-2xl relative animate-fade-in text-white my-8">
             
-            {/* Header */}
             <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
               <div className="flex items-center gap-2">
                 <Crown className="w-5 h-5 text-[#FFD600]" />
-                <h3 className="text-lg font-black text-white">회원 멤버십 변경</h3>
+                <h3 className="text-lg font-black text-white">
+                  멤버십 및 매출 부여 ({assignTargetUserIds.length}명 선택됨)
+                </h3>
               </div>
               <button
-                onClick={() => setSelectedMember(null)}
+                onClick={() => setIsAssignModalOpen(false)}
                 className="p-1 text-zinc-400 hover:text-white cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Target User Card */}
-            <div className="p-4 bg-zinc-900 border border-zinc-800 rounded-2xl space-y-1">
-              <div className="text-xs text-zinc-400">대상 회원 정보:</div>
-              <div className="font-bold text-base text-white flex items-center gap-2">
-                <span>{selectedMember.full_name}</span>
-                <span className="text-xs font-mono font-normal text-zinc-400">({selectedMember.email})</span>
-              </div>
-              <div className="text-xs text-zinc-400 pt-1">
-                현재 상태: {' '}
-                {selectedMember.isProActive ? (
-                  selectedMember.membership_tier === 'bootcamp' ? (
-                    <strong className="text-indigo-400">
-                      BOOTCAMP {selectedMember.bootcamp_cohort ? `(${selectedMember.bootcamp_cohort})` : ''} (활성, 만료일: {selectedMember.membership_expires_at ? formatDate(selectedMember.membership_expires_at) : '무기한'})
-                    </strong>
-                  ) : (
-                    <strong className="text-[#FFD600]">
-                      PRO (활성, 만료일: {selectedMember.membership_expires_at ? formatDate(selectedMember.membership_expires_at) : '무기한'})
-                    </strong>
-                  )
-                ) : selectedMember.isProExpired ? (
-                  <strong className="text-rose-400">만료됨 ({selectedMember.membership_tier.toUpperCase()})</strong>
-                ) : (
-                  <strong className="text-zinc-300">FREE 회원</strong>
-                )}
-              </div>
-            </div>
-
-            {/* Error in modal */}
-            {updateError && (
+            {assignError && (
               <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-300 flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
-                <span className="font-bold">{updateError}</span>
+                <span className="font-bold">{assignError}</span>
               </div>
             )}
 
-            {/* Form controls */}
             <div className="space-y-4 text-xs">
               
-              {/* Select Tier */}
+              {/* 1. Membership Tier */}
               <div className="space-y-2">
-                <label className="block font-bold text-zinc-300">변경할 멤버십 선택:</label>
+                <label className="block font-bold text-zinc-300">1. 회원 등급 선택:</label>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
-                    onClick={() => setEditTier('free')}
+                    onClick={() => handleAssignTierChange('free')}
                     className={`py-3 px-3 rounded-xl font-bold border transition text-center cursor-pointer ${
-                      editTier === 'free'
+                      assignTier === 'free'
                         ? 'bg-zinc-800 text-white border-zinc-500 shadow-md'
                         : 'bg-zinc-900 text-zinc-500 border-zinc-800 hover:text-zinc-300'
                     }`}
@@ -1096,9 +1284,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
 
                   <button
                     type="button"
-                    onClick={() => setEditTier('pro')}
+                    onClick={() => handleAssignTierChange('pro')}
                     className={`py-3 px-3 rounded-xl font-bold border transition flex items-center justify-center gap-1 cursor-pointer ${
-                      editTier === 'pro'
+                      assignTier === 'pro'
                         ? 'bg-[#FFD600] text-zinc-950 border-[#FFD600] shadow-md'
                         : 'bg-zinc-900 text-amber-500/80 border-amber-500/30 hover:bg-amber-500/10'
                     }`}
@@ -1109,9 +1297,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
 
                   <button
                     type="button"
-                    onClick={() => setEditTier('bootcamp')}
+                    onClick={() => handleAssignTierChange('bootcamp')}
                     className={`py-3 px-3 rounded-xl font-bold border transition flex items-center justify-center gap-1 cursor-pointer ${
-                      editTier === 'bootcamp'
+                      assignTier === 'bootcamp'
                         ? 'bg-indigo-600 text-white border-indigo-500 shadow-md'
                         : 'bg-zinc-900 text-indigo-400 border-indigo-500/30 hover:bg-indigo-500/10'
                     }`}
@@ -1122,37 +1310,157 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
                 </div>
               </div>
 
-              {/* If BOOTCAMP selected: Cohort input */}
-              {editTier === 'bootcamp' && (
+              {/* 2. Plan Selection (if not free) */}
+              {assignTier !== 'free' && (
+                <div className="space-y-2 pt-2 border-t border-zinc-800">
+                  <label className="block font-bold text-zinc-300">2. 상품 플랜 선택:</label>
+                  <select
+                    value={assignPlanCode}
+                    onChange={(e) => handleAssignPlanChange(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white font-bold focus:outline-none focus:border-[#FFD600]"
+                  >
+                    {productsList
+                      .filter(p => (assignTier === 'bootcamp' ? p.product_group === 'bootcamp' : p.product_group === 'pro_membership') && p.is_active)
+                      .map(p => (
+                        <option key={p.id} value={p.plan_code}>
+                          {p.plan_name} ({p.default_price.toLocaleString()}원)
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+
+              {/* 3. Grant Type */}
+              {assignTier !== 'free' && (
+                <div className="space-y-2 pt-2 border-t border-zinc-800">
+                  <label className="block font-bold text-zinc-300">3. 부여 방식 (Grant Type):</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setAssignGrantType('paid')}
+                      className={`py-2.5 px-2 rounded-xl font-bold border text-[11px] transition cursor-pointer flex flex-col items-center gap-1 ${
+                        assignGrantType === 'paid'
+                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500 shadow-md'
+                          : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                      }`}
+                    >
+                      <span className="font-black">신규 결제 (paid)</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setAssignGrantType('promotion')}
+                      className={`py-2.5 px-2 rounded-xl font-bold border text-[11px] transition cursor-pointer flex flex-col items-center gap-1 ${
+                        assignGrantType === 'promotion'
+                          ? 'bg-amber-500/20 text-[#FFD600] border-[#FFD600] shadow-md'
+                          : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                      }`}
+                    >
+                      <span className="font-black">프로모션 제공</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setAssignGrantType('access_only')}
+                      className={`py-2.5 px-2 rounded-xl font-bold border text-[11px] transition cursor-pointer flex flex-col items-center gap-1 ${
+                        assignGrantType === 'access_only'
+                          ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500 shadow-md'
+                          : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                      }`}
+                    >
+                      <span className="font-black">권한만 변경</span>
+                    </button>
+                  </div>
+                  <div className="p-2.5 bg-zinc-900/80 border border-zinc-800 rounded-xl text-[11px] text-zinc-400">
+                    {assignGrantType === 'paid' && '✅ 회원 권한을 부여하고 선택한 상품의 가격을 매출에 반영합니다.'}
+                    {assignGrantType === 'promotion' && '🎁 회원 권한은 부여하지만 실제 매출은 0원으로 기록합니다 (통계 반영, 매출 0원).'}
+                    {assignGrantType === 'access_only' && '⚡ 회원 정보만 변경하며 새로운 매출 내역은 만들지 않습니다.'}
+                  </div>
+                </div>
+              )}
+
+              {/* 4. Payment Info (Only if grantType === 'paid' && tier !== 'free') */}
+              {assignTier !== 'free' && assignGrantType === 'paid' && (
+                <div className="space-y-3 pt-2 border-t border-zinc-800 bg-zinc-900/50 p-3 rounded-xl">
+                  <div className="font-bold text-emerald-400 text-xs">결제 및 매출 정보 설정</div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-zinc-400 mb-1">매출 발생일:</label>
+                      <input
+                        type="date"
+                        value={assignSaleDate}
+                        onChange={(e) => setAssignSaleDate(e.target.value)}
+                        className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-zinc-400 mb-1">실제 결제 금액 (원):</label>
+                      <input
+                        type="number"
+                        value={assignAmountOverride}
+                        onChange={(e) => setAssignAmountOverride(Number(e.target.value))}
+                        className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-white font-bold font-mono"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-zinc-400 mb-1">결제 수단:</label>
+                      <select
+                        value={assignPaymentMethod}
+                        onChange={(e) => setAssignPaymentMethod(e.target.value as any)}
+                        className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-white"
+                      >
+                        <option value="card">카드 결제</option>
+                        <option value="bank_transfer">무통장 입금</option>
+                        <option value="cash">현금</option>
+                        <option value="other">기타</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-zinc-400 mb-1">관리자 메모:</label>
+                      <input
+                        type="text"
+                        value={assignMemo}
+                        onChange={(e) => setAssignMemo(e.target.value)}
+                        placeholder="예: 런칭 기념 특가 적용"
+                        className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 5. Cohort (if bootcamp) */}
+              {assignTier === 'bootcamp' && (
                 <div className="space-y-1.5 pt-2 border-t border-zinc-800">
-                  <label className="block font-bold text-zinc-300">부트캠프 기수 입력 (선택):</label>
+                  <label className="block font-bold text-zinc-300">부트캠프 기수 입력:</label>
                   <input
                     type="text"
-                    value={editCohort}
-                    onChange={(e) => setEditCohort(e.target.value)}
+                    value={assignCohort}
+                    onChange={(e) => setAssignCohort(e.target.value)}
                     placeholder="예: 8기"
                     className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-indigo-400"
                   />
                 </div>
               )}
 
-              {/* Expiration setting for PRO or BOOTCAMP */}
-              {editTier === 'pro' || editTier === 'bootcamp' ? (
+              {/* 6. Expiry setting (if pro or bootcamp) */}
+              {assignTier !== 'free' && (
                 <div className="space-y-3 pt-2 border-t border-zinc-800">
                   <label className="block font-bold text-zinc-300 flex items-center justify-between">
-                    <span>만료일 설정 (선택):</span>
+                    <span>만료일 설정:</span>
                     <span className="text-[11px] font-normal text-amber-400">
-                      {editExpireMode === 'indefinite' ? '무기한 (만료일 없음)' : calculateExpiresAt() ? formatDate(calculateExpiresAt()!) : ''}
+                      {assignExpireMode === 'indefinite' ? '무기한 (만료일 없음)' : calculateExpiresAtForAssign() ? formatDate(calculateExpiresAtForAssign()!) : ''}
                     </span>
                   </label>
 
-                  {/* Presets */}
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       type="button"
-                      onClick={() => setEditExpireMode('indefinite')}
+                      onClick={() => setAssignExpireMode('indefinite')}
                       className={`py-2 px-2 rounded-lg font-bold border text-[11px] transition cursor-pointer ${
-                        editExpireMode === 'indefinite'
+                        assignExpireMode === 'indefinite'
                           ? 'bg-amber-500/20 text-[#FFD600] border-[#FFD600]'
                           : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
                       }`}
@@ -1162,9 +1470,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
 
                     <button
                       type="button"
-                      onClick={() => setEditExpireMode('1month')}
+                      onClick={() => setAssignExpireMode('1month')}
                       className={`py-2 px-2 rounded-lg font-bold border text-[11px] transition cursor-pointer ${
-                        editExpireMode === '1month'
+                        assignExpireMode === '1month'
                           ? 'bg-amber-500/20 text-[#FFD600] border-[#FFD600]'
                           : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
                       }`}
@@ -1174,9 +1482,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
 
                     <button
                       type="button"
-                      onClick={() => setEditExpireMode('3month')}
+                      onClick={() => setAssignExpireMode('3month')}
                       className={`py-2 px-2 rounded-lg font-bold border text-[11px] transition cursor-pointer ${
-                        editExpireMode === '3month'
+                        assignExpireMode === '3month'
                           ? 'bg-amber-500/20 text-[#FFD600] border-[#FFD600]'
                           : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
                       }`}
@@ -1186,9 +1494,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
 
                     <button
                       type="button"
-                      onClick={() => setEditExpireMode('6month')}
+                      onClick={() => setAssignExpireMode('6month')}
                       className={`py-2 px-2 rounded-lg font-bold border text-[11px] transition cursor-pointer ${
-                        editExpireMode === '6month'
+                        assignExpireMode === '6month'
                           ? 'bg-amber-500/20 text-[#FFD600] border-[#FFD600]'
                           : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
                       }`}
@@ -1198,9 +1506,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
 
                     <button
                       type="button"
-                      onClick={() => setEditExpireMode('1year')}
+                      onClick={() => setAssignExpireMode('1year')}
                       className={`py-2 px-2 rounded-lg font-bold border text-[11px] transition cursor-pointer ${
-                        editExpireMode === '1year'
+                        assignExpireMode === '1year'
                           ? 'bg-amber-500/20 text-[#FFD600] border-[#FFD600]'
                           : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
                       }`}
@@ -1210,9 +1518,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
 
                     <button
                       type="button"
-                      onClick={() => setEditExpireMode('custom')}
+                      onClick={() => setAssignExpireMode('custom')}
                       className={`py-2 px-2 rounded-lg font-bold border text-[11px] transition cursor-pointer ${
-                        editExpireMode === 'custom'
+                        assignExpireMode === 'custom'
                           ? 'bg-amber-500/20 text-[#FFD600] border-[#FFD600]'
                           : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
                       }`}
@@ -1221,31 +1529,25 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
                     </button>
                   </div>
 
-                  {/* Custom Date Input */}
-                  {editExpireMode === 'custom' && (
+                  {assignExpireMode === 'custom' && (
                     <div className="pt-2">
                       <input
                         type="date"
-                        value={customExpireDate}
-                        onChange={(e) => setCustomExpireDate(e.target.value)}
+                        value={assignCustomExpireDate}
+                        onChange={(e) => setAssignCustomExpireDate(e.target.value)}
                         className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white font-mono focus:outline-none focus:border-[#FFD600]"
                       />
                     </div>
                   )}
                 </div>
-              ) : (
-                <div className="p-3 bg-zinc-900/80 border border-zinc-800 rounded-xl text-zinc-400 text-[11px]">
-                  💡 FREE 회원으로 변경하면 <code className="text-rose-400">membership_expires_at</code> 및 <code className="text-indigo-400">bootcamp_cohort</code> 값이 <code className="text-amber-400">null</code>로 초기화되며 PRO 전용 콘텐츠 접근이 제한됩니다.
-                </div>
               )}
 
             </div>
 
-            {/* Buttons */}
             <div className="flex items-center gap-3 pt-2">
               <button
                 type="button"
-                onClick={() => setSelectedMember(null)}
+                onClick={() => setIsAssignModalOpen(false)}
                 className="flex-1 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold rounded-xl cursor-pointer"
               >
                 취소
@@ -1253,10 +1555,10 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
 
               <button
                 type="button"
-                onClick={() => setShowConfirmModal(true)}
+                onClick={() => setShowAssignConfirmModal(true)}
                 className="flex-1 py-3 bg-[#FFD600] hover:bg-[#FFE033] text-zinc-950 font-black rounded-xl shadow-lg shadow-yellow-500/10 cursor-pointer"
               >
-                저장하기
+                최종 확인 및 반영
               </button>
             </div>
 
@@ -1264,8 +1566,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
         </div>
       )}
 
-      {/* Confirmation Step Window */}
-      {showConfirmModal && selectedMember && (
+      {/* Assignment Final Confirmation Modal */}
+      {showAssignConfirmModal && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-[#121216] border border-[#27272A] rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-6 shadow-2xl animate-fade-in text-white text-center">
             
@@ -1274,30 +1576,64 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-xl font-black text-white">멤버십 변경 최종 확인</h4>
+              <h4 className="text-xl font-black text-white">멤버십 및 매출 부여 최종 확인</h4>
               <p className="text-xs text-zinc-300 leading-relaxed">
-                <strong className="text-white">{selectedMember.full_name}</strong>({selectedMember.email}) 님의 멤버십 정보를 실제 데이터베이스(<code className="text-[#FFD600]">user_access</code>)에 다음과 같이 업데이트하시겠습니까?
+                선택된 <strong className="text-white">{assignTargetUserIds.length}명</strong>의 회원에게 멤버십을 부여하고 매출 내역을 처리하시겠습니까?
               </p>
             </div>
 
             <div className="p-4 bg-zinc-900 border border-zinc-800 rounded-2xl text-xs text-left space-y-2">
               <div className="flex justify-between">
-                <span className="text-zinc-400">멤버십 등급:</span>
-                <span className="font-black text-[#FFD600] uppercase">{editTier}</span>
+                <span className="text-zinc-400">변경 대상:</span>
+                <span className="font-bold text-white">{assignTargetUserIds.length}명</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-400">만료일 (expires_at):</span>
+                <span className="text-zinc-400">부여 등급:</span>
+                <span className="font-black text-[#FFD600] uppercase">{assignTier}</span>
+              </div>
+              {assignTier !== 'free' && (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-400">선택 상품:</span>
+                    <span className="font-bold text-white">
+                      {productsList.find(p => p.plan_code === assignPlanCode)?.plan_name || assignPlanCode || '-'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-400">부여 방식:</span>
+                    <span className="font-bold text-emerald-400">
+                      {assignGrantType === 'paid' ? '신규 결제 (매출 발생)' : assignGrantType === 'promotion' ? '프로모션 제공 (0원)' : '권한만 변경 (매출 없음)'}
+                    </span>
+                  </div>
+                  {assignGrantType === 'paid' && (
+                    <div className="flex justify-between">
+                      <span className="text-zinc-400">예상 총매출:</span>
+                      <span className="font-black text-amber-300">
+                        {(assignAmountOverride * assignTargetUserIds.length).toLocaleString()}원 ({assignTargetUserIds.length}명 × {assignAmountOverride.toLocaleString()}원)
+                      </span>
+                    </div>
+                  )}
+                </>
+              )}
+              <div className="flex justify-between">
+                <span className="text-zinc-400">만료일:</span>
                 <span className="font-mono text-zinc-200">
-                  {editTier === 'free' ? 'null (FREE 설정)' : calculateExpiresAt() ? formatDate(calculateExpiresAt()!) : 'null (무기한)'}
+                  {assignTier === 'free' ? 'null (FREE)' : calculateExpiresAtForAssign() ? formatDate(calculateExpiresAtForAssign()!) : 'null (무기한)'}
                 </span>
               </div>
+              {assignTier === 'bootcamp' && (
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">부트캠프 기수:</span>
+                  <span className="font-bold text-indigo-300">{assignCohort || '-'}</span>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-3 pt-2">
               <button
                 type="button"
-                disabled={isUpdating}
-                onClick={() => setShowConfirmModal(false)}
+                disabled={isAssigning}
+                onClick={() => setShowAssignConfirmModal(false)}
                 className="flex-1 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold rounded-xl cursor-pointer disabled:opacity-50"
               >
                 돌아가기
@@ -1305,17 +1641,17 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
 
               <button
                 type="button"
-                disabled={isUpdating}
-                onClick={handleConfirmUpdate}
+                disabled={isAssigning}
+                onClick={handleExecuteAssign}
                 className="flex-1 py-3 bg-[#FFD600] hover:bg-[#FFE033] text-zinc-950 font-black rounded-xl shadow-lg cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {isUpdating ? (
+                {isAssigning ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>업데이트 중...</span>
+                    <span>처리 중...</span>
                   </>
                 ) : (
-                  <span>확인 및 저장</span>
+                  <span>최종 승인 및 반영</span>
                 )}
               </button>
             </div>

@@ -210,3 +210,42 @@ export interface ManagedUser {
   isPromotedToPro?: boolean;
   promotedAt?: string;
 }
+
+export type ProductGroup = 'bootcamp' | 'pro_membership';
+
+export interface RevenueProduct {
+  id: string;
+  product_group: ProductGroup;
+  plan_code: string;
+  plan_name: string;
+  default_price: number;
+  is_active: boolean;
+  sort_order: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export type TransactionStatus = 'paid' | 'partially_refunded' | 'refunded' | 'cancelled';
+export type PaymentMethod = 'bank_transfer' | 'card' | 'cash' | 'other';
+
+export interface RevenueTransaction {
+  id: string;
+  sale_date: string;
+  product_id: string;
+  customer_name: string;
+  customer_email: string;
+  gross_amount: number;
+  refund_amount: number;
+  status: TransactionStatus;
+  net_amount: number;
+  payment_method: PaymentMethod;
+  memo?: string;
+  member_user_id?: string;
+  created_by?: string;
+  created_at?: string;
+  updated_at?: string;
+  grant_type?: 'paid' | 'promotion' | 'manual';
+  revenue_products?: RevenueProduct;
+  product_group?: ProductGroup;
+  plan_name?: string;
+}
