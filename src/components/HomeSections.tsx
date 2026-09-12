@@ -26,35 +26,24 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
   const [showClassTooltip, setShowClassTooltip] = useState<boolean>(false);
   const classTooltipId = useId();
 
-  const [hasAnimated, setHasAnimated] = useState<boolean>(() => {
-    try {
-      return sessionStorage.getItem('reposition_hero_animated') === 'true';
-    } catch {
-      return false;
-    }
-  });
-
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
-    try {
-      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch {
-      return false;
-    }
-  });
-
-  const [isAnimated, setIsAnimated] = useState<boolean>(hasAnimated || prefersReducedMotion);
+  const [isAnimated, setIsAnimated] = useState<boolean>(false);
+  const [testRed, setTestRed] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!hasAnimated && !prefersReducedMotion) {
-      const timer = setTimeout(() => {
-        setIsAnimated(true);
-        try {
-          sessionStorage.setItem('reposition_hero_animated', 'true');
-        } catch {}
-      }, 50);
-      return () => clearTimeout(timer);
-    }
-  }, [hasAnimated, prefersReducedMotion]);
+    const colorTimer = setTimeout(() => setTestRed(false), 3000);
+    const animTimer = setTimeout(() => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsAnimated(true);
+        });
+      });
+    }, 80);
+
+    return () => {
+      clearTimeout(colorTimer);
+      clearTimeout(animTimer);
+    };
+  }, []);
 
   useEffect(() => {
     if (siteFeatures) {
@@ -75,7 +64,7 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
         {/* Pure Symbol J */}
         <div 
           className="flex justify-center"
-          style={!isAnimated ? { opacity: 0, transform: 'translateY(-8px)', transition: 'opacity 0.35s ease-out, transform 0.35s ease-out' } : {}}
+          style={!isAnimated ? { opacity: 0, transform: 'translateY(-20px)', transition: 'opacity 0.7s ease-out, transform 0.7s ease-out' } : { opacity: 1, transform: 'translateY(0)', transition: 'opacity 0.7s ease-out, transform 0.7s ease-out' }}
         >
           <span className="font-black text-8xl sm:text-9xl italic text-[#FFD600] tracking-tighter leading-none select-none">
             J
@@ -84,9 +73,24 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
 
         {/* Title & Headline */}
         <div className="space-y-4 max-w-3xl mx-auto">
+          <div className="text-red-500 font-bold text-xs uppercase tracking-widest animate-pulse">
+            ANIMATION TEST
+          </div>
           <h1 
-            className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-tight"
-            style={!isAnimated ? { opacity: 0, transform: 'translate(10px, 12px)', filter: 'blur(6px)', transition: 'opacity 0.45s ease-out 0.15s, transform 0.45s ease-out 0.15s, filter 0.45s ease-out 0.15s' } : {}}
+            className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight"
+            style={!isAnimated ? { 
+              color: testRed ? '#ef4444' : '#ffffff', 
+              opacity: 0, 
+              transform: 'translate(40px, 20px)', 
+              filter: 'blur(10px)', 
+              transition: 'opacity 1s ease-out 0.15s, transform 1s ease-out 0.15s, filter 1s ease-out 0.15s, color 0.5s ease' 
+            } : { 
+              color: '#ffffff', 
+              opacity: 1, 
+              transform: 'translate(0, 0)', 
+              filter: 'blur(0px)', 
+              transition: 'opacity 1s ease-out 0.15s, transform 1s ease-out 0.15s, filter 1s ease-out 0.15s, color 0.5s ease' 
+            }}
           >
             REPOSITION
           </h1>
@@ -95,13 +99,13 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
             <p className="text-xl sm:text-3xl font-bold text-zinc-200 tracking-tight leading-snug">
               <span 
                 className="block sm:inline"
-                style={!isAnimated ? { opacity: 0, transform: 'translateY(10px)', transition: 'opacity 0.4s ease-out 0.3s, transform 0.4s ease-out 0.3s', display: 'inline-block' } : { display: 'inline-block' }}
+                style={!isAnimated ? { opacity: 0, transform: 'translateY(20px)', transition: 'opacity 0.7s ease-out 0.3s, transform 0.7s ease-out 0.3s', display: 'inline-block' } : { display: 'inline-block' }}
               >
                 스펙은 바꾸지 않습니다.
               </span>{' '}
               <span 
                 className="text-[#FFD600] font-black block sm:inline"
-                style={!isAnimated ? { opacity: 0, transform: 'translateY(10px)', transition: 'opacity 0.4s ease-out 0.4s, transform 0.4s ease-out 0.4s', display: 'inline-block' } : { display: 'inline-block' }}
+                style={!isAnimated ? { opacity: 0, transform: 'translateY(20px)', transition: 'opacity 0.7s ease-out 0.4s, transform 0.7s ease-out 0.4s', display: 'inline-block' } : { display: 'inline-block' }}
               >
                 읽히는 방식을 바꿉니다.
               </span>
@@ -110,7 +114,7 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
           
           <p 
             className="text-xs sm:text-base text-zinc-400 font-medium max-w-2xl mx-auto pt-2 leading-relaxed"
-            style={!isAnimated ? { opacity: 0, transform: 'translateY(10px)', transition: 'opacity 0.4s ease-out 0.5s, transform 0.4s ease-out 0.5s' } : {}}
+            style={!isAnimated ? { opacity: 0, transform: 'translateY(15px)', transition: 'opacity 0.6s ease-out 0.5s, transform 0.6s ease-out 0.5s' } : {}}
           >
             <span className="block sm:inline">대기업 광고대행사 출신 브랜딩 취업 컨설턴트 J가</span>{' '}
             <span className="block sm:inline">지원자의 경험을 기업이 선택할 가치로 정리합니다.</span>
@@ -120,7 +124,7 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
         {/* Primary Buttons */}
         <div 
           className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2"
-          style={!isAnimated ? { opacity: 0, transform: 'translateY(10px)', transition: 'opacity 0.4s ease-out 0.58s, transform 0.4s ease-out 0.58s' } : {}}
+          style={!isAnimated ? { opacity: 0, transform: 'translateY(15px)', transition: 'opacity 0.6s ease-out 0.58s, transform 0.6s ease-out 0.58s' } : {}}
         >
           {!isClassEnabled ? (
             <div
@@ -187,9 +191,9 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto pt-6">
           {BRAND_INFO.plannerJ.summaryStats.map((st, idx) => {
-            const cardDelay = 0.66 + idx * 0.07;
+            const cardDelay = 0.66 + idx * 0.08;
             const cardStyle = !isAnimated
-              ? { opacity: 0, transform: 'translateY(10px)', transition: `opacity 0.4s ease-out ${cardDelay}s, transform 0.4s ease-out ${cardDelay}s` }
+              ? { opacity: 0, transform: 'translateY(20px)', transition: `opacity 0.6s ease-out ${cardDelay}s, transform 0.6s ease-out ${cardDelay}s` }
               : {};
             const isThreads = idx === 3 || st.label === 'Threads 팔로워';
             if (isThreads) {
