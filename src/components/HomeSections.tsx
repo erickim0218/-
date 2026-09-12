@@ -26,25 +26,6 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
   const [showClassTooltip, setShowClassTooltip] = useState<boolean>(false);
   const classTooltipId = useId();
 
-  const [isAnimated, setIsAnimated] = useState<boolean>(false);
-  const [testRed, setTestRed] = useState<boolean>(true);
-
-  useEffect(() => {
-    const colorTimer = setTimeout(() => setTestRed(false), 3000);
-    const animTimer = setTimeout(() => {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setIsAnimated(true);
-        });
-      });
-    }, 80);
-
-    return () => {
-      clearTimeout(colorTimer);
-      clearTimeout(animTimer);
-    };
-  }, []);
-
   useEffect(() => {
     if (siteFeatures) {
       setIsClassEnabled(siteFeatures.repositioning_class === true);
@@ -62,10 +43,7 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
         
         {/* Pure Symbol J */}
-        <div 
-          className="flex justify-center"
-          style={!isAnimated ? { opacity: 0, transform: 'translateY(-20px)', transition: 'opacity 0.7s ease-out, transform 0.7s ease-out' } : { opacity: 1, transform: 'translateY(0)', transition: 'opacity 0.7s ease-out, transform 0.7s ease-out' }}
-        >
+        <div className="flex justify-center">
           <span className="font-black text-8xl sm:text-9xl italic text-[#FFD600] tracking-tighter leading-none select-none">
             J
           </span>
@@ -73,59 +51,25 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
 
         {/* Title & Headline */}
         <div className="space-y-4 max-w-3xl mx-auto">
-          <div className="text-red-500 font-bold text-xs uppercase tracking-widest animate-pulse">
-            ANIMATION TEST
-          </div>
-          <h1 
-            className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight"
-            style={!isAnimated ? { 
-              color: testRed ? '#ef4444' : '#ffffff', 
-              opacity: 0, 
-              transform: 'translate(40px, 20px)', 
-              filter: 'blur(10px)', 
-              transition: 'opacity 1s ease-out 0.15s, transform 1s ease-out 0.15s, filter 1s ease-out 0.15s, color 0.5s ease' 
-            } : { 
-              color: '#ffffff', 
-              opacity: 1, 
-              transform: 'translate(0, 0)', 
-              filter: 'blur(0px)', 
-              transition: 'opacity 1s ease-out 0.15s, transform 1s ease-out 0.15s, filter 1s ease-out 0.15s, color 0.5s ease' 
-            }}
-          >
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-tight">
             REPOSITION
           </h1>
 
           <div className="space-y-2 pt-2">
             <p className="text-xl sm:text-3xl font-bold text-zinc-200 tracking-tight leading-snug">
-              <span 
-                className="block sm:inline"
-                style={!isAnimated ? { opacity: 0, transform: 'translateY(20px)', transition: 'opacity 0.7s ease-out 0.3s, transform 0.7s ease-out 0.3s', display: 'inline-block' } : { display: 'inline-block' }}
-              >
-                스펙은 바꾸지 않습니다.
-              </span>{' '}
-              <span 
-                className="text-[#FFD600] font-black block sm:inline"
-                style={!isAnimated ? { opacity: 0, transform: 'translateY(20px)', transition: 'opacity 0.7s ease-out 0.4s, transform 0.7s ease-out 0.4s', display: 'inline-block' } : { display: 'inline-block' }}
-              >
-                읽히는 방식을 바꿉니다.
-              </span>
+              <span className="block sm:inline">스펙은 바꾸지 않습니다.</span>{' '}
+              <span className="text-[#FFD600] font-black block sm:inline">읽히는 방식을 바꿉니다.</span>
             </p>
           </div>
           
-          <p 
-            className="text-xs sm:text-base text-zinc-400 font-medium max-w-2xl mx-auto pt-2 leading-relaxed"
-            style={!isAnimated ? { opacity: 0, transform: 'translateY(15px)', transition: 'opacity 0.6s ease-out 0.5s, transform 0.6s ease-out 0.5s' } : {}}
-          >
+          <p className="text-xs sm:text-base text-zinc-400 font-medium max-w-2xl mx-auto pt-2 leading-relaxed">
             <span className="block sm:inline">대기업 광고대행사 출신 브랜딩 취업 컨설턴트 J가</span>{' '}
             <span className="block sm:inline">지원자의 경험을 기업이 선택할 가치로 정리합니다.</span>
           </p>
         </div>
 
         {/* Primary Buttons */}
-        <div 
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2"
-          style={!isAnimated ? { opacity: 0, transform: 'translateY(15px)', transition: 'opacity 0.6s ease-out 0.58s, transform 0.6s ease-out 0.58s' } : {}}
-        >
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
           {!isClassEnabled ? (
             <div
               className="relative w-full sm:w-auto cursor-not-allowed"
@@ -191,10 +135,6 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto pt-6">
           {BRAND_INFO.plannerJ.summaryStats.map((st, idx) => {
-            const cardDelay = 0.66 + idx * 0.08;
-            const cardStyle = !isAnimated
-              ? { opacity: 0, transform: 'translateY(20px)', transition: `opacity 0.6s ease-out ${cardDelay}s, transform 0.6s ease-out ${cardDelay}s` }
-              : {};
             const isThreads = idx === 3 || st.label === 'Threads 팔로워';
             if (isThreads) {
               return (
@@ -204,7 +144,6 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="기획자 J Threads 계정 방문하기"
-                  style={cardStyle}
                   className="p-4 bg-[#121215] border border-[#222228] rounded-xl text-center space-y-1 cursor-pointer transition duration-200 hover:-translate-y-1 hover:border-zinc-500 hover:text-amber-300 block"
                 >
                   <span className="text-2xl sm:text-3xl font-black text-[#FFD600] block tracking-tight">{st.value}</span>
@@ -215,7 +154,6 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
             return (
               <div 
                 key={idx} 
-                style={cardStyle}
                 className="p-4 bg-[#121215] border border-[#222228] rounded-xl text-center space-y-1"
               >
                 <span className="text-2xl sm:text-3xl font-black text-[#FFD600] block tracking-tight">{st.value}</span>
