@@ -145,11 +145,15 @@ export const Footer: React.FC<FooterProps> = ({ onTabChange, siteFeatures }) => 
 
         {/* Bottom copyright */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-zinc-500 gap-4">
-          <p>© REPOSITION. All rights reserved.</p>
-          <div className="flex gap-4">
-            <span className="hover:underline cursor-pointer">이용약관</span>
-            <span className="hover:underline cursor-pointer">개인정보처리방침</span>
+          <p>© REPOSITION · 대표자 김지윤</p>
+          <div className="flex items-center gap-2">
+            <button onClick={() => onTabChange('terms')} className="hover:text-white transition cursor-pointer">이용약관</button>
+            <span>|</span>
+            <button onClick={() => onTabChange('privacy')} className="hover:text-white transition cursor-pointer">개인정보처리방침</button>
+            <span>|</span>
+            <button onClick={() => onTabChange('policy')} className="hover:text-white transition cursor-pointer">서비스 운영방침</button>
           </div>
+          <p className="font-mono">문의 kjyoon0218@naver.com</p>
         </div>
       </div>
     </footer>

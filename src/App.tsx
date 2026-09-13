@@ -10,6 +10,9 @@ import { MyLmsView } from './components/Views/MyLmsView';
 import { AdminView } from './components/Views/AdminView';
 import { ProPaymentView } from './components/Views/ProPaymentView';
 import { AuthView } from './components/Views/AuthView';
+import { TermsView } from './components/Views/TermsView';
+import { PrivacyView } from './components/Views/PrivacyView';
+import { PolicyView } from './components/Views/PolicyView';
 import { COURSES } from './data/mockData';
 import { BOOTCAMP_REVIEWS, BootcampReview } from './data/bootcampReviews';
 import { INITIAL_PAYMENTS, INITIAL_MANAGED_USERS } from './data/adminMockData';
@@ -252,6 +255,21 @@ export default function App() {
     }
   }, [currentTab, siteFeatures]);
 
+  // Check initial path on mount
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (path === '/terms' || path === '/terms.html') {
+      setCurrentTab('terms');
+      document.title = 'REPOSITION 이용약관';
+    } else if (path === '/privacy' || path === '/privacy.html') {
+      setCurrentTab('privacy');
+      document.title = 'REPOSITION 개인정보처리방침';
+    } else if (path === '/policy' || path === '/policy.html') {
+      setCurrentTab('policy');
+      document.title = 'REPOSITION 서비스 운영방침';
+    }
+  }, []);
+
   const handleTabChange = (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => {
     if (tab === 'classes' && siteFeatures.repositioning_class !== true) {
       alert('현재 리포지셔닝 클래스 서비스는 비활성화 상태입니다.');
@@ -265,6 +283,25 @@ export default function App() {
     if (subTab) {
       setPracticalSubTab(subTab);
     }
+
+    try {
+      const path = tab === 'home' ? '/' : `/${tab}`;
+      window.history.pushState({}, '', path);
+    } catch {
+      // ignore
+    }
+
+    if (tab === 'terms') {
+      document.title = 'REPOSITION 이용약관';
+    } else if (tab === 'privacy') {
+      document.title = 'REPOSITION 개인정보처리방침';
+    } else if (tab === 'policy') {
+      document.title = 'REPOSITION 서비스 운영방침';
+    } else {
+      document.title = 'REPOSITION | 스펙은 바꾸지 않습니다. 읽히는 방식을 바꿉니다.';
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleAddReview = (newReview: BootcampReview) => {
@@ -482,6 +519,12 @@ export default function App() {
             onTabChange={handleTabChange}
           />
         );
+      case 'terms':
+        return <TermsView onTabChange={handleTabChange} />;
+      case 'privacy':
+        return <PrivacyView onTabChange={handleTabChange} />;
+      case 'policy':
+        return <PolicyView onTabChange={handleTabChange} />;
       default:
         return (
           <HomeView

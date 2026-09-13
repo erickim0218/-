@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { SlidingReviewsMarquee } from './SlidingReviewsMarquee';
 import { BootcampReviewsSection } from './BootcampReviewsSection';
+import { UserReviewsSection } from './UserReviewsSection';
 import { RocketInfographic } from './RocketInfographic';
 import { BootcampScheduleCalendar } from './BootcampScheduleCalendar';
 import standardRocketImg from '../assets/images/standard_rocket_launch_1788079504479.jpg';
@@ -761,6 +762,11 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
         {/* 7. 수강 후기 */}
         <section className="p-8 sm:p-12 border-b border-zinc-200 bg-white space-y-8">
           <BootcampReviewsSection reviews={reviews} onAddReview={onAddReview} />
+        </section>
+
+        {/* 7-2. 운영 가능한 사용자 작성 수강생 후기 시스템 */}
+        <section className="p-8 sm:p-12 border-b border-zinc-200 bg-white space-y-8">
+          <UserReviewsSection onTabChange={onTabChange} />
         </section>
 
         {/* 8. 환불 보장 & 수강 신청 CTA */}

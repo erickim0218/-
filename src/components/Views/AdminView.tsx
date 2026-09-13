@@ -23,7 +23,8 @@ import {
   Layers,
   Settings2,
   BarChart3,
-  DollarSign
+  DollarSign,
+  MessageSquareQuote
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { CombinedMember, checkIsPro } from '../../lib/userAccess';
@@ -32,13 +33,14 @@ import { adminAssignMemberships } from '../../lib/revenueService';
 import { RevenueProduct } from '../../types';
 import { AnalyticsAdminTab } from './AnalyticsAdminTab';
 import { RevenueAdminTab } from './RevenueAdminTab';
+import { ReviewAdminTab } from './ReviewAdminTab';
 
 interface AdminViewProps {
   onTabChange: (tab: string) => void;
 }
 
 export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
-  const [adminActiveTab, setAdminActiveTab] = useState<'members' | 'analytics' | 'revenue'>('members');
+  const [adminActiveTab, setAdminActiveTab] = useState<'members' | 'analytics' | 'revenue' | 'reviews'>('members');
   // Guard & Loading State
   const [authStatus, setAuthStatus] = useState<'loading' | 'authorized' | 'unauthorized'>('loading');
   const [currentAdminEmail, setCurrentAdminEmail] = useState<string>('');
@@ -589,12 +591,26 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
             <DollarSign className="w-4 h-4" />
             <span>매출 관리</span>
           </button>
+
+          <button
+            onClick={() => setAdminActiveTab('reviews')}
+            className={`px-5 py-2.5 rounded-2xl text-xs font-black transition cursor-pointer flex items-center gap-2 shrink-0 ${
+              adminActiveTab === 'reviews'
+                ? 'bg-[#FFD600] text-zinc-950 shadow-lg shadow-yellow-500/10'
+                : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+            }`}
+          >
+            <MessageSquareQuote className="w-4 h-4" />
+            <span>수강생 후기 관리</span>
+          </button>
         </div>
 
         {adminActiveTab === 'analytics' ? (
           <AnalyticsAdminTab />
         ) : adminActiveTab === 'revenue' ? (
           <RevenueAdminTab adminEmail={currentAdminEmail} />
+        ) : adminActiveTab === 'reviews' ? (
+          <ReviewAdminTab />
         ) : (
           <>
             {/* Summary Statistics Cards */}
