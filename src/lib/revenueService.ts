@@ -355,6 +355,13 @@ export const adminAssignMemberships = async (params: {
   memo?: string | null;
 }): Promise<{ success: boolean; error?: string }> => {
   try {
+    // Only an actual paid grant may carry revenue. Keep this invariant here as
+    // well as in the UI so promotion/access-only grants can never accidentally
+    // inherit a product's default price.
+    const normalizedAmountOverride = params.grantType === 'paid'
+      ? Math.max(0, Number(params.amountOverride) || 0)
+      : 0;
+
     let finalPlanCode = params.planCode;
     if (params.membershipTier !== 'free' && (!finalPlanCode || finalPlanCode.trim() === '')) {
       const products = await fetchRevenueProducts();
@@ -382,7 +389,7 @@ export const adminAssignMemberships = async (params: {
             product_group: params.membershipTier === 'bootcamp' ? 'bootcamp' : 'pro_membership',
             plan_code: finalPlanCode,
             plan_name: finalPlanCode === 'pro_monthly' ? 'PRO Monthly' : finalPlanCode === 'bootcamp_standard' ? '부트캠프 스탠다드' : finalPlanCode,
-            default_price: params.amountOverride > 0 ? params.amountOverride : (params.membershipTier === 'bootcamp' ? 500000 : 99000),
+            default_price: normalizedAmountOverride > 0 ? normalizedAmountOverride : (params.membershipTier === 'bootcamp' ? 500000 : 99000),
             is_active: true,
             sort_order: 1,
             created_at: new Date().toISOString(),
@@ -402,7 +409,7 @@ export const adminAssignMemberships = async (params: {
       p_expires_at: params.expiresAt || null,
       p_bootcamp_cohort: params.bootcampCohort || null,
       p_grant_type: params.grantType,
-      p_amount_override: params.amountOverride,
+      p_amount_override: normalizedAmountOverride,
       p_payment_method: params.paymentMethod,
       p_sale_date: params.saleDate,
       p_memo: params.memo || null
