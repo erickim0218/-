@@ -130,8 +130,15 @@ export const RevenueAdminTab: React.FC<RevenueAdminTabProps> = ({ adminEmail }) 
   const [currentYear, currentMonthStr] = todayStr.split('-');
   const thisMonthPrefix = `${currentYear}-${currentMonthStr}`;
 
+  // A promotion grants access but is not a sale. Every dashboard aggregate
+  // must use the same rule so promotional memberships never inflate revenue
+  // amounts or paid-order counts, even if an old DB row contains a price.
+  const isRevenueTransaction = (t: RevenueTransaction) =>
+    t.grant_type !== 'promotion' &&
+    (t.status === 'paid' || t.status === 'partially_refunded');
+
   const computeSummaryForList = (txList: RevenueTransaction[]) => {
-    const revenueTxs = txList.filter(t => t.grant_type !== 'promotion' && (t.status === 'paid' || t.status === 'partially_refunded'));
+    const revenueTxs = txList.filter(isRevenueTransaction);
     const totalGross = revenueTxs.reduce((sum, t) => sum + (t.gross_amount || 0), 0);
     const totalRefund = txList.filter(t => t.grant_type !== 'promotion').reduce((sum, t) => sum + (t.refund_amount || 0), 0);
     const totalNet = revenueTxs.reduce((sum, t) => sum + (t.net_amount || 0), 0);
@@ -408,7 +415,7 @@ export const RevenueAdminTab: React.FC<RevenueAdminTabProps> = ({ adminEmail }) 
   const dailyTrendData = Array.from({ length: daysInMonth }, (_, i) => {
     const dayStr = String(i + 1).padStart(2, '0');
     const dateKey = `${analyticsMonth}-${dayStr}`;
-    const dayTxs = transactions.filter(t => t.sale_date === dateKey && (t.status === 'paid' || t.status === 'partially_refunded'));
+    const dayTxs = transactions.filter(t => t.sale_date === dateKey && isRevenueTransaction(t));
     const net = dayTxs.reduce((sum, t) => sum + (t.net_amount || 0), 0);
     return { day: i + 1, dateKey, net };
   });
@@ -418,7 +425,7 @@ export const RevenueAdminTab: React.FC<RevenueAdminTabProps> = ({ adminEmail }) 
   const monthlyTrendData = Array.from({ length: 12 }, (_, i) => {
     const mStr = String(i + 1).padStart(2, '0');
     const prefix = `${analyticsYear}-${mStr}`;
-    const monthTxs = transactions.filter(t => t.sale_date && t.sale_date.startsWith(prefix) && (t.status === 'paid' || t.status === 'partially_refunded'));
+    const monthTxs = transactions.filter(t => t.sale_date && t.sale_date.startsWith(prefix) && isRevenueTransaction(t));
     const net = monthTxs.reduce((sum, t) => sum + (t.net_amount || 0), 0);
     return { month: i + 1, prefix, net };
   });
@@ -449,12 +456,12 @@ export const RevenueAdminTab: React.FC<RevenueAdminTabProps> = ({ adminEmail }) 
         net: 0
       };
     }
-    if (t.status === 'paid' || t.status === 'partially_refunded') {
+    if (isRevenueTransaction(t)) {
       productStatsMap[pId].count += 1;
       productStatsMap[pId].gross += (t.gross_amount || 0);
+      productStatsMap[pId].refund += (t.refund_amount || 0);
+      productStatsMap[pId].net += (t.net_amount || 0);
     }
-    productStatsMap[pId].refund += (t.refund_amount || 0);
-    productStatsMap[pId].net += (t.net_amount || 0);
   });
 
   const productStatsList = Object.values(productStatsMap);
