@@ -51,7 +51,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             FLAGSHIP BOOTCAMP
           </span>
           <h2 className="text-2xl sm:text-4xl font-black text-white">
-            기획자 J의 1:1 리포지셔닝 부트캠프 8기
+            기획자 J의 1:1 리포지셔닝 부트캠프 9기
           </h2>
           <p className="text-xs sm:text-sm text-zinc-400">
             아래 롱폼 상세페이지에서 3주 커리큘럼, 완판 기록, 가격 및 100% 환불 보장 정보를 확인하세요.

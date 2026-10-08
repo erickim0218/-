@@ -19,6 +19,9 @@ interface HomeSectionsProps {
   siteFeatures?: Record<string, boolean>;
 }
 
+const isBootcampRecruitmentPending = () =>
+  Date.now() < new Date('2026-10-10T00:00:00+09:00').getTime();
+
 /* 1. Hero Section - Ultra Clean & Direct */
 export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeatures }) => {
   const [isClassEnabled, setIsClassEnabled] = useState<boolean>(false);
@@ -37,6 +40,8 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
       });
     }
   }, [siteFeatures]);
+
+  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentPending();
 
   return (
     <section className="relative bg-[#09090B] text-white pt-16 pb-20 md:py-24 border-b border-[#1A1A1E] overflow-hidden">
@@ -120,14 +125,14 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
               trackAnalyticsEvent({
                 eventName: 'bootcamp_click',
                 buttonLocation: 'home_bootcamp_cta',
-                bootcampCohort: 8
+                bootcampCohort: 9
               });
               onTabChange('bootcamp');
             }}
             className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-sm sm:text-base rounded-xl transition flex items-center justify-center gap-2 shadow-lg cursor-pointer"
           >
             <Sparkles className="w-4 h-4 text-[#09090B] shrink-0" />
-            <span>{isBootcampEnabled ? '부트캠프 8기 신청하기' : '모집 마감 (다음 기수 예약)'}</span>
+            <span>{isBootcampOpen ? '부트캠프 9기 신청하기' : isBootcampRecruitmentPending() ? '모집 준비 중 (사전 문의)' : '모집 마감 (다음 기수 예약)'}</span>
             <ArrowRight className="w-4 h-4 text-[#09090B] shrink-0" />
           </button>
         </div>
@@ -194,6 +199,8 @@ export const FeaturedCoursesSection: React.FC<{
     };
   }, []);
 
+  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentPending();
+
   return (
     <section className="py-20 bg-[#0C0C0F] text-white border-b border-[#1A1A1E]">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
@@ -214,9 +221,9 @@ export const FeaturedCoursesSection: React.FC<{
           {/* Card 1: Live Bootcamp */}
           <div className="bg-[#121216] border border-[#FFD600]/40 rounded-2xl p-6 flex flex-col justify-between space-y-6 relative overflow-hidden">
             <div className={`absolute top-0 right-0 font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-widest ${
-              isBootcampEnabled ? 'bg-[#FFD600] text-[#09090B]' : 'bg-rose-600 text-white'
+              isBootcampOpen ? 'bg-[#FFD600] text-[#09090B]' : 'bg-rose-600 text-white'
             }`}>
-              {isBootcampEnabled ? '모집중 (선착순 10명)' : '모집 마감'}
+              {isBootcampOpen ? '모집중 (선착순 10명)' : isBootcampRecruitmentPending() ? '10월 10일 모집 시작' : '모집 마감'}
             </div>
 
             <div className="space-y-4">
@@ -224,13 +231,13 @@ export const FeaturedCoursesSection: React.FC<{
                 <span className="p-2 rounded-xl bg-[#FFD600]/10 text-[#FFD600]">
                   <Zap className="w-5 h-5" />
                 </span>
-                <span className="text-xs font-bold text-[#FFD600] tracking-wider uppercase">BOOTCAMP 8기</span>
+                <span className="text-xs font-bold text-[#FFD600] tracking-wider uppercase">BOOTCAMP 9기</span>
               </div>
 
               <div>
                 <h3 className="text-xl font-black text-white">리포지셔닝 부트캠프</h3>
                 <p className="text-xs text-[#FFD600] font-bold pt-1">
-                  🔥 1기~7기 연속 전회 완판 릴레이!
+                  🔥 1기~8기 연속 전회 완판 릴레이!
                 </p>
                 <p className="text-xs text-zinc-400 pt-2 leading-relaxed">
                   3주 특강 + 1:1 라이브 피드백 3회 + 실전 빌딩업 과제로 나만의 포지셔닝 완비
@@ -697,7 +704,7 @@ export const BootcampCurriculumPreview: React.FC<{
 
         <div className="p-6 bg-[#18181C] border border-[#FFD600]/30 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="space-y-1">
-            <span className="text-[#FFD600] font-black text-sm block">리포지셔닝 부트캠프 8기 모집 안내 · 모집 마감: 9월 18일(금) 오후 9시 · 선착순 10명</span>
+            <span className="text-[#FFD600] font-black text-sm block">리포지셔닝 부트캠프 9기 모집 안내 · 10월 10일(토) 모집 시작 · 10월 23일(금) 오후 9시 마감 · 선착순 10명</span>
             <p className="text-xs text-zinc-300">1회차 컨설팅 만족 불발 시 24시간 이내 전액 환불 보장</p>
           </div>
           <button
@@ -734,6 +741,8 @@ export const FinalConversionSection: React.FC<{
       });
     }
   }, [siteFeatures]);
+
+  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentPending();
 
   return (
     <section className="py-24 bg-[#09090B] text-white text-center border-t border-[#1A1A1E]">
@@ -801,14 +810,14 @@ export const FinalConversionSection: React.FC<{
               trackAnalyticsEvent({
                 eventName: 'bootcamp_click',
                 buttonLocation: 'home_bootcamp_cta',
-                bootcampCohort: 8
+                bootcampCohort: 9
               });
               onTabChange('bootcamp');
             }}
             className="w-full sm:w-auto px-8 py-4 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-base rounded-xl transition flex items-center justify-center gap-2 shadow-lg cursor-pointer"
           >
             <Sparkles className="w-5 h-5 text-[#09090B] shrink-0" />
-            <span>{isBootcampEnabled ? '부트캠프 8기 신청하기' : '모집 마감 (다음 기수 예약)'}</span>
+            <span>{isBootcampOpen ? '부트캠프 9기 신청하기' : isBootcampRecruitmentPending() ? '모집 준비 중 (사전 문의)' : '모집 마감 (다음 기수 예약)'}</span>
             <ArrowRight className="w-5 h-5 text-[#09090B] shrink-0" />
           </button>
         </div>

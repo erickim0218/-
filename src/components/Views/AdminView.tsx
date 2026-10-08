@@ -1455,7 +1455,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
                     type="text"
                     value={assignCohort}
                     onChange={(e) => setAssignCohort(e.target.value)}
-                    placeholder="예: 8기"
+                    placeholder="예: 9기"
                     className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-indigo-400"
                   />
                 </div>

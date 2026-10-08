@@ -10,19 +10,19 @@ export const BootcampScheduleCalendar: React.FC = () => {
         <div className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-rose-50 text-rose-800 border border-rose-200 rounded-full text-xs font-bold shadow-sm">
             <CalendarIcon className="w-3.5 h-3.5 text-rose-600" />
-            <span>2026년 9월·10월 리포지셔닝 부트캠프 8기 공식 일정</span>
+            <span>2026년 10월·11월 리포지셔닝 부트캠프 9기 공식 일정</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-zinc-950">
-            부트캠프 <span className="text-rose-600">마감 일정 & 9월·10월 캘린더</span>
+            부트캠프 <span className="text-rose-600">모집 일정 & 10월·11월 캘린더</span>
           </h2>
           <p className="text-xs sm:text-sm text-zinc-600 max-w-xl mx-auto leading-relaxed">
-            <strong className="text-rose-600">9월 18일(금) 오후 9시</strong> 선착순 10명 마감 후,<br className="hidden sm:inline" />
-            <strong className="text-zinc-950 font-black"> 9월 19일(토) 1주차 첫 강의</strong>부터 3주간의 주차별 커리큘럼이 가동됩니다.
+            <strong className="text-rose-600">10월 10일(토) 모집 시작 · 10월 23일(금) 오후 9시 마감</strong> 후,<br className="hidden sm:inline" />
+            <strong className="text-zinc-950 font-black"> 10월 24일(토) 1주차 첫 강의</strong>부터 3주간의 주차별 커리큘럼이 진행됩니다.
           </p>
         </div>
 
         {/* ========================================================================= */}
-        {/* 1. 2026년 9월·10월 달력 */}
+        {/* 1. 2026년 10월·11월 달력 */}
         {/* ========================================================================= */}
         <div className="rounded-2xl border-2 border-zinc-900 bg-white overflow-hidden shadow-2xl">
           
@@ -30,14 +30,14 @@ export const BootcampScheduleCalendar: React.FC = () => {
           <div className="bg-white border-b border-zinc-200 px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-4">
               <span className="text-4xl sm:text-5xl font-black font-sans tracking-tight text-zinc-900 leading-none">
-                9·10
+                10·11
               </span>
               <div>
                 <span className="text-xs sm:text-sm font-black tracking-wider text-zinc-700 block uppercase font-mono">
-                  SEPTEMBER · OCTOBER 2026
+                  OCTOBER · NOVEMBER 2026
                 </span>
                 <span className="text-xs text-zinc-500 font-medium">
-                  기획자J 리포지셔닝 부트캠프 8기 공식 일정표
+                  기획자J 리포지셔닝 부트캠프 9기 공식 일정표
                 </span>
               </div>
             </div>
@@ -45,11 +45,11 @@ export const BootcampScheduleCalendar: React.FC = () => {
             <div className="flex items-center flex-wrap gap-2 text-xs font-bold">
               <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
                 <Flame className="w-3.5 h-3.5 fill-current text-rose-600" />
-                18일(금) 21:00 마감
+                10일(토) 모집 시작
               </span>
               <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
                 <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                19일(토) 1주차 개강
+                23일(금) 21:00 마감 · 24일(토) 개강
               </span>
             </div>
           </div>
@@ -61,11 +61,11 @@ export const BootcampScheduleCalendar: React.FC = () => {
             </p>
             <div className="space-y-1.5 text-xs font-bold text-zinc-900">
               <div className="p-2.5 bg-white rounded-xl border border-rose-200 flex items-center justify-between shadow-xs">
-                <span className="text-rose-600 font-black">9월 20일 ~ 9월 25일</span>
+                <span className="text-rose-600 font-black">10월 25일 ~ 10월 30일</span>
                 <span className="text-zinc-900 font-bold">과제 수행 및 피드백</span>
               </div>
               <div className="p-2.5 bg-white rounded-xl border border-rose-200 flex items-center justify-between shadow-xs">
-                <span className="text-rose-600 font-black">9월 27일 ~ 10월 2일</span>
+                <span className="text-rose-600 font-black">11월 1일 ~ 11월 6일</span>
                 <span className="text-zinc-900 font-bold">과제 수행 및 피드백</span>
               </div>
             </div>
@@ -85,53 +85,37 @@ export const BootcampScheduleCalendar: React.FC = () => {
           {/* 달력 날짜 그리드 */}
           <div className="grid grid-cols-7 border-collapse select-none relative">
             
-            {/* Week 1: 8/30, 8/31, 9/1, 9/2, 9/3, 9/4, 9/5 */}
+            {/* Week 1: 10/4 ~ 10/10 (모집 시작) */}
             <div className="p-2 sm:p-3 min-h-[70px] sm:min-h-[85px] border-r border-b border-zinc-200/80 bg-zinc-50/50 text-zinc-300 font-medium text-xs sm:text-sm">
-              30
-            </div>
-            <div className="p-2 sm:p-3 min-h-[70px] sm:min-h-[85px] border-r border-b border-zinc-200/80 bg-zinc-50/50 text-zinc-300 font-medium text-xs sm:text-sm">
-              31
-            </div>
-            <div className="p-2 sm:p-3 min-h-[70px] sm:min-h-[85px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
-              1
-            </div>
-            <div className="p-2 sm:p-3 min-h-[70px] sm:min-h-[85px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
-              2
-            </div>
-            <div className="p-2 sm:p-3 min-h-[70px] sm:min-h-[85px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
-              3
-            </div>
-            <div className="p-2 sm:p-3 min-h-[70px] sm:min-h-[85px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
               4
             </div>
-            <div className="p-2 sm:p-3 min-h-[70px] sm:min-h-[85px] border-b border-zinc-200/80 bg-[#FAD2D8]/30 text-zinc-800 font-medium text-xs sm:text-sm">
+            <div className="p-2 sm:p-3 min-h-[70px] sm:min-h-[85px] border-r border-b border-zinc-200/80 bg-zinc-50/50 text-zinc-300 font-medium text-xs sm:text-sm">
               5
             </div>
-
-            {/* Week 2: 9/6 ~ 9/12 */}
-            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
+            <div className="p-2 sm:p-3 min-h-[70px] sm:min-h-[85px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
               6
             </div>
-            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
+            <div className="p-2 sm:p-3 min-h-[70px] sm:min-h-[85px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
               7
             </div>
-            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
+            <div className="p-2 sm:p-3 min-h-[70px] sm:min-h-[85px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
               8
             </div>
-            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
+            <div className="p-2 sm:p-3 min-h-[70px] sm:min-h-[85px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
               9
             </div>
-            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
-              10
+            <div className="p-2 sm:p-2.5 min-h-[70px] sm:min-h-[85px] border-b border-zinc-200/80 bg-[#FFD600]/20 text-zinc-800 font-medium text-xs sm:text-sm">
+              <span className="font-black text-zinc-950">10</span>
+              <p className="mt-1 text-[9px] sm:text-[10px] font-black text-amber-800 leading-tight">모집 시작</p>
             </div>
+
+            {/* Week 2: 10/11 ~ 10/17 */}
             <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
               11
             </div>
-            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
+            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
               12
             </div>
-
-            {/* Week 3: 9/13 ~ 9/19 (18일 마감, 19일 개강) */}
             <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
               13
             </div>
@@ -144,15 +128,32 @@ export const BootcampScheduleCalendar: React.FC = () => {
             <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
               16
             </div>
-            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
+            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
               17
             </div>
 
-            {/* 18일 금요일: 모집 마감 */}
+            {/* Week 3: 10/18 ~ 10/24 (23일 마감, 24일 개강) */}
+            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
+              18
+            </div>
+            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
+              19
+            </div>
+            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
+              20
+            </div>
+            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
+              21
+            </div>
+            <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 text-zinc-800 font-medium text-xs sm:text-sm">
+              22
+            </div>
+
+            {/* 23일 금요일: 모집 마감 */}
             <div className="p-2 sm:p-2.5 min-h-[85px] sm:min-h-[115px] border-r border-b border-zinc-200/80 bg-amber-50/80 relative flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm sm:text-base font-black text-zinc-950">18</span>
+                  <span className="text-sm sm:text-base font-black text-zinc-950">23</span>
                   <span className="text-[9px] sm:text-[10px] bg-rose-600 text-white font-black px-1.5 py-0.5 rounded">
                     마감
                   </span>
@@ -168,10 +169,10 @@ export const BootcampScheduleCalendar: React.FC = () => {
               </div>
             </div>
 
-            {/* 19일 토요일: 1주차 강의 */}
+            {/* 24일 토요일: 1주차 강의 */}
             <div className="p-2 sm:p-3 min-h-[85px] sm:min-h-[115px] border-b border-zinc-200/80 bg-[#F7C6CC] relative flex flex-col justify-start">
               <span className="text-base sm:text-xl font-black text-zinc-950 leading-none block">
-                19
+                24
               </span>
               <div className="mt-2 space-y-1">
                 <p className="text-[11px] sm:text-xs font-black text-zinc-950 flex items-center gap-1 leading-snug">
@@ -183,12 +184,12 @@ export const BootcampScheduleCalendar: React.FC = () => {
               </div>
             </div>
 
-            {/* Week 4 (20 ~ 25일) Unified Block */}
+            {/* Week 4 (10/25 ~ 10/30) Unified Block */}
             <div className="col-span-6 grid grid-cols-6 bg-rose-50/70 border-2 border-rose-300/80 rounded-2xl p-2 sm:p-3 shadow-inner relative items-center">
               <div className="p-1 sm:p-2 border-r border-rose-200/60">
-                <span className="text-base sm:text-xl font-black text-rose-600 block">20</span>
+                <span className="text-base sm:text-xl font-black text-rose-600 block">25</span>
               </div>
-              {[21, 22, 23, 24, 25].map((d, i) => (
+              {[26, 27, 28, 29, 30].map((d, i) => (
                 <div key={d} className={`p-1 sm:p-2 ${i < 4 ? 'border-r border-rose-200/60' : ''}`}>
                   <span className="text-base sm:text-xl font-black text-zinc-800 block">{d}</span>
                 </div>
@@ -196,15 +197,15 @@ export const BootcampScheduleCalendar: React.FC = () => {
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="bg-white/95 px-4 py-1.5 rounded-full border border-rose-300 shadow-sm text-xs sm:text-sm font-black text-zinc-950 flex items-center gap-1.5">
                   <span className="text-rose-600">📌</span>
-                  <span>과제 수행 및 피드백 (9/20~9/25)</span>
+                  <span>과제 수행 및 피드백 (10/25~10/30)</span>
                 </div>
               </div>
             </div>
 
-            {/* 26일 토요일: 2주차 강의 */}
+            {/* 31일 토요일: 2주차 강의 */}
             <div className="p-2 sm:p-3 border-b border-zinc-200/80 bg-[#F7C6CC] relative flex flex-col justify-start">
               <span className="text-base sm:text-xl font-black text-zinc-950 leading-none block">
-                26
+                31
               </span>
               <div className="mt-2 space-y-1">
                 <p className="text-[11px] sm:text-xs font-black text-zinc-950 flex items-center gap-1 leading-snug">
@@ -216,12 +217,12 @@ export const BootcampScheduleCalendar: React.FC = () => {
               </div>
             </div>
 
-            {/* Week 5 (27 ~ 10/2) Unified Block */}
+            {/* Week 5 (11/1 ~ 11/6) Unified Block */}
             <div className="col-span-6 grid grid-cols-6 bg-rose-50/70 border-2 border-rose-300/80 rounded-2xl p-2 sm:p-3 shadow-inner relative items-center">
               <div className="p-1 sm:p-2 border-r border-rose-200/60">
-                <span className="text-base sm:text-xl font-black text-rose-600 block">27</span>
+                <span className="text-base sm:text-xl font-black text-rose-600 block">11/1</span>
               </div>
-              {[28, 29, 30, '10/1', '10/2'].map((d, i) => (
+              {['11/2', '11/3', '11/4', '11/5', '11/6'].map((d, i) => (
                 <div key={String(d)} className={`p-1 sm:p-2 ${i < 4 ? 'border-r border-rose-200/60' : ''}`}>
                   <span className="text-base sm:text-xl font-black text-zinc-800 block">{d}</span>
                 </div>
@@ -229,15 +230,15 @@ export const BootcampScheduleCalendar: React.FC = () => {
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="bg-white/95 px-4 py-1.5 rounded-full border border-rose-300 shadow-sm text-xs sm:text-sm font-black text-zinc-950 flex items-center gap-1.5">
                   <span className="text-rose-600">📌</span>
-                  <span>과제 수행 및 피드백 (9/27~10/2)</span>
+                  <span>과제 수행 및 피드백 (11/1~11/6)</span>
                 </div>
               </div>
             </div>
 
-            {/* 3일 토요일: 3주차 강의(종료) */}
+            {/* 7일 토요일: 3주차 강의(종료) */}
             <div className="p-2 sm:p-3 border-b border-zinc-200/80 bg-[#F7C6CC] relative flex flex-col justify-start">
               <span className="text-base sm:text-xl font-black text-zinc-950 leading-none block">
-                3
+                7
               </span>
               <div className="mt-2 space-y-1">
                 <p className="text-[11px] sm:text-xs font-black text-zinc-950 flex items-center gap-1 leading-snug">

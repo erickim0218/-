@@ -195,7 +195,7 @@ export function trackInquiryClickAndOpen(
   trackAnalyticsEvent({
     eventName: 'inquiry_click',
     buttonLocation,
-    bootcampCohort: 8
+    bootcampCohort: 9
   }).catch(() => {});
 
   setTimeout(() => {

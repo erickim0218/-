@@ -116,7 +116,7 @@ export const UserReviewsSection: React.FC<UserReviewsSectionProps> = ({ onTabCha
       await upsertUserReview({
         id: editingReviewId || myReview?.id,
         user_id: currentUser.id,
-        bootcamp_cohort: '8기',
+        bootcamp_cohort: '9기',
         display_name: displayName || '수강생',
         title: title.trim(),
         content: content.trim(),

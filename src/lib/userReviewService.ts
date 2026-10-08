@@ -127,7 +127,7 @@ export async function upsertUserReview(reviewData: {
         .from('bootcamp_reviews')
         .insert([{
           user_id: reviewData.user_id,
-          bootcamp_cohort: reviewData.bootcamp_cohort || '8기',
+          bootcamp_cohort: reviewData.bootcamp_cohort || '9기',
           display_name: reviewData.display_name,
           title: reviewData.title || null,
           content: reviewData.content,
@@ -176,7 +176,7 @@ export async function upsertUserReview(reviewData: {
     updatedReview = {
       id: `rev-${Date.now()}`,
       user_id: reviewData.user_id,
-      bootcamp_cohort: reviewData.bootcamp_cohort || '8기',
+      bootcamp_cohort: reviewData.bootcamp_cohort || '9기',
       display_name: reviewData.display_name,
       title: reviewData.title || null,
       content: reviewData.content,

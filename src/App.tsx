@@ -480,7 +480,7 @@ export default function App() {
                 userName: userProfile.name || '수강생',
                 userEmail: userProfile.email || 'user@example.com',
                 productType: 'BOOTCAMP',
-                productName: '1:1 리포지셔닝 부트캠프 8기 (프로 플랜)',
+                productName: '1:1 리포지셔닝 부트캠프 9기 (프로 플랜)',
                 amount: 1490000,
                 status: '결제완료',
                 paidAt: new Date().toISOString().slice(0, 10),

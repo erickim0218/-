@@ -15,9 +15,9 @@ export const BootcampOverviewSummary: React.FC<BootcampOverviewSummaryProps> = (
     {
       id: 1,
       tag: '01 / 부트캠프 개요',
-      title: '기획자 J의 1:1 리포지셔닝 부트캠프 8기',
+      title: '기획자 J의 1:1 리포지셔닝 부트캠프 9기',
       subtitle: '단순 자소서 첨삭이 아닌, 당신의 커리어 가치를 3배 높이는 설득 프로세스',
-      badge: '1~7기 전기수 전석 매진 기록',
+      badge: '1~8기 전기수 전석 매진 기록',
       stats: [
         { label: '평균 서류 합격률', value: '70%▲', desc: '이전 대비 최대 7배 상승' },
         { label: '수강 만족도', value: '98.6%', desc: '전 기수 수강생 실전 입증' },
