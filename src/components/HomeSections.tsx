@@ -22,6 +22,9 @@ interface HomeSectionsProps {
 const isBootcampRecruitmentPending = () =>
   Date.now() < new Date('2026-10-10T00:00:00+09:00').getTime();
 
+const isBootcampRecruitmentExpired = () =>
+  Date.now() >= new Date('2026-10-23T21:00:00+09:00').getTime();
+
 /* 1. Hero Section - Ultra Clean & Direct */
 export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeatures }) => {
   const [isClassEnabled, setIsClassEnabled] = useState<boolean>(false);
@@ -41,7 +44,7 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
     }
   }, [siteFeatures]);
 
-  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentPending();
+  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentPending() && !isBootcampRecruitmentExpired();
 
   return (
     <section className="relative bg-[#09090B] text-white pt-16 pb-20 md:py-24 border-b border-[#1A1A1E] overflow-hidden">
@@ -199,7 +202,7 @@ export const FeaturedCoursesSection: React.FC<{
     };
   }, []);
 
-  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentPending();
+  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentPending() && !isBootcampRecruitmentExpired();
 
   return (
     <section className="py-20 bg-[#0C0C0F] text-white border-b border-[#1A1A1E]">
@@ -742,7 +745,7 @@ export const FinalConversionSection: React.FC<{
     }
   }, [siteFeatures]);
 
-  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentPending();
+  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentPending() && !isBootcampRecruitmentExpired();
 
   return (
     <section className="py-24 bg-[#09090B] text-white text-center border-t border-[#1A1A1E]">

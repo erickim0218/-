@@ -65,7 +65,8 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
   const totalCapacity = 10;
   const remainingSpots = Math.max(0, totalCapacity - confirmedCount);
   const isRecruitmentPending = Date.now() < new Date('2026-10-10T00:00:00+09:00').getTime();
-  const isBootcampOpen = isBootcampEnabled && !isRecruitmentPending;
+  const isRecruitmentExpired = Date.now() >= new Date('2026-10-23T21:00:00+09:00').getTime();
+  const isBootcampOpen = isBootcampEnabled && !isRecruitmentPending && !isRecruitmentExpired;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#121216]/95 backdrop-blur-md border-t border-zinc-800 text-white py-2.5 px-3 sm:py-3 sm:px-4 shadow-2xl transition-all pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
