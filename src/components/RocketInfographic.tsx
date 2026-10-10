@@ -103,13 +103,51 @@ export const RocketInfographic: React.FC = () => {
                 <circle cx="680" cy="38" r="5" fill="#10B981" />
               </g>
 
-              {/* 최상단 로켓 뱃지 (x=750, y=15) */}
-              <g transform="translate(750, 15)">
-                <circle cx="0" cy="0" r="18" fill="#FFFFFF" />
-                <path 
-                  d="M-4 5 L-1 1 L3 1 L6 -3 L3 -6 L-1 -3 L-1 1 Z" 
-                  fill="#000000" 
-                  transform="scale(1.3) rotate(45)"
+              {/* 상승 궤도 끝의 작은 로켓 */}
+              <g transform="translate(750, 15) rotate(45)">
+                {/* 로켓 본체 */}
+                <path
+                  d="M0 -18 C7 -12 9 -3 7 8 L0 13 L-7 8 C-9 -3 -7 -12 0 -18Z"
+                  fill="#FFD600"
+                  stroke="#FFFFFF"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                />
+
+                {/* 로켓 창문 */}
+                <circle
+                  cx="0"
+                  cy="-6"
+                  r="3"
+                  fill="#09090B"
+                />
+
+                {/* 왼쪽 날개 */}
+                <path
+                  d="M-7 3 L-13 10 L-6 9Z"
+                  fill="#FFD600"
+                  stroke="#FFFFFF"
+                  strokeWidth="1.5"
+                  strokeLinejoin="round"
+                />
+
+                {/* 오른쪽 날개 */}
+                <path
+                  d="M7 3 L13 10 L6 9Z"
+                  fill="#FFD600"
+                  stroke="#FFFFFF"
+                  strokeWidth="1.5"
+                  strokeLinejoin="round"
+                />
+
+                {/* 추진 불꽃 */}
+                <path
+                  d="M-4 11 L0 21 L4 11Z"
+                  fill="#F97316"
+                />
+                <path
+                  d="M-2 12 L0 18 L2 12Z"
+                  fill="#FFFFFF"
                 />
               </g>
             </svg>

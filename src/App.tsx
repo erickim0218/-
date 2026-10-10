@@ -5,6 +5,7 @@ import { HomeView } from './components/Views/HomeView';
 import { PhilosophyView } from './components/Views/PhilosophyView';
 import { ClassesView } from './components/Views/ClassesView';
 import { BootcampView } from './components/Views/BootcampView';
+import { ConsultingView } from './components/Views/ConsultingView';
 import { PracticalView } from './components/Views/PracticalView';
 import { MyLmsView } from './components/Views/MyLmsView';
 import { AdminView } from './components/Views/AdminView';
@@ -37,8 +38,85 @@ const GUEST_PROFILE: UserProfile = {
   isAdmin: false
 };
 
+const VALID_TABS = new Set([
+  'home',
+  'repositioning',
+  'classes',
+  'bootcamp',
+  'consulting',
+  'practical',
+  'mylms',
+  'admin',
+  'pro-payment',
+  'login',
+  'signup',
+  'auth',
+  'terms',
+  'privacy',
+  'policy'
+]);
+
+function getTabFromPathname(rawPath: string): { tab: string; isUnknown: boolean } {
+  const cleaned = rawPath
+    .replace(/\.html$/i, '')
+    .replace(/\/+$/, '')
+    .replace(/^\/+/, '')
+    .toLowerCase();
+
+  if (!cleaned || cleaned === 'home' || cleaned === 'index') {
+    return { tab: 'home', isUnknown: false };
+  }
+  if (VALID_TABS.has(cleaned)) {
+    return { tab: cleaned, isUnknown: false };
+  }
+  return { tab: 'home', isUnknown: true };
+}
+
+const DEFAULT_META_TITLE = 'REPOSITION | 스펙은 바꾸지 않습니다. 읽히는 방식을 바꿉니다.';
+const DEFAULT_META_DESCRIPTION =
+  '스펙은 바꾸지 않습니다. 읽히는 방식을 바꿉니다. 브랜딩의 원리로 기업이 선택할 이유를 설계하는 회원제 취업교육 및 리포지셔닝 플랫폼';
+const CONSULTING_META_TITLE = '기획자 J의 1:1 밀착 리포지셔닝 컨설팅 | REPOSITION';
+const CONSULTING_META_DESCRIPTION =
+  '스펙이 부족해서가 아니라 제대로 설명하지 못해서 떨어질 수 있습니다. 60분 1:1 밀착 컨설팅과 개인별 리포지셔닝 리포트, 30일 카톡 방향 피드백으로 기업이 당신을 선택할 이유를 정리합니다.';
+
+function applyRouteSeoMeta(tab: string) {
+  let title = DEFAULT_META_TITLE;
+  let description = DEFAULT_META_DESCRIPTION;
+
+  if (tab === 'consulting') {
+    title = CONSULTING_META_TITLE;
+    description = CONSULTING_META_DESCRIPTION;
+  } else if (tab === 'terms') {
+    title = 'REPOSITION 이용약관';
+  } else if (tab === 'privacy') {
+    title = 'REPOSITION 개인정보처리방침';
+  } else if (tab === 'policy') {
+    title = 'REPOSITION 서비스 운영방침';
+  }
+
+  document.title = title;
+
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) {
+    metaDesc.setAttribute('content', description);
+  }
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) {
+    ogTitle.setAttribute('content', title);
+  }
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc) {
+    ogDesc.setAttribute('content', description);
+  }
+}
+
 export default function App() {
-  const [currentTab, setCurrentTab] = useState<string>('home');
+  const [currentTab, setCurrentTab] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return getTabFromPathname(window.location.pathname).tab;
+    }
+    return 'home';
+  });
   const [practicalSubTab, setPracticalSubTab] = useState<'realneeds' | 'persuasion' | 'interview'>('realneeds');
   const [supabaseConnected, setSupabaseConnected] = useState<boolean>(false);
   const [siteFeatures, setSiteFeatures] = useState<Record<string, boolean>>({
@@ -255,20 +333,31 @@ export default function App() {
     }
   }, [currentTab, siteFeatures]);
 
-  // Check initial path on mount
+  // Check initial path on mount and listen to browser back/forward (popstate)
   useEffect(() => {
-    const path = window.location.pathname;
-    if (path === '/terms' || path === '/terms.html') {
-      setCurrentTab('terms');
-      document.title = 'REPOSITION 이용약관';
-    } else if (path === '/privacy' || path === '/privacy.html') {
-      setCurrentTab('privacy');
-      document.title = 'REPOSITION 개인정보처리방침';
-    } else if (path === '/policy' || path === '/policy.html') {
-      setCurrentTab('policy');
-      document.title = 'REPOSITION 서비스 운영방침';
-    }
+    const syncFromLocation = () => {
+      const { tab, isUnknown } = getTabFromPathname(window.location.pathname);
+      if (isUnknown) {
+        try {
+          window.history.replaceState({ tab: 'home' }, '', '/');
+        } catch {
+          // ignore
+        }
+      }
+      setCurrentTab(tab);
+      applyRouteSeoMeta(tab);
+    };
+
+    syncFromLocation();
+    window.addEventListener('popstate', syncFromLocation);
+    return () => {
+      window.removeEventListener('popstate', syncFromLocation);
+    };
   }, []);
+
+  useEffect(() => {
+    applyRouteSeoMeta(currentTab);
+  }, [currentTab]);
 
   const handleTabChange = (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => {
     if (tab === 'classes' && siteFeatures.repositioning_class !== true) {
@@ -285,22 +374,17 @@ export default function App() {
     }
 
     try {
-      const path = tab === 'home' ? '/' : `/${tab}`;
-      window.history.pushState({}, '', path);
+      const targetPath = tab === 'home' ? '/' : `/${tab}`;
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState({ tab }, '', targetPath);
+      } else {
+        window.history.replaceState({ tab }, '', targetPath);
+      }
     } catch {
       // ignore
     }
 
-    if (tab === 'terms') {
-      document.title = 'REPOSITION 이용약관';
-    } else if (tab === 'privacy') {
-      document.title = 'REPOSITION 개인정보처리방침';
-    } else if (tab === 'policy') {
-      document.title = 'REPOSITION 서비스 운영방침';
-    } else {
-      document.title = 'REPOSITION | 스펙은 바꾸지 않습니다. 읽히는 방식을 바꿉니다.';
-    }
-
+    applyRouteSeoMeta(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -490,6 +574,8 @@ export default function App() {
             }}
           />
         );
+      case 'consulting':
+        return <ConsultingView onTabChange={handleTabChange} />;
       case 'practical':
         if (siteFeatures.practical_tools !== true) {
           return (

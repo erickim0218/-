@@ -78,6 +78,15 @@ export const PolicyView: React.FC<PolicyViewProps> = ({ onTabChange }) => {
           </section>
 
           <section className="space-y-3">
+            <h2 className="text-lg font-bold text-white border-l-2 border-[#FFD600] pl-3">7-2. 1:1 밀착 리포지셔닝 컨설팅 운영 및 환불 기준</h2>
+            <ul className="list-disc pl-5 space-y-1 text-zinc-300">
+              <li><strong>일정 변경</strong>: 상담 진행 전 카카오톡 채널을 통해 문의해 주세요.</li>
+              <li><strong>1:1 컨설팅 환불</strong>: 컨설팅 종료 시점부터 24시간 이내 요청 가능 (문의 이메일: <span className="text-[#FFD600] font-mono">kjyoon0218@naver.com</span>)</li>
+              <li><strong>미사용 시간 보관</strong>: 60분을 모두 사용하지 못한 경우 남은 시간은 컨설팅 후 30일 이내 1회 예약하여 사용할 수 있으며, 타인 양도 및 현금 환급은 불가합니다.</li>
+            </ul>
+          </section>
+
+          <section className="space-y-3">
             <h2 className="text-lg font-bold text-white border-l-2 border-[#FFD600] pl-3">8. 후기 작성 및 운영관리</h2>
             <p>실제 경험을 바탕으로 작성할 수 있으며, 허위 후기, 욕설, 개인정보, 광고 등은 숨김 또는 삭제될 수 있습니다.</p>
           </section>

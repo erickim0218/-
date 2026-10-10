@@ -187,15 +187,27 @@ export async function trackAnalyticsEvent({
   }
 }
 
+export type InquiryButtonLocation =
+  | 'home_inquiry'
+  | 'bootcamp_detail_inquiry'
+  | 'bottom_fixed_inquiry'
+  | 'kakao_inquiry'
+  | 'consulting_hero_inquiry'
+  | 'consulting_career_inquiry'
+  | 'consulting_resume_inquiry'
+  | 'consulting_portfolio_inquiry'
+  | 'consulting_bottom_inquiry';
+
 // Safe inquiry click helper for external links (KakaoTalk etc.)
 export function trackInquiryClickAndOpen(
-  buttonLocation: 'home_inquiry' | 'bootcamp_detail_inquiry' | 'bottom_fixed_inquiry' | 'kakao_inquiry',
+  buttonLocation: InquiryButtonLocation,
   targetUrl: string = 'https://open.kakao.com/o/sEgVEi0h'
 ) {
+  const isConsulting = buttonLocation.startsWith('consulting_');
   trackAnalyticsEvent({
     eventName: 'inquiry_click',
     buttonLocation,
-    bootcampCohort: 9
+    bootcampCohort: isConsulting ? null : 9
   }).catch(() => {});
 
   setTimeout(() => {

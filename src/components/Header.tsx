@@ -185,6 +185,18 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
               </button>
 
+              {/* 4-2. 1:1 밀착 컨설팅 */}
+              <button
+                onClick={() => onTabChange('consulting')}
+                className={`px-3 py-2 rounded-xl text-xs xl:text-sm font-bold transition cursor-pointer ${
+                  currentTab === 'consulting'
+                    ? 'text-[#FFD600] bg-[#18181B] shadow-sm'
+                    : 'text-zinc-300 hover:text-white hover:bg-zinc-800/50'
+                }`}
+              >
+                1:1 밀착 컨설팅
+              </button>
+
               {/* 5. 리포지셔닝 실전활용 (준비중 툴팁 지원) */}
               <div 
                 className="relative"
@@ -271,103 +283,115 @@ export const Header: React.FC<HeaderProps> = ({
 
             </nav>
 
-            {/* Right Action Area (User Name + Tier + Profile Menu) */}
+            {/* Right Action Area (User Name + Tier + Profile/Mobile Menu) */}
             <div className="flex items-center gap-3">
               {!isLoggedIn ? (
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => onTabChange('auth')}
-                    className="px-4 py-2 text-xs xl:text-sm font-bold text-zinc-300 hover:text-white transition cursor-pointer"
+                    className="px-3 sm:px-4 py-2 text-xs xl:text-sm font-bold text-zinc-300 hover:text-white transition cursor-pointer"
                   >
                     로그인
                   </button>
                   <button
                     onClick={() => onTabChange('signup')}
-                    className="px-4 py-2 bg-[#FFD600] hover:bg-[#ffe033] text-zinc-950 font-black text-xs xl:text-sm rounded-xl transition shadow cursor-pointer"
+                    className="px-3 sm:px-4 py-2 bg-[#FFD600] hover:bg-[#ffe033] text-zinc-950 font-black text-xs xl:text-sm rounded-xl transition shadow cursor-pointer"
                   >
                     회원가입
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-3">
-                  {/* User Name & Tier text */}
-                  <div className="text-right hidden sm:block">
-                    <p className="text-xs font-bold text-white tracking-tight">{displayUserName}</p>
-                    <p className="text-[10px] text-emerald-400 font-medium flex items-center justify-end gap-1 mt-0.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
-                      {getTierBadgeText()}
-                    </p>
-                  </div>
+                <div className="text-right hidden sm:block">
+                  <p className="text-xs font-bold text-white tracking-tight">{displayUserName}</p>
+                  <p className="text-[10px] text-emerald-400 font-medium flex items-center justify-end gap-1 mt-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+                    {getTierBadgeText()}
+                  </p>
+                </div>
+              )}
 
-                  {/* Profile Dropdown / Hamburger Menu Toggle */}
-                  <div className="relative" ref={profileMenuRef}>
-                    <button
-                      onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                      className="p-2.5 rounded-xl bg-[#141417] border border-zinc-800 hover:border-zinc-700 text-[#FFD600] transition cursor-pointer flex items-center justify-center min-w-[44px] min-h-[44px]"
-                      aria-label="사용자 메뉴 열기"
-                    >
-                      <Menu className="w-5 h-5 text-[#FFD600]" />
-                    </button>
+              {/* Profile Dropdown / Hamburger Menu Toggle */}
+              <div className={`relative ${!isLoggedIn ? 'min-[1000px]:hidden' : ''}`} ref={profileMenuRef}>
+                <button
+                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  className="p-2.5 rounded-xl bg-[#141417] border border-zinc-800 hover:border-zinc-700 text-[#FFD600] transition cursor-pointer flex items-center justify-center min-w-[44px] min-h-[44px]"
+                  aria-label="메뉴 열기"
+                >
+                  <Menu className="w-5 h-5 text-[#FFD600]" />
+                </button>
 
-                    {/* Profile & Navigation Dropdown Menu */}
-                    {isProfileMenuOpen && (
-                      <div className="absolute right-0 mt-2 w-64 bg-[#121216] border border-zinc-800 rounded-2xl shadow-2xl py-2 z-50 animate-fade-in text-xs font-sans">
-                        <div className="px-4 py-3 border-b border-zinc-800 sm:hidden">
-                          <p className="font-bold text-white text-sm">{displayUserName}</p>
-                          <p className="text-[11px] text-emerald-400 font-semibold mt-0.5">
-                            {getTierBadgeText()}
-                          </p>
-                        </div>
+                {/* Profile & Navigation Dropdown Menu */}
+                {isProfileMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-[#121216] border border-zinc-800 rounded-2xl shadow-2xl py-2 z-50 animate-fade-in text-xs font-sans">
+                    {isLoggedIn && (
+                      <div className="px-4 py-3 border-b border-zinc-800 sm:hidden">
+                        <p className="font-bold text-white text-sm">{displayUserName}</p>
+                        <p className="text-[11px] text-emerald-400 font-semibold mt-0.5">
+                          {getTierBadgeText()}
+                        </p>
+                      </div>
+                    )}
 
-                        {/* Mobile quick links inside dropdown */}
-                        <div className="py-1 min-[1000px]:hidden border-b border-zinc-800/80 mb-1">
-                          <button
-                            onClick={() => {
-                              onTabChange('home');
-                              setIsProfileMenuOpen(false);
-                            }}
-                            className="w-full text-left px-4 py-2 text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition font-bold"
-                          >
-                            홈
-                          </button>
-                          <button
-                            onClick={() => {
-                              onTabChange('repositioning');
-                              setIsProfileMenuOpen(false);
-                            }}
-                            className="w-full text-left px-4 py-2 text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition font-bold"
-                          >
-                            리포지셔닝이란?
-                          </button>
-                          <button
-                            onClick={() => {
-                              onTabChange('classes');
-                              setIsProfileMenuOpen(false);
-                            }}
-                            className="w-full text-left px-4 py-2 text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition font-bold"
-                          >
-                            리포지셔닝 클래스
-                          </button>
-                          <button
-                            onClick={() => {
-                              onTabChange('bootcamp');
-                              setIsProfileMenuOpen(false);
-                            }}
-                            className="w-full text-left px-4 py-2 text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition font-bold"
-                          >
-                            리포지셔닝 부트캠프
-                          </button>
-                          <button
-                            onClick={() => {
-                              onTabChange('practical');
-                              setIsProfileMenuOpen(false);
-                            }}
-                            className="w-full text-left px-4 py-2 text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition font-bold"
-                          >
-                            리포지셔닝 실전활용
-                          </button>
-                        </div>
+                    {/* Mobile quick links inside dropdown */}
+                    <div className={`py-1 min-[1000px]:hidden ${isLoggedIn ? 'border-b border-zinc-800/80 mb-1' : ''}`}>
+                      <button
+                        onClick={() => {
+                          onTabChange('home');
+                          setIsProfileMenuOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition font-bold"
+                      >
+                        홈
+                      </button>
+                      <button
+                        onClick={() => {
+                          onTabChange('repositioning');
+                          setIsProfileMenuOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition font-bold"
+                      >
+                        리포지셔닝이란?
+                      </button>
+                      <button
+                        onClick={() => {
+                          onTabChange('classes');
+                          setIsProfileMenuOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition font-bold"
+                      >
+                        리포지셔닝 클래스
+                      </button>
+                      <button
+                        onClick={() => {
+                          onTabChange('bootcamp');
+                          setIsProfileMenuOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition font-bold"
+                      >
+                        리포지셔닝 부트캠프
+                      </button>
+                      <button
+                        onClick={() => {
+                          onTabChange('consulting');
+                          setIsProfileMenuOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition font-bold"
+                      >
+                        1:1 밀착 리포지셔닝 컨설팅
+                      </button>
+                      <button
+                        onClick={() => {
+                          onTabChange('practical');
+                          setIsProfileMenuOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition font-bold"
+                      >
+                        리포지셔닝 실전활용
+                      </button>
+                    </div>
 
+                    {isLoggedIn && (
+                      <>
                         <div className="py-1">
                           <button
                             onClick={() => {
@@ -441,11 +465,11 @@ export const Header: React.FC<HeaderProps> = ({
                             </button>
                           </div>
                         )}
-                      </div>
+                      </>
                     )}
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
           </div>

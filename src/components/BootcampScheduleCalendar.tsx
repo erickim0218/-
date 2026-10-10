@@ -163,7 +163,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
                     🔥 21:00 마감
                   </p>
                   <p className="text-[9px] sm:text-[10px] text-zinc-500 font-medium leading-tight">
-                    선착순 10명
+                    선착순 5명
                   </p>
                 </div>
               </div>
@@ -256,7 +256,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
           <div className="bg-zinc-50 px-5 sm:px-8 py-3.5 border-t border-zinc-200 text-xs text-zinc-700 font-medium">
             <p className="font-bold text-zinc-900 flex items-center gap-1.5">
               <span className="text-rose-600 font-black">*</span>
-              <span>10명 조기 모집 시 본 프로그램이 마감되며 이후 추가 모집은 진행되지 않습니다.</span>
+              <span>5명 조기 모집 시 본 프로그램이 마감되며 이후 추가 모집은 진행되지 않습니다.</span>
             </p>
           </div>
 
@@ -284,7 +284,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
             
             {/* [1주차 카드] */}
             <div className="p-6 sm:p-8 bg-white border border-zinc-900 rounded-[28px] space-y-4 shadow-sm hover:shadow-md transition">
-              <div className="flex flex-wrap items-center gap-2 text-base sm:text-lg md:text-xl font-bold text-zinc-950">
+              <div className="flex flex-wrap items-center justify-center gap-2 text-base sm:text-lg md:text-xl font-bold text-zinc-950 text-center">
                 <span className="text-2xl leading-none">🎯</span>
                 <span className="text-rose-600 font-black tracking-tight">1주차</span>
                 <span className="font-bold">
@@ -292,23 +292,19 @@ export const BootcampScheduleCalendar: React.FC = () => {
                 </span>
               </div>
 
-              <div className="space-y-2.5 pt-1 text-xs sm:text-sm font-semibold text-zinc-900">
-                <div className="flex justify-center sm:justify-start">
-                  <div className="inline-block bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed">
-                    + 특강 이후 1:1 개별 컨설팅 진행(순서 공지 예정, 오후 2시 이후 진행)
-                  </div>
+              <div className="flex flex-col items-center space-y-2.5 pt-1 text-xs sm:text-sm font-semibold text-zinc-900">
+                <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
+                  + 특강 이후 1:1 개별 컨설팅 진행(순서 공지 예정, 오후 2시 이후 진행)
                 </div>
-                <div className="flex justify-center sm:justify-start sm:pl-8">
-                  <div className="inline-block bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed">
-                    + 자기설득서 Building Up Book 기반 1주차 과제 수행
-                  </div>
+                <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
+                  + 자기설득서 Building Up Book 기반 1주차 과제 수행
                 </div>
               </div>
             </div>
 
             {/* [2주차 카드] */}
             <div className="p-6 sm:p-8 bg-white border border-zinc-900 rounded-[28px] space-y-4 shadow-sm hover:shadow-md transition">
-              <div className="flex flex-wrap items-center gap-2 text-base sm:text-lg md:text-xl font-bold text-zinc-950">
+              <div className="flex flex-wrap items-center justify-center gap-2 text-base sm:text-lg md:text-xl font-bold text-zinc-950 text-center">
                 <span className="text-2xl leading-none">🎯</span>
                 <span className="text-rose-600 font-black tracking-tight">2주차</span>
                 <span className="font-bold">
@@ -316,23 +312,19 @@ export const BootcampScheduleCalendar: React.FC = () => {
                 </span>
               </div>
 
-              <div className="space-y-2.5 pt-1 text-xs sm:text-sm font-semibold text-zinc-900">
-                <div className="flex justify-center sm:justify-start sm:pl-8">
-                  <div className="inline-block bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed">
-                    + 특강 이후 1:1 2차 개별 컨설팅 진행(1주차 동일 순서)
-                  </div>
+              <div className="flex flex-col items-center space-y-2.5 pt-1 text-xs sm:text-sm font-semibold text-zinc-900">
+                <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
+                  + 특강 이후 1:1 2차 개별 컨설팅 진행(1주차 동일 순서)
                 </div>
-                <div className="flex justify-center sm:justify-start sm:pl-12">
-                  <div className="inline-block bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed">
-                    + 면접통제 Building Up Book 기반 2주차 과제 수행
-                  </div>
+                <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
+                  + 면접통제 Building Up Book 기반 2주차 과제 수행
                 </div>
               </div>
             </div>
 
             {/* [3주차 카드] */}
             <div className="p-6 sm:p-8 bg-white border border-zinc-900 rounded-[28px] space-y-4 shadow-sm hover:shadow-md transition">
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-base sm:text-lg md:text-xl font-bold text-zinc-950">
+              <div className="flex flex-wrap items-center justify-center gap-2 text-base sm:text-lg md:text-xl font-bold text-zinc-950 text-center">
                 <span className="text-2xl leading-none">🎯</span>
                 <span className="text-rose-600 font-black tracking-tight">3주차</span>
                 <span className="font-bold">
@@ -340,16 +332,12 @@ export const BootcampScheduleCalendar: React.FC = () => {
                 </span>
               </div>
 
-              <div className="space-y-2.5 pt-1 text-xs sm:text-sm font-semibold text-zinc-900">
-                <div className="flex justify-center sm:justify-start sm:pl-14">
-                  <div className="inline-block bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed">
-                    + 특강 이후 1:1 3차 개별 컨설팅 진행
-                  </div>
+              <div className="flex flex-col items-center space-y-2.5 pt-1 text-xs sm:text-sm font-semibold text-zinc-900">
+                <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
+                  + 특강 이후 1:1 3차 개별 컨설팅 진행
                 </div>
-                <div className="flex justify-center sm:justify-start">
-                  <div className="inline-block bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed">
-                    + 자소서 3회 첨삭권(1회당 최대 3문항) 및 프리미엄 상시 피드백 안내
-                  </div>
+                <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
+                  + 자소서 3회 첨삭권(1회당 최대 3문항) 및 프리미엄 상시 피드백 안내
                 </div>
               </div>
             </div>

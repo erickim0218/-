@@ -92,6 +92,10 @@ export const Footer: React.FC<FooterProps> = ({ onTabChange, siteFeatures }) => 
                 리포지셔닝 부트캠프
               </button>
 
+              <button onClick={() => onTabChange('consulting')} className="text-left text-zinc-400 hover:text-white transition">
+                1:1 밀착 리포지셔닝 컨설팅
+              </button>
+
               {/* 리포지셔닝 실전활용 */}
               {isPracticalDisabled ? (
                 <div

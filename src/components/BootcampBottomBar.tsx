@@ -22,13 +22,17 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
   const [isBootcampEnabled, setIsBootcampEnabled] = useState<boolean>(true);
 
   // Check if bar should be hidden
-  const excludedTabs = ['login', 'signup', 'auth', 'mylms', 'admin', 'pro-payment'];
+  const excludedTabs = ['login', 'signup', 'auth', 'mylms', 'admin', 'pro-payment', 'consulting', 'terms', 'privacy', 'policy'];
   const shouldHide =
     excludedTabs.includes(currentTab) ||
     currentTier === 'BOOTCAMP' ||
     Boolean(isAdmin);
 
   useEffect(() => {
+    if (currentTab !== 'home' && currentTab !== 'bootcamp') {
+      return;
+    }
+
     const fetchStats = async () => {
       try {
         const { count, error } = await supabase
@@ -39,11 +43,9 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
 
         if (!error && count !== null && count !== undefined) {
           setConfirmedCount(count);
-        } else if (error) {
-          console.warn('9기 모집인원 조회 오류:', error);
         }
-      } catch (err) {
-        console.warn('9기 모집인원 조회 오류:', err);
+      } catch {
+        // ignore
       }
     };
 
@@ -56,17 +58,18 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
 
     fetchStats();
     checkFeatures();
-  }, []);
+  }, [currentTab]);
 
   if (shouldHide) {
     return null;
   }
 
-  const totalCapacity = 10;
+  const totalCapacity = 5;
   const remainingSpots = Math.max(0, totalCapacity - confirmedCount);
-  const isRecruitmentPending = Date.now() < new Date('2026-10-10T00:00:00+09:00').getTime();
-  const isRecruitmentExpired = Date.now() >= new Date('2026-10-23T21:00:00+09:00').getTime();
-  const isBootcampOpen = isBootcampEnabled && !isRecruitmentPending && !isRecruitmentExpired;
+  const isTimeExpired = Date.now() >= new Date('2026-10-23T21:00:00+09:00').getTime();
+  const isCountFull = confirmedCount >= totalCapacity;
+  const isClosed = !isBootcampEnabled || isTimeExpired || isCountFull;
+  const isBootcampOpen = !isClosed;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#121216]/95 backdrop-blur-md border-t border-zinc-800 text-white py-2.5 px-3 sm:py-3 sm:px-4 shadow-2xl transition-all pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
@@ -109,7 +112,7 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
               }}
               className="px-3 py-1.5 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-xs rounded-xl transition shadow flex items-center justify-center min-h-[34px] whitespace-nowrap cursor-pointer"
             >
-              <span>{isBootcampOpen ? '부트캠프 9기 신청하기' : isRecruitmentPending ? '9기 사전 문의' : '다음 기수 예약 문의'}</span>
+              <span>{isBootcampOpen ? '부트캠프 9기 신청하기' : '다음 기수 예약 문의'}</span>
             </button>
           </div>
         </div>
@@ -117,7 +120,7 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
         {/* Desktop & Tablet View (>= 640px) */}
         <div className="hidden sm:flex items-center gap-3 overflow-hidden">
           <span className="px-2.5 py-1 bg-[#FFD600] text-[#09090B] font-black text-xs rounded-lg shrink-0">
-            {isBootcampOpen ? 'BOOTCAMP 9기' : isRecruitmentPending ? '9기 모집 준비 중' : '9기 모집 마감'}
+            {isBootcampOpen ? 'BOOTCAMP 9기' : '9기 모집 마감'}
           </span>
           <div className="flex items-center gap-2 text-xs sm:text-sm font-bold truncate">
             <span
@@ -160,7 +163,7 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
             className="px-4 py-2 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-xs sm:text-sm rounded-xl transition shadow-lg flex items-center gap-1.5 cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />
-            <span>{isBootcampOpen ? '부트캠프 9기 신청하기' : isRecruitmentPending ? '9기 사전 문의' : '다음 기수 예약 문의'}</span>
+            <span>{isBootcampOpen ? '부트캠프 9기 신청하기' : '다음 기수 예약 문의'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
