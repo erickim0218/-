@@ -5,7 +5,7 @@ import { Course, CourseLesson, MemberTier } from '../../types';
 
 interface ClassesViewProps {
   currentTier: MemberTier;
-  onTabChange: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
+  onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
   courses?: Course[];
 }
 

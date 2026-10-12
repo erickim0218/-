@@ -12,7 +12,7 @@ const STORAGE_KEY = 'reposition_site_features_cache';
 export const DEFAULT_SITE_FEATURES: Record<string, boolean> = {
   bootcamp: true,
   repositioning_class: false,
-  practical_tools: false
+  practical_tools: true
 };
 
 // Get all site features from Supabase or Local Storage fallback
@@ -20,7 +20,7 @@ export async function fetchSiteFeatures(): Promise<Record<string, boolean>> {
   const result: Record<string, boolean> = {
     bootcamp: true,
     repositioning_class: false,
-    practical_tools: false
+    practical_tools: true
   };
 
   // 1. Try local storage cache first if available
@@ -30,7 +30,7 @@ export async function fetchSiteFeatures(): Promise<Record<string, boolean>> {
       const parsed = JSON.parse(cached);
       result.bootcamp = typeof parsed.bootcamp === 'boolean' ? parsed.bootcamp : true;
       result.repositioning_class = parsed.repositioning_class === true;
-      result.practical_tools = parsed.practical_tools === true;
+      result.practical_tools = typeof parsed.practical_tools === 'boolean' ? parsed.practical_tools : true;
     }
   } catch (e) {
     console.warn('Failed to read site_features cache:', e);

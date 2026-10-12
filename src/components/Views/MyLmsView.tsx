@@ -7,7 +7,7 @@ interface MyLmsViewProps {
   user: UserProfile;
   currentTier: MemberTier;
   onUpdateUser: (updatedUser: UserProfile) => void;
-  onTabChange: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
+  onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
 }
 
 export const MyLmsView: React.FC<MyLmsViewProps> = ({

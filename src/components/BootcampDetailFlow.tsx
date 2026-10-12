@@ -28,7 +28,7 @@ import { fetchSiteFeatures } from '../lib/siteFeatures';
 import { trackInquiryClickAndOpen } from '../lib/analytics';
 
 interface BootcampDetailFlowProps {
-  onTabChange?: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
+  onTabChange?: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
   onApplicationSubmitted?: () => void;
   reviews?: BootcampReview[];
   onAddReview?: (review: BootcampReview) => void;

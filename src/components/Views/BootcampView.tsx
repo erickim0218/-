@@ -5,7 +5,7 @@ import { BootcampReview } from '../../data/bootcampReviews';
 
 interface BootcampViewProps {
   currentTier: MemberTier;
-  onTabChange: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
+  onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
   onApplicationSubmitted?: () => void;
   onChangeTier?: (tier: MemberTier) => void;
   reviews?: BootcampReview[];

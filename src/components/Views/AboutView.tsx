@@ -4,7 +4,7 @@ import { BRAND_INFO } from '../../data/mockData';
 import { fetchSiteFeatures } from '../../lib/siteFeatures';
 
 interface AboutViewProps {
-  onTabChange?: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
+  onTabChange?: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
   siteFeatures?: Record<string, boolean>;
 }
 

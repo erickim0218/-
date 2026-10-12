@@ -14,7 +14,7 @@ import { fetchSiteFeatures } from '../lib/siteFeatures';
 import { trackAnalyticsEvent } from '../lib/analytics';
 
 interface HomeSectionsProps {
-  onTabChange: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
+  onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
   onSelectCourse?: (courseId: string) => void;
   siteFeatures?: Record<string, boolean>;
 }
@@ -175,11 +175,11 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
 
 /* 2. Featured Programs Section */
 export const FeaturedCoursesSection: React.FC<{
-  onTabChange: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
+  onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
 }> = ({ onTabChange }) => {
   const [isBootcampEnabled, setIsBootcampEnabled] = useState<boolean>(true);
   const [isClassEnabled, setIsClassEnabled] = useState<boolean>(false);
-  const [isPracticalEnabled, setIsPracticalEnabled] = useState<boolean>(false);
+  const [isPracticalEnabled, setIsPracticalEnabled] = useState<boolean>(true);
 
   useEffect(() => {
     const loadState = async () => {
@@ -349,7 +349,7 @@ export const FeaturedCoursesSection: React.FC<{
                   <span className="p-2 rounded-xl bg-[#FFD600]/10 text-[#FFD600]">
                     <FileText className="w-5 h-5" />
                   </span>
-                  <span className="text-xs font-bold text-[#FFD600] tracking-wider uppercase">PAID EXCLUSIVE</span>
+                  <span className="text-xs font-bold text-[#FFD600] tracking-wider uppercase">FREE + PRO LIBRARY</span>
                 </div>
                 {!isPracticalEnabled && (
                   <span className="px-2 py-0.5 text-[10px] font-bold bg-[#18181B] text-amber-200/90 border border-amber-500/30 rounded">
@@ -361,22 +361,22 @@ export const FeaturedCoursesSection: React.FC<{
               <div>
                 <h3 className="text-xl font-black text-white">리포지셔닝 실전활용</h3>
                 <p className="text-xs text-zinc-400 pt-2 leading-relaxed">
-                  REALNEEDS 이력서, 자기설득서, 완벽통제면접 빌딩업
+                  이직 실전자료와 자기설득서·면접통제 Building Up Book
                 </p>
               </div>
 
               <div className="space-y-2 pt-2 border-t border-[#1F1F24]">
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>REALNEEDS 3단계 이력서</span>
+                  <span>이직자를 위한 무료 실전자료</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>자기설득서 4단계 빌딩업</span>
+                  <span>PRO 전용 심화 자료</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>완벽통제면접 1분 스크립트</span>
+                  <span>기존 Building Up Book</span>
                 </div>
               </div>
             </div>
@@ -392,7 +392,7 @@ export const FeaturedCoursesSection: React.FC<{
                   disabled
                   className="w-full py-3.5 font-extrabold text-sm rounded-xl border transition flex items-center justify-center gap-2 bg-zinc-800/80 text-zinc-400 border-zinc-700/80 cursor-not-allowed opacity-80"
                 >
-                  <span>실전활용 워크북 보기</span>
+                  <span>실전활용 자료 보기</span>
                   <span className="px-1.5 py-0.5 text-[10px] font-bold bg-[#18181B] text-amber-200/90 border border-amber-500/30 rounded">
                     오픈 준비 중
                   </span>
@@ -407,7 +407,7 @@ export const FeaturedCoursesSection: React.FC<{
                 onClick={() => onTabChange('practical')}
                 className="w-full py-3.5 font-extrabold text-sm rounded-xl border transition flex items-center justify-center gap-1.5 bg-[#1C1C22] hover:bg-[#25252D] text-white border-[#27272A]"
               >
-                <span>실전활용 워크북 보기</span>
+                <span>실전활용 자료 보기</span>
                 <ChevronRight className="w-4 h-4 text-[#FFD600]" />
               </button>
             )}
@@ -722,7 +722,7 @@ export const BootcampCurriculumPreview: React.FC<{
 
 /* 10. Final Section */
 export const FinalConversionSection: React.FC<{
-  onTabChange: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
+  onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
   siteFeatures?: Record<string, boolean>;
 }> = ({ onTabChange, siteFeatures }) => {
   const [isClassEnabled, setIsClassEnabled] = useState<boolean>(false);

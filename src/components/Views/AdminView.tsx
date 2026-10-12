@@ -24,7 +24,8 @@ import {
   Settings2,
   BarChart3,
   DollarSign,
-  MessageSquareQuote
+  MessageSquareQuote,
+  FolderOpen
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { CombinedMember, checkIsPro } from '../../lib/userAccess';
@@ -34,13 +35,14 @@ import { RevenueProduct } from '../../types';
 import { AnalyticsAdminTab } from './AnalyticsAdminTab';
 import { RevenueAdminTab } from './RevenueAdminTab';
 import { ReviewAdminTab } from './ReviewAdminTab';
+import { PracticalResourcesAdmin } from './PracticalResourcesAdmin';
 
 interface AdminViewProps {
   onTabChange: (tab: string) => void;
 }
 
 export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
-  const [adminActiveTab, setAdminActiveTab] = useState<'members' | 'analytics' | 'revenue' | 'reviews'>('members');
+  const [adminActiveTab, setAdminActiveTab] = useState<'members' | 'analytics' | 'revenue' | 'reviews' | 'resources'>('members');
   // Guard & Loading State
   const [authStatus, setAuthStatus] = useState<'loading' | 'authorized' | 'unauthorized'>('loading');
   const [currentAdminEmail, setCurrentAdminEmail] = useState<string>('');
@@ -93,7 +95,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
   const [siteFeatures, setSiteFeatures] = useState<Record<string, boolean>>({
     bootcamp: true,
     repositioning_class: false,
-    practical_tools: false
+    practical_tools: true
   });
   const [isUpdatingFeature, setIsUpdatingFeature] = useState<boolean>(false);
 
@@ -603,6 +605,18 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
             <MessageSquareQuote className="w-4 h-4" />
             <span>수강생 후기 관리</span>
           </button>
+
+          <button
+            onClick={() => setAdminActiveTab('resources')}
+            className={`px-5 py-2.5 rounded-2xl text-xs font-black transition cursor-pointer flex items-center gap-2 shrink-0 ${
+              adminActiveTab === 'resources'
+                ? 'bg-[#FFD600] text-zinc-950 shadow-lg shadow-yellow-500/10'
+                : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+            }`}
+          >
+            <FolderOpen className="w-4 h-4" />
+            <span>실전활용 자료 관리</span>
+          </button>
         </div>
 
         {adminActiveTab === 'analytics' ? (
@@ -611,6 +625,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
           <RevenueAdminTab adminEmail={currentAdminEmail} />
         ) : adminActiveTab === 'reviews' ? (
           <ReviewAdminTab />
+        ) : adminActiveTab === 'resources' ? (
+          <PracticalResourcesAdmin />
         ) : (
           <>
             {/* Summary Statistics Cards */}

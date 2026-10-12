@@ -15,7 +15,7 @@ import { BootcampDetailFlow } from '../BootcampDetailFlow';
 import { BootcampReview } from '../../data/bootcampReviews';
 
 interface HomeViewProps {
-  onTabChange: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
+  onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
   onSelectCourse: (courseId: string) => void;
   reviews?: BootcampReview[];
   onAddReview?: (review: BootcampReview) => void;

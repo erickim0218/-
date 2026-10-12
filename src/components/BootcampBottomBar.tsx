@@ -9,7 +9,7 @@ interface BootcampBottomBarProps {
   currentTab: string;
   currentTier: MemberTier;
   isAdmin?: boolean;
-  onTabChange: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
+  onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
 }
 
 export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({

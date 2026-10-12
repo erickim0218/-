@@ -15,7 +15,7 @@ import {
 } from '../../lib/analytics';
 
 interface ConsultingViewProps {
-  onTabChange?: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
+  onTabChange?: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
 }
 
 const KAKAO_CONSULTING_URL = 'https://open.kakao.com/o/sEgVEi0h';

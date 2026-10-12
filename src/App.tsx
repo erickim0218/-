@@ -117,12 +117,12 @@ export default function App() {
     }
     return 'home';
   });
-  const [practicalSubTab, setPracticalSubTab] = useState<'realneeds' | 'persuasion' | 'interview'>('realneeds');
+  const [practicalSubTab, setPracticalSubTab] = useState<'resources' | 'persuasion' | 'interview'>('resources');
   const [supabaseConnected, setSupabaseConnected] = useState<boolean>(false);
   const [siteFeatures, setSiteFeatures] = useState<Record<string, boolean>>({
     bootcamp: true,
     repositioning_class: false,
-    practical_tools: false
+    practical_tools: true
   });
 
   // Fetch site features on mount and sync on event
@@ -359,7 +359,7 @@ export default function App() {
     applyRouteSeoMeta(currentTab);
   }, [currentTab]);
 
-  const handleTabChange = (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => {
+  const handleTabChange = (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => {
     if (tab === 'classes' && siteFeatures.repositioning_class !== true) {
       alert('현재 리포지셔닝 클래스 서비스는 비활성화 상태입니다.');
       return;

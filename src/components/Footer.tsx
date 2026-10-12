@@ -2,7 +2,7 @@ import React, { useState, useId } from 'react';
 import { BRAND_INFO } from '../data/mockData';
 
 interface FooterProps {
-  onTabChange: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
+  onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
   siteFeatures?: Record<string, boolean>;
 }
 

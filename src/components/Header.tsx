@@ -15,8 +15,8 @@ import { MemberTier } from '../types';
 
 interface HeaderProps {
   currentTab: string;
-  practicalSubTab?: 'realneeds' | 'persuasion' | 'interview';
-  onTabChange: (tab: string, subTab?: 'realneeds' | 'persuasion' | 'interview') => void;
+  practicalSubTab?: 'resources' | 'persuasion' | 'interview';
+  onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
   currentTier: MemberTier;
   isAdmin?: boolean;
   userName?: string;
@@ -238,24 +238,23 @@ export const Header: React.FC<HeaderProps> = ({
                 {!isPracticalDisabled && isPracticalHovered && (
                   <div className="absolute top-full left-0 mt-1 w-56 bg-[#121216] border border-zinc-800 rounded-2xl shadow-2xl py-2 z-50 animate-fade-in">
                     <button
-                      onClick={() => onTabChange('practical', 'realneeds')}
+                      onClick={() => onTabChange('practical', 'resources')}
                       className="w-full text-left px-4 py-2.5 text-xs font-semibold text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition flex items-center justify-between"
                     >
-                      <span>원티드 핵심니즈 분석기</span>
-                      {!isPaidTier && !isAdmin && <Lock className="w-3 h-3 text-amber-400" />}
+                      <span>이직 실전자료</span>
                     </button>
                     <button
                       onClick={() => onTabChange('practical', 'persuasion')}
                       className="w-full text-left px-4 py-2.5 text-xs font-semibold text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition flex items-center justify-between"
                     >
-                      <span>이력서 설득력 진단기</span>
+                      <span>자기설득서 Building Up Book</span>
                       {!isPaidTier && !isAdmin && <Lock className="w-3 h-3 text-amber-400" />}
                     </button>
                     <button
                       onClick={() => onTabChange('practical', 'interview')}
                       className="w-full text-left px-4 py-2.5 text-xs font-semibold text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition flex items-center justify-between"
                     >
-                      <span>AI 면접 예상 질문 생성기</span>
+                      <span>면접통제 Building Up Book</span>
                       {!isPaidTier && !isAdmin && <Lock className="w-3 h-3 text-amber-400" />}
                     </button>
                   </div>
