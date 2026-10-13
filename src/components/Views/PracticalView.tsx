@@ -40,8 +40,7 @@ const tabItems: Array<{
   icon: React.ComponentType<{ className?: string }>;
 }> = [
   { id: 'resources', title: '무료자료', shortTitle: '무료자료', icon: Download },
-  { id: 'persuasion', title: 'PRO 자료', shortTitle: 'PRO 자료', icon: Sparkles },
-  { id: 'interview', title: 'Building Up Book', shortTitle: '빌딩업북', icon: BookOpen }
+  { id: 'persuasion', title: '프로 전용 실전자료', shortTitle: '프로 전용', icon: Sparkles }
 ];
 
 const PaidContentLock: React.FC<{
@@ -194,6 +193,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [downloadingId, setDownloadingId] = useState('');
+  const [proSection, setProSection] = useState<'downloads' | 'building'>('downloads');
   const [buildingBookTab, setBuildingBookTab] = useState<'persuasion' | 'interview'>('persuasion');
 
   const currentSub = onSubTabChange ? activeSubTab : localSubTab;
@@ -254,7 +254,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
             지금 필요한 내용을 골라 활용해보세요.
           </p>
 
-          <div className="mt-9 grid grid-cols-3 gap-2 rounded-2xl border border-zinc-800 bg-[#09090B] p-2 sm:inline-grid sm:min-w-[720px]">
+          <div className="mt-9 grid grid-cols-2 gap-2 rounded-2xl border border-zinc-800 bg-[#09090B] p-2 sm:inline-grid sm:min-w-[560px]">
             {tabItems.map(({ id, title, shortTitle, icon: Icon }) => (
               <button
                 key={id}
@@ -325,17 +325,39 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
           </div>
         )}
 
-        {currentSub === 'persuasion' && (
+        {(currentSub === 'persuasion' || currentSub === 'interview') && (
           <div className="animate-fade-in">
-            <section>
-              <div className="text-center">
-                <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">PRO RESOURCES</span>
-                <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">지원에 바로 적용하는 PRO 자료</h2>
-                <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-zinc-500">
-                  목표 공고에 맞춰 이력서·자소서·포트폴리오·면접을 더 깊게 점검합니다.
-                </p>
-              </div>
+            <div className="text-center">
+              <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">PRO PRACTICAL TOOLS</span>
+              <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">프로 전용 실전자료</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-zinc-500">
+                읽고 끝나는 자료가 아니라, 지금 지원하는 기업에 바로 적용하는 실전 도구입니다.
+              </p>
+            </div>
 
+            <div className="mx-auto mb-12 mt-8 grid max-w-2xl grid-cols-2 gap-2 rounded-2xl border border-zinc-800 bg-[#101014] p-2">
+              <button
+                type="button"
+                onClick={() => setProSection('downloads')}
+                className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-3 text-xs font-black transition sm:text-sm ${
+                  proSection === 'downloads' ? 'bg-[#FFD600] text-black' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                }`}
+              >
+                <Download className="h-4 w-4" /> 자료 다운로드
+              </button>
+              <button
+                type="button"
+                onClick={() => setProSection('building')}
+                className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-3 text-xs font-black transition sm:text-sm ${
+                  proSection === 'building' ? 'bg-[#FFD600] text-black' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                }`}
+              >
+                <BookOpen className="h-4 w-4" /> Building Up Book
+              </button>
+            </div>
+
+            {proSection === 'downloads' && (
+            <section>
               <div className="mt-8">
                 {isLoading ? (
                   <div className="flex items-center justify-center gap-2 py-16 text-sm text-zinc-500">
@@ -369,11 +391,10 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                 )}
               </div>
             </section>
-          </div>
-        )}
+            )}
 
-        {currentSub === 'interview' && (
-          <div className="animate-fade-in">
+            {proSection === 'building' && (
+            <section>
             <div className="mb-10 text-center">
               <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">BUILDING UP BOOK</span>
               <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">직접 완성하는 리포지셔닝 워크북</h2>
@@ -413,6 +434,8 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                   : '자기소개부터 약점 질문과 역질문까지, 면접에서 보여줄 핵심 메시지를 한 흐름으로 정리하는 PRO 전용 워크북입니다.'}
                 onTabChange={onTabChange}
               />
+            )}
+            </section>
             )}
           </div>
         )}
