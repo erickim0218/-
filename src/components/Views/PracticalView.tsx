@@ -226,6 +226,13 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
     pro: resources.filter((resource) => resource.access_level === 'pro')
   }), [resources]);
 
+  const realNeedsResume = useMemo(() => resources.find((resource) => {
+    const normalizedTitle = resource.title.toLowerCase().replace(/[\s_-]/g, '');
+    return resource.access_level === 'pro'
+      && (normalizedTitle.includes('realneeds') || normalizedTitle.includes('리얼니즈'))
+      && normalizedTitle.includes('이력서');
+  }), [resources]);
+
   const handleDownload = async (resource: PracticalResource) => {
     setDownloadingId(resource.id);
     try {
@@ -358,6 +365,54 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
 
             {proSection === 'downloads' && (
             <section>
+              <div className="mb-8 overflow-hidden rounded-3xl border border-[#FFD600]/40 bg-gradient-to-br from-[#1d1b0f] via-[#141416] to-[#101014] p-6 shadow-2xl sm:p-9">
+                <div className="grid items-center gap-8 md:grid-cols-[1.35fr_0.65fr]">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-md bg-[#FFD600] px-2.5 py-1 text-[10px] font-black tracking-wide text-black">PRO 대표자료</span>
+                      <span className="rounded-md bg-white/10 px-2.5 py-1 text-[10px] font-bold text-zinc-300">이력서 · 경력기술서</span>
+                    </div>
+                    <h3 className="mt-5 text-2xl font-black tracking-tight text-white sm:text-3xl">REAL NEEDS 이력서</h3>
+                    <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-300 sm:text-base">
+                      경력을 나열하는 이력서가 아니라, 기업이 찾는 역량과 나의 경험을 연결해
+                      채용해야 할 이유를 보여주는 리포지셔닝 이력서입니다.
+                    </p>
+                    <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold text-zinc-300">
+                      {['사용방법', '작성 템플릿', '범용 예시'].map((label) => (
+                        <span key={label} className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5">{label}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-5 text-center">
+                    <FileText className="mx-auto h-10 w-10 text-[#FFD600]" />
+                    <p className="mt-3 text-xs font-bold text-zinc-400">Word 원본 템플릿</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!isPaidMember) {
+                          onTabChange('pro-payment');
+                        } else if (realNeedsResume) {
+                          void handleDownload(realNeedsResume);
+                        }
+                      }}
+                      disabled={isPaidMember && (!realNeedsResume || downloadingId === realNeedsResume.id)}
+                      className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFD600] px-4 py-3.5 text-xs font-black text-black transition hover:bg-yellow-300 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {downloadingId === realNeedsResume?.id ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> 준비 중...</>
+                      ) : !isPaidMember ? (
+                        <><Lock className="h-4 w-4" /> 프로로 전체 자료 열기</>
+                      ) : realNeedsResume ? (
+                        <><Download className="h-4 w-4" /> REAL NEEDS 이력서 받기</>
+                      ) : (
+                        '자료 업로드 준비 중'
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <div className="mt-8">
                 {isLoading ? (
                   <div className="flex items-center justify-center gap-2 py-16 text-sm text-zinc-500">
@@ -377,7 +432,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                   </div>
                 ) : (
                   <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-                    {groupedResources.pro.map((resource) => (
+                    {groupedResources.pro.filter((resource) => resource.id !== realNeedsResume?.id).map((resource) => (
                       <ResourceCard
                         key={resource.id}
                         resource={resource}
