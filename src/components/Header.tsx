@@ -241,20 +241,20 @@ export const Header: React.FC<HeaderProps> = ({
                       onClick={() => onTabChange('practical', 'resources')}
                       className="w-full text-left px-4 py-2.5 text-xs font-semibold text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition flex items-center justify-between"
                     >
-                      <span>이직 실전자료</span>
+                      <span>무료자료</span>
                     </button>
                     <button
                       onClick={() => onTabChange('practical', 'persuasion')}
                       className="w-full text-left px-4 py-2.5 text-xs font-semibold text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition flex items-center justify-between"
                     >
-                      <span>자기설득서 Building Up Book</span>
+                      <span>PRO 자료</span>
                       {!isPaidTier && !isAdmin && <Lock className="w-3 h-3 text-amber-400" />}
                     </button>
                     <button
                       onClick={() => onTabChange('practical', 'interview')}
                       className="w-full text-left px-4 py-2.5 text-xs font-semibold text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition flex items-center justify-between"
                     >
-                      <span>면접통제 Building Up Book</span>
+                      <span>Building Up Book</span>
                       {!isPaidTier && !isAdmin && <Lock className="w-3 h-3 text-amber-400" />}
                     </button>
                   </div>

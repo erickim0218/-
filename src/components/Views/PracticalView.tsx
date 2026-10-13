@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ArrowRight,
   BookOpen,
-  BriefcaseBusiness,
   Compass,
   Download,
   ExternalLink,
@@ -40,9 +39,9 @@ const tabItems: Array<{
   shortTitle: string;
   icon: React.ComponentType<{ className?: string }>;
 }> = [
-  { id: 'resources', title: '이직 실전자료', shortTitle: '실전자료', icon: BriefcaseBusiness },
-  { id: 'persuasion', title: '자기설득서 Building Up Book', shortTitle: '자기설득서', icon: Compass },
-  { id: 'interview', title: '면접통제 Building Up Book', shortTitle: '면접통제', icon: MessageSquare }
+  { id: 'resources', title: '무료자료', shortTitle: '무료자료', icon: Download },
+  { id: 'persuasion', title: 'PRO 자료', shortTitle: 'PRO 자료', icon: Sparkles },
+  { id: 'interview', title: 'Building Up Book', shortTitle: '빌딩업북', icon: BookOpen }
 ];
 
 const PaidContentLock: React.FC<{
@@ -195,6 +194,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [downloadingId, setDownloadingId] = useState('');
+  const [buildingBookTab, setBuildingBookTab] = useState<'persuasion' | 'interview'>('persuasion');
 
   const currentSub = onSubTabChange ? activeSubTab : localSubTab;
   const isPaidMember = currentTier === 'PRO' || currentTier === 'BOOTCAMP';
@@ -278,7 +278,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
 
       <main className="mx-auto max-w-6xl px-4 pt-12 sm:px-6 sm:pt-16">
         {currentSub === 'resources' && (
-          <div className="space-y-16 animate-fade-in">
+          <div className="animate-fade-in">
             <section>
               <div className="text-center">
                 <span className="text-xs font-black tracking-[0.18em] text-emerald-400">FREE RESOURCES</span>
@@ -322,7 +322,12 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
               </div>
             </section>
 
-            <section className="border-t border-zinc-800 pt-14">
+          </div>
+        )}
+
+        {currentSub === 'persuasion' && (
+          <div className="animate-fade-in">
+            <section>
               <div className="text-center">
                 <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">PRO RESOURCES</span>
                 <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">지원에 바로 적용하는 PRO 자료</h2>
@@ -332,7 +337,18 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
               </div>
 
               <div className="mt-8">
-                {!isLoading && groupedResources.pro.length === 0 ? (
+                {isLoading ? (
+                  <div className="flex items-center justify-center gap-2 py-16 text-sm text-zinc-500">
+                    <Loader2 className="h-5 w-5 animate-spin" /> 자료를 불러오고 있습니다.
+                  </div>
+                ) : loadError ? (
+                  <div className="rounded-2xl border border-zinc-800 bg-[#121216] py-12 text-center">
+                    <p className="text-sm text-zinc-400">{loadError}</p>
+                    <button type="button" onClick={loadResources} className="mt-4 inline-flex items-center gap-2 text-xs font-black text-[#FFD600]">
+                      <RefreshCw className="h-4 w-4" /> 다시 불러오기
+                    </button>
+                  </div>
+                ) : groupedResources.pro.length === 0 ? (
                   <div className="rounded-2xl border border-dashed border-[#FFD600]/25 bg-[#FFD600]/5 py-14 text-center">
                     <BookOpen className="mx-auto h-7 w-7 text-[#FFD600]/60" />
                     <p className="mt-4 text-sm font-bold text-zinc-400">PRO 전용 자료를 준비하고 있습니다.</p>
@@ -356,28 +372,49 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
           </div>
         )}
 
-        {currentSub === 'persuasion' && (
-          isPaidMember ? (
-            <div className="animate-fade-in"><SelfPersuasionBook /></div>
-          ) : (
-            <PaidContentLock
-              title="자기설득서 Building Up Book"
-              description="기업의 질문 의도를 확인하고, 주장·근거·어필의 구조로 나를 채용해야 할 이유를 직접 정리하는 PRO 전용 워크북입니다."
-              onTabChange={onTabChange}
-            />
-          )
-        )}
-
         {currentSub === 'interview' && (
-          isPaidMember ? (
-            <InterviewBuildingBook />
-          ) : (
-            <PaidContentLock
-              title="면접통제 Building Up Book"
-              description="자기소개부터 약점 질문과 역질문까지, 면접에서 보여줄 핵심 메시지를 한 흐름으로 정리하는 PRO 전용 워크북입니다."
-              onTabChange={onTabChange}
-            />
-          )
+          <div className="animate-fade-in">
+            <div className="mb-10 text-center">
+              <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">BUILDING UP BOOK</span>
+              <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">직접 완성하는 리포지셔닝 워크북</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-zinc-500">
+                자기설득서와 면접 답변을 단계별로 쌓아 올릴 수 있도록 기존 빌딩업북을 그대로 제공합니다.
+              </p>
+            </div>
+
+            <div className="mx-auto mb-10 grid max-w-2xl grid-cols-2 gap-2 rounded-2xl border border-zinc-800 bg-[#101014] p-2">
+              <button
+                type="button"
+                onClick={() => setBuildingBookTab('persuasion')}
+                className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-3 text-xs font-black transition sm:text-sm ${
+                  buildingBookTab === 'persuasion' ? 'bg-[#FFD600] text-black' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                }`}
+              >
+                <Compass className="h-4 w-4" /> 자기설득서
+              </button>
+              <button
+                type="button"
+                onClick={() => setBuildingBookTab('interview')}
+                className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-3 text-xs font-black transition sm:text-sm ${
+                  buildingBookTab === 'interview' ? 'bg-[#FFD600] text-black' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                }`}
+              >
+                <MessageSquare className="h-4 w-4" /> 면접통제
+              </button>
+            </div>
+
+            {isPaidMember ? (
+              buildingBookTab === 'persuasion' ? <SelfPersuasionBook /> : <InterviewBuildingBook />
+            ) : (
+              <PaidContentLock
+                title={buildingBookTab === 'persuasion' ? '자기설득서 Building Up Book' : '면접통제 Building Up Book'}
+                description={buildingBookTab === 'persuasion'
+                  ? '기업의 질문 의도를 확인하고, 주장·근거·어필의 구조로 나를 채용해야 할 이유를 직접 정리하는 PRO 전용 워크북입니다.'
+                  : '자기소개부터 약점 질문과 역질문까지, 면접에서 보여줄 핵심 메시지를 한 흐름으로 정리하는 PRO 전용 워크북입니다.'}
+                onTabChange={onTabChange}
+              />
+            )}
+          </div>
         )}
       </main>
     </div>
