@@ -1,0 +1,3 @@
+[functions.unsubscribe-marketing]
+verify_jwt = false
+

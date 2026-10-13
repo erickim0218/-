@@ -24,7 +24,7 @@ export const PrivacyView: React.FC<PrivacyViewProps> = ({ onTabChange }) => {
           <p className="text-sm text-zinc-400 leading-relaxed">
             REPOSITION은 이용자의 개인정보를 중요하게 생각하며 개인정보 보호법 등 관련 법령을 준수합니다.
           </p>
-          <p className="text-xs text-zinc-500 font-mono">시행일: 2026년 9월 13일</p>
+          <p className="text-xs text-zinc-500 font-mono">시행일: 2026년 10월 13일</p>
         </div>
 
         <div className="space-y-8 text-sm text-zinc-300 leading-relaxed font-normal">
@@ -38,6 +38,8 @@ export const PrivacyView: React.FC<PrivacyViewProps> = ({ onTabChange }) => {
               <li>후기 작성 및 관리, 이용자 문의 대응</li>
               <li>결제 및 환불, 서비스 부정 이용 방지</li>
               <li>서비스 안정성 확보 및 이용통계 분석·개선</li>
+              <li>실전자료 다운로드 이력 관리 및 운영자 알림</li>
+              <li>별도 동의한 회원에 대한 취업·이직 콘텐츠 및 프로모션 이메일 발송</li>
             </ul>
           </section>
 
@@ -51,6 +53,7 @@ export const PrivacyView: React.FC<PrivacyViewProps> = ({ onTabChange }) => {
             <ul className="list-disc pl-5 space-y-1 text-zinc-400">
               <li>회원등급(membership_tier), 부트캠프 기수, 콘텐츠 이용정보</li>
               <li>작성한 후기 및 별점, 문의내용, 서비스 이용기록</li>
+              <li>다운로드한 자료, 다운로드 일시, 마케팅 수신 동의 여부·동의 일시·동의 경로</li>
             </ul>
             <p className="pt-2">결제 및 자동으로 생성되는 정보:</p>
             <ul className="list-disc pl-5 space-y-1 text-zinc-400">
@@ -75,12 +78,13 @@ export const PrivacyView: React.FC<PrivacyViewProps> = ({ onTabChange }) => {
             <ul className="list-disc pl-5 space-y-1 text-zinc-400">
               <li><strong>Supabase</strong>: 회원 인증, 회원정보 관리, 데이터베이스, 멤버십, 후기, 데이터 저장 및 처리</li>
               <li><strong>Cloudflare</strong>: 도메인, 웹서비스 제공, 콘텐츠 전송, 네트워크 및 보안</li>
+              <li><strong>Resend</strong>: 서비스 알림 및 마케팅 수신 동의 회원 대상 이메일 발송</li>
             </ul>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-lg font-bold text-white border-l-2 border-[#FFD600] pl-3">6. 개인정보의 국외 처리</h2>
-            <p>Supabase, Cloudflare 등 해외 사업자가 제공하는 서비스를 이용하는 과정에서 일부 정보가 해외에 위치한 시스템에서 처리될 수 있습니다.</p>
+            <p>Supabase, Cloudflare, Resend 등 해외 사업자가 제공하는 서비스를 이용하는 과정에서 일부 정보가 해외에 위치한 시스템에서 처리될 수 있습니다.</p>
           </section>
 
           <section className="space-y-3">
@@ -91,6 +95,7 @@ export const PrivacyView: React.FC<PrivacyViewProps> = ({ onTabChange }) => {
           <section className="space-y-3">
             <h2 className="text-lg font-bold text-white border-l-2 border-[#FFD600] pl-3">8. 이용자의 권리</h2>
             <p>이용자는 개인정보 열람, 정정, 삭제, 처리정지 요청 및 회원탈퇴를 행사할 수 있습니다.</p>
+            <p>마케팅 정보 수신 동의는 선택사항이며, 동의하지 않아도 자료 다운로드와 기본 서비스를 이용할 수 있습니다. 수신 동의 후에도 이메일 하단의 수신거부 링크를 통해 언제든 철회할 수 있습니다.</p>
             <p className="text-[#FFD600] font-mono">문의 이메일: kjyoon0218@naver.com</p>
           </section>
 

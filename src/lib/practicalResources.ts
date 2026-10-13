@@ -71,10 +71,32 @@ export async function getPracticalResourceUrl(resource: PracticalResource) {
 }
 
 export async function recordPracticalResourceDownload(resourceId: string) {
-  const { error } = await supabase.rpc('increment_practical_resource_download', {
+  const { data, error } = await supabase.rpc('increment_practical_resource_download', {
     resource_id: resourceId
   });
-  if (error) console.warn('Failed to record practical resource download:', error);
+  if (error) throw error;
+
+  if (data) {
+    const { error: notificationError } = await supabase.functions.invoke('notify-resource-download', {
+      body: { downloadId: data }
+    });
+    if (notificationError) console.warn('Failed to send download notification:', notificationError);
+  }
+  return data as string | null;
+}
+
+export async function getMyMarketingConsent() {
+  const { data, error } = await supabase.rpc('get_my_marketing_consent');
+  if (error) throw error;
+  return Boolean(data);
+}
+
+export async function setMyMarketingConsent(consented: boolean, source = 'resource_download') {
+  const { error } = await supabase.rpc('set_my_marketing_consent', {
+    consented,
+    consent_source: source
+  });
+  if (error) throw error;
 }
 
 export interface PracticalResourceInput {

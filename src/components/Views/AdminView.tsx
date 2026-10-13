@@ -25,7 +25,8 @@ import {
   BarChart3,
   DollarSign,
   MessageSquareQuote,
-  FolderOpen
+  FolderOpen,
+  Mail
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { CombinedMember, checkIsPro } from '../../lib/userAccess';
@@ -36,13 +37,14 @@ import { AnalyticsAdminTab } from './AnalyticsAdminTab';
 import { RevenueAdminTab } from './RevenueAdminTab';
 import { ReviewAdminTab } from './ReviewAdminTab';
 import { PracticalResourcesAdmin } from './PracticalResourcesAdmin';
+import { EmailCampaignAdmin } from './EmailCampaignAdmin';
 
 interface AdminViewProps {
   onTabChange: (tab: string) => void;
 }
 
 export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
-  const [adminActiveTab, setAdminActiveTab] = useState<'members' | 'analytics' | 'revenue' | 'reviews' | 'resources'>('members');
+  const [adminActiveTab, setAdminActiveTab] = useState<'members' | 'analytics' | 'revenue' | 'reviews' | 'resources' | 'email'>('members');
   // Guard & Loading State
   const [authStatus, setAuthStatus] = useState<'loading' | 'authorized' | 'unauthorized'>('loading');
   const [currentAdminEmail, setCurrentAdminEmail] = useState<string>('');
@@ -617,6 +619,18 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
             <FolderOpen className="w-4 h-4" />
             <span>실전활용 자료 관리</span>
           </button>
+
+          <button
+            onClick={() => setAdminActiveTab('email')}
+            className={`px-5 py-2.5 rounded-2xl text-xs font-black transition cursor-pointer flex items-center gap-2 shrink-0 ${
+              adminActiveTab === 'email'
+                ? 'bg-[#FFD600] text-zinc-950 shadow-lg shadow-yellow-500/10'
+                : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+            }`}
+          >
+            <Mail className="w-4 h-4" />
+            <span>회원 이메일</span>
+          </button>
         </div>
 
         {adminActiveTab === 'analytics' ? (
@@ -627,6 +641,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
           <ReviewAdminTab />
         ) : adminActiveTab === 'resources' ? (
           <PracticalResourcesAdmin />
+        ) : adminActiveTab === 'email' ? (
+          <EmailCampaignAdmin />
         ) : (
           <>
             {/* Summary Statistics Cards */}

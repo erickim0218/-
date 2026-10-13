@@ -17,10 +17,12 @@ import { MemberTier } from '../../types';
 import {
   fetchPracticalResources,
   formatResourceSize,
+  getMyMarketingConsent,
   getPracticalResourceUrl,
   PRACTICAL_CATEGORY_LABELS,
   PracticalResource,
-  recordPracticalResourceDownload
+  recordPracticalResourceDownload,
+  setMyMarketingConsent
 } from '../../lib/practicalResources';
 import { SelfPersuasionBook } from '../SelfPersuasionBook';
 
@@ -195,6 +197,11 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
   const [downloadingId, setDownloadingId] = useState('');
   const [proSection, setProSection] = useState<'downloads' | 'building'>('downloads');
   const [buildingBookTab, setBuildingBookTab] = useState<'persuasion' | 'interview'>('persuasion');
+  const [marketingConsent, setMarketingConsent] = useState(false);
+  const [marketingOptIn, setMarketingOptIn] = useState(false);
+  const [consentHandledThisVisit, setConsentHandledThisVisit] = useState(false);
+  const [pendingResource, setPendingResource] = useState<PracticalResource | null>(null);
+  const [isSavingConsent, setIsSavingConsent] = useState(false);
 
   const currentSub = onSubTabChange ? activeSubTab : localSubTab;
   const isPaidMember = currentTier === 'PRO' || currentTier === 'BOOTCAMP';
@@ -221,6 +228,13 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
     loadResources();
   }, [loadResources, currentTier]);
 
+  useEffect(() => {
+    if (currentTier === 'NON_MEMBER') return;
+    getMyMarketingConsent()
+      .then(setMarketingConsent)
+      .catch((error) => console.warn('Failed to load marketing consent:', error));
+  }, [currentTier]);
+
   const groupedResources = useMemo(() => ({
     free: resources.filter((resource) => resource.access_level === 'free'),
     pro: resources.filter((resource) => resource.access_level === 'pro')
@@ -237,13 +251,53 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
     setDownloadingId(resource.id);
     try {
       const url = await getPracticalResourceUrl(resource);
-      window.open(url, '_blank', 'noopener,noreferrer');
-      void recordPracticalResourceDownload(resource.id);
+      await recordPracticalResourceDownload(resource.id);
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     } catch (error) {
       console.error('Failed to open practical resource:', error);
       window.alert('자료를 열지 못했습니다. 잠시 후 다시 시도해 주세요.');
     } finally {
       setDownloadingId('');
+    }
+  };
+
+  const requestDownload = (resource: PracticalResource) => {
+    if (currentTier === 'NON_MEMBER') {
+      window.alert('자료 다운로드는 회원가입 후 이용할 수 있습니다.');
+      onTabChange('auth');
+      return;
+    }
+    if (marketingConsent || consentHandledThisVisit) {
+      void handleDownload(resource);
+      return;
+    }
+    setMarketingOptIn(false);
+    setPendingResource(resource);
+  };
+
+  const confirmDownload = async () => {
+    if (!pendingResource) return;
+    const resource = pendingResource;
+    setIsSavingConsent(true);
+    try {
+      if (marketingOptIn) {
+        await setMyMarketingConsent(true);
+        setMarketingConsent(true);
+      }
+      setConsentHandledThisVisit(true);
+      setPendingResource(null);
+      await handleDownload(resource);
+    } catch (error) {
+      console.error('Failed to save marketing consent:', error);
+      window.alert('수신 동의 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    } finally {
+      setIsSavingConsent(false);
     }
   };
 
@@ -320,7 +374,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                         resource={resource}
                         canUsePro={isPaidMember}
                         isDownloading={downloadingId === resource.id}
-                        onDownload={handleDownload}
+                        onDownload={requestDownload}
                         onUpgrade={() => onTabChange('pro-payment')}
                       />
                     ))}
@@ -393,7 +447,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                         if (!isPaidMember) {
                           onTabChange('pro-payment');
                         } else if (realNeedsResume) {
-                          void handleDownload(realNeedsResume);
+                          requestDownload(realNeedsResume);
                         }
                       }}
                       disabled={isPaidMember && (!realNeedsResume || downloadingId === realNeedsResume.id)}
@@ -438,7 +492,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                         resource={resource}
                         canUsePro={isPaidMember}
                         isDownloading={downloadingId === resource.id}
-                        onDownload={handleDownload}
+                        onDownload={requestDownload}
                         onUpgrade={() => onTabChange('pro-payment')}
                       />
                     ))}
@@ -495,6 +549,54 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
           </div>
         )}
       </main>
+
+      {pendingResource ? (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-3xl border border-zinc-700 bg-[#121216] p-6 shadow-2xl sm:p-8">
+            <span className="text-xs font-black tracking-[0.16em] text-[#FFD600]">DOWNLOAD</span>
+            <h2 className="mt-3 text-xl font-black text-white sm:text-2xl">자료를 다운로드할까요?</h2>
+            <p className="mt-3 text-sm leading-relaxed text-zinc-400">
+              로그인한 회원의 자료 이용 이력은 서비스 운영과 콘텐츠 개선을 위해 저장됩니다.
+            </p>
+
+            <label className="mt-6 flex cursor-pointer items-start gap-3 rounded-2xl border border-zinc-700 bg-black/20 p-4">
+              <input
+                type="checkbox"
+                checked={marketingOptIn}
+                onChange={(event) => setMarketingOptIn(event.target.checked)}
+                className="mt-0.5 h-4 w-4 accent-[#FFD600]"
+              />
+              <span>
+                <span className="block text-sm font-bold text-white">[선택] 마케팅 정보 이메일 수신에 동의합니다.</span>
+                <span className="mt-1 block text-xs leading-relaxed text-zinc-500">
+                  취업·이직 자료, 신규 프로그램 및 프로모션 소식을 이메일로 보내드립니다.
+                </span>
+              </span>
+            </label>
+            <p className="mt-3 text-xs text-zinc-500">동의하지 않아도 자료를 다운로드할 수 있으며, 이메일의 수신거부 링크로 언제든 철회할 수 있습니다.</p>
+
+            <div className="mt-7 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setPendingResource(null)}
+                disabled={isSavingConsent}
+                className="rounded-xl border border-zinc-700 px-4 py-3.5 text-sm font-black text-zinc-300 hover:bg-zinc-800 disabled:opacity-50"
+              >
+                취소
+              </button>
+              <button
+                type="button"
+                onClick={() => void confirmDownload()}
+                disabled={isSavingConsent}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#FFD600] px-4 py-3.5 text-sm font-black text-black hover:bg-yellow-300 disabled:opacity-50"
+              >
+                {isSavingConsent ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                다운로드
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
