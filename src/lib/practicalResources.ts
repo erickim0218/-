@@ -60,14 +60,21 @@ export async function getPracticalResourceUrl(resource: PracticalResource) {
 
   const { data, error } = await supabase.storage
     .from(PRACTICAL_RESOURCE_BUCKET)
-    .createSignedUrl(resource.file_path, 60 * 10, {
-      download: resource.file_name || true
-    });
+    .createSignedUrl(resource.file_path, 60 * 10);
 
   if (error || !data?.signedUrl) {
     throw error || new Error('파일 주소를 만들지 못했습니다.');
   }
   return data.signedUrl;
+}
+
+export function getPracticalResourceDownloadName(resource: PracticalResource) {
+  const fallbackExtension = resource.file_path?.match(/\.[a-zA-Z0-9]+$/)?.[0] || '';
+  const fallbackName = `${resource.title}${fallbackExtension}`;
+  return (resource.file_name || fallbackName)
+    .normalize('NFC')
+    .replace(/[\\/:*?"<>|\u0000-\u001F]/g, '-')
+    .trim();
 }
 
 export async function getPracticalResourcePreviewUrl(resource: PracticalResource) {
