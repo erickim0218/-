@@ -197,6 +197,17 @@ export async function setPracticalResourceAccess(id: string, accessLevel: Practi
   if (error) throw error;
 }
 
+export async function updatePracticalResourceMetadata(
+  id: string,
+  values: Pick<PracticalResource, 'title' | 'description' | 'category' | 'access_level' | 'sort_order'>
+) {
+  const { error } = await supabase
+    .from('practical_resources')
+    .update({ ...values, updated_at: new Date().toISOString() })
+    .eq('id', id);
+  if (error) throw error;
+}
+
 export async function deletePracticalResource(resource: PracticalResource) {
   if (resource.file_path) {
     const { error: storageError } = await supabase.storage
