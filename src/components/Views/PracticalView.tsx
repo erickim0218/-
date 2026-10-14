@@ -87,76 +87,46 @@ const ResourceCard: React.FC<{
   const canPreview = Boolean(isPdf && !normalizedTitle.includes('예시') && !normalizedTitle.includes('프롬프트'));
 
   return (
-    <article className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border p-6 shadow-[0_18px_60px_rgba(0,0,0,0.28)] transition sm:p-7 ${
+    <article className={`group relative overflow-hidden rounded-3xl border shadow-[0_18px_60px_rgba(0,0,0,0.28)] transition ${
       resource.access_level === 'pro'
         ? 'border-[#FFD600]/35 bg-gradient-to-br from-[#1d1b0e] via-[#151516] to-[#101014] hover:border-[#FFD600]/70'
         : 'border-white/15 bg-gradient-to-br from-[#1b1b20] via-[#151518] to-[#101014] hover:border-[#FFD600]/45'
     }`}>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#FFD600]/80 to-transparent" />
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex flex-wrap gap-2">
-          <span className={`rounded-md px-2.5 py-1 text-[10px] font-black tracking-wide ${
-            resource.access_level === 'pro'
-              ? 'bg-[#FFD600] text-black'
-              : 'border border-[#FFD600]/30 bg-[#FFD600]/10 text-[#FFD600]'
-          }`}>
-            {resource.access_level === 'pro' ? 'PRO' : 'FREE'}
-          </span>
-          <span className="rounded-md bg-zinc-800 px-2.5 py-1 text-[10px] font-bold text-zinc-400">
-            {PRACTICAL_CATEGORY_LABELS[resource.category]}
-          </span>
+      <div className="grid gap-6 p-6 sm:p-8 md:grid-cols-[minmax(0,1fr)_260px] md:items-stretch lg:gap-10 lg:p-10">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={`rounded-md px-3 py-1.5 text-[10px] font-black tracking-wide ${resource.access_level === 'pro' ? 'bg-[#FFD600] text-black' : 'border border-[#FFD600]/30 bg-[#FFD600]/10 text-[#FFD600]'}`}>
+              {resource.access_level === 'pro' ? 'PRO 자료' : '무료자료'}
+            </span>
+            <span className="rounded-md bg-white/10 px-3 py-1.5 text-[10px] font-bold text-zinc-300">{PRACTICAL_CATEGORY_LABELS[resource.category]}</span>
+          </div>
+          <h3 className="mt-6 text-xl font-black leading-tight text-white sm:text-2xl">{resource.title}</h3>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-300 sm:text-[15px]">{resource.description}</p>
+          <div className="mt-6 flex flex-wrap items-center gap-2 text-[11px] font-bold text-zinc-500">
+            <span className="rounded-full border border-white/10 px-3 py-1.5">PDF 실전자료</span>
+            {canPreview ? <span className="rounded-full border border-white/10 px-3 py-1.5">5페이지 미리보기</span> : null}
+            {resource.file_size ? <span className="rounded-full border border-white/10 px-3 py-1.5">{formatResourceSize(resource.file_size)}</span> : null}
+          </div>
         </div>
-        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-          resource.access_level === 'pro'
-            ? 'bg-[#FFD600]/10 text-[#FFD600]'
-            : 'bg-white/10 text-white'
-        }`}>
-          {isLocked ? <Lock className="h-5 w-5" /> : <FileArchive className="h-5 w-5" />}
+
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-black/25 p-5 text-center sm:p-6">
+          <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${resource.access_level === 'pro' ? 'bg-[#FFD600]/10 text-[#FFD600]' : 'bg-white/10 text-white'}`}>
+            {isLocked ? <Lock className="h-7 w-7" /> : <FileText className="h-7 w-7" />}
+          </div>
+          <p className="mt-3 max-w-full truncate text-xs font-bold text-zinc-400">{resource.file_name || '온라인 자료'}</p>
+          {canPreview ? (
+            <button type="button" onClick={() => (isLocked ? onUpgrade() : onPreview(resource))} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-xs font-black text-zinc-200 transition hover:border-[#FFD600]/45 hover:text-[#FFD600]">
+              {isLocked ? <Lock className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {isLocked ? 'PRO에서 미리보기' : '첫 5페이지 미리보기'}
+            </button>
+          ) : null}
+          <button type="button" onClick={() => (isLocked ? onUpgrade() : onDownload(resource))} disabled={isDownloading} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:opacity-60 ${isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resource.access_level === 'pro' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'}`}>
+            {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : isLocked ? <Lock className="h-4 w-4" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
+            {isDownloading ? '준비 중...' : isLocked ? 'PRO에서 이용하기' : resource.external_url ? '자료 열기' : '자료 다운로드'}
+          </button>
         </div>
       </div>
-
-      <h3 className="mt-6 text-lg font-black leading-snug text-white">{resource.title}</h3>
-      <p className="mt-3 flex-1 text-sm leading-relaxed text-zinc-400">{resource.description}</p>
-
-      <div className="mt-6 flex items-center justify-between border-t border-zinc-800 pt-4 text-[11px] text-zinc-600">
-        <span className="truncate pr-3">{resource.file_name || '외부 링크'}</span>
-        {resource.file_size ? <span className="shrink-0">{formatResourceSize(resource.file_size)}</span> : null}
-      </div>
-
-      {canPreview ? (
-        <button
-          type="button"
-          onClick={() => (isLocked ? onUpgrade() : onPreview(resource))}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-xs font-black text-zinc-200 transition hover:border-[#FFD600]/45 hover:text-[#FFD600]"
-        >
-          {isLocked ? <Lock className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          {isLocked ? 'PRO에서 미리보기' : '첫 5페이지 미리보기'}
-        </button>
-      ) : null}
-
-      <button
-        type="button"
-        onClick={() => (isLocked ? onUpgrade() : onDownload(resource))}
-        disabled={isDownloading}
-        className={`mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:opacity-60 ${
-          isLocked
-            ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10'
-            : resource.access_level === 'pro'
-              ? 'bg-[#FFD600] text-black hover:bg-yellow-300'
-              : 'bg-white text-black hover:bg-zinc-200'
-        }`}
-      >
-        {isDownloading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : isLocked ? (
-          <Lock className="h-4 w-4" />
-        ) : resource.external_url ? (
-          <ExternalLink className="h-4 w-4" />
-        ) : (
-          <Download className="h-4 w-4" />
-        )}
-        {isDownloading ? '준비 중...' : isLocked ? 'PRO에서 이용하기' : resource.external_url ? '자료 열기' : '자료 다운로드'}
-      </button>
     </article>
   );
 };
@@ -408,7 +378,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                     <p className="mt-4 text-sm font-bold text-zinc-400">첫 무료자료를 준비하고 있습니다.</p>
                   </div>
                 ) : (
-                  <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="space-y-5">
                     {groupedResources.free.map((resource) => (
                       <ResourceCard
                         key={resource.id}
@@ -527,7 +497,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                     <p className="mt-4 text-sm font-bold text-zinc-400">PRO 전용 자료를 준비하고 있습니다.</p>
                   </div>
                 ) : (
-                  <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="space-y-5">
                     {groupedResources.pro.filter((resource) => resource.id !== realNeedsResume?.id).map((resource) => (
                       <ResourceCard
                         key={resource.id}
