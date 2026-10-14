@@ -22,16 +22,12 @@ interface ProPaymentViewProps {
 }
 
 interface PlanItem {
-  id: '1month' | '3month' | '6month';
+  id: '1month';
   durationMonths: number;
   name: string;
   subLabel: string;
   description: string;
   price: number;
-  originalPrice?: number;
-  monthlyText: string;
-  badge?: string;
-  isPopular?: boolean;
 }
 
 export const ProPaymentView: React.FC<ProPaymentViewProps> = ({
@@ -43,40 +39,15 @@ export const ProPaymentView: React.FC<ProPaymentViewProps> = ({
     {
       id: '1month',
       durationMonths: 1,
-      name: 'PRO START 30',
-      subLabel: '프로의 시작',
-      description: '당장 필요한 서류와 면접을 프로의 언어로 바꾸는 30일',
-      price: 35000,
-      originalPrice: 69000,
-      monthlyText: '35,000원'
-    },
-    {
-      id: '3month',
-      durationMonths: 3,
-      name: 'PRO POSITION 90',
-      subLabel: '프로의 완성',
-      description: '경험·서류·면접을 하나의 포지션으로 완성하는 90일',
-      price: 75000,
-      originalPrice: 149000,
-      monthlyText: '월 25,000원',
-      badge: '가장 많이 선택',
-      isPopular: true
-    },
-    {
-      id: '6month',
-      durationMonths: 6,
-      name: 'PRO CAREER 180',
-      subLabel: '프로의 확장',
-      description: '상·하반기 공채와 이직까지 나만의 포지션을 확장하는 180일',
-      price: 115000,
-      originalPrice: 229000,
-      monthlyText: '월 약 19,160원',
-      badge: '장기 이용 추천'
+      name: 'REPOSITION PRO 30',
+      subLabel: '30일 이용권',
+      description: '필요한 강의와 실전 자료를 30일 동안 제한 없이 이용하세요.',
+      price: 100000
     }
   ];
 
-  const [selectedPlanId, setSelectedPlanId] = useState<'1month' | '3month' | '6month'>('3month');
-  const selectedPlan = plans.find((p) => p.id === selectedPlanId) || plans[1];
+  const [selectedPlanId, setSelectedPlanId] = useState<'1month'>('1month');
+  const selectedPlan = plans.find((p) => p.id === selectedPlanId) || plans[0];
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 py-12 px-4 sm:px-6 lg:px-8 font-sans">
@@ -159,7 +130,7 @@ export const ProPaymentView: React.FC<ProPaymentViewProps> = ({
         </div>
 
         {/* 3. Plan Selection Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="max-w-xl mx-auto">
           {plans.map((plan) => {
             const isSelected = selectedPlanId === plan.id;
 
@@ -173,19 +144,6 @@ export const ProPaymentView: React.FC<ProPaymentViewProps> = ({
                     : 'bg-zinc-900/90 text-zinc-100 border border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900'
                 }`}
               >
-                {/* Top Badge */}
-                {plan.badge && (
-                  <div className="absolute -top-3 left-6">
-                    <span className={`px-3 py-1 text-[11px] font-black rounded-full shadow-sm ${
-                      isSelected
-                        ? 'bg-zinc-950 text-[#FFD600]'
-                        : 'bg-[#FFD600] text-zinc-950'
-                    }`}>
-                      {plan.badge}
-                    </span>
-                  </div>
-                )}
-
                 <div className="space-y-4 pt-1">
                   <div className="space-y-1">
                     <div className="flex items-baseline justify-between">
@@ -203,22 +161,14 @@ export const ProPaymentView: React.FC<ProPaymentViewProps> = ({
 
                   {/* Price Row */}
                   <div className={`pt-4 border-t ${isSelected ? 'border-zinc-200' : 'border-zinc-800'} space-y-1`}>
-                    {plan.originalPrice && (
-                      <span className={`text-[11px] line-through block ${isSelected ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                        ₩ {plan.originalPrice.toLocaleString()}
-                      </span>
-                    )}
                     <div className="flex items-baseline gap-1.5">
                       <span className={`text-2xl sm:text-3xl font-black ${isSelected ? 'text-zinc-950' : 'text-white'}`}>
                         ₩ {plan.price.toLocaleString()}
                       </span>
                       <span className={`text-xs ${isSelected ? 'text-zinc-600' : 'text-zinc-400'}`}>
-                        ({plan.durationMonths}개월 이용)
+                        (30일 이용)
                       </span>
                     </div>
-                    <p className={`text-xs font-bold ${isSelected ? 'text-amber-800' : 'text-[#FFD600]'}`}>
-                      {plan.monthlyText}
-                    </p>
                   </div>
                 </div>
 
@@ -234,7 +184,7 @@ export const ProPaymentView: React.FC<ProPaymentViewProps> = ({
                         : 'bg-[#FFD600] text-zinc-950 hover:bg-[#ffe033]'
                     }`}
                   >
-                    <span>{plan.durationMonths === 1 ? '30일 PRO 시작하기' : plan.durationMonths === 3 ? '90일 PRO 완성하기' : '180일 PRO 확장하기'}</span>
+                    <span>30일 PRO 시작하기</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -401,13 +351,13 @@ export const ProPaymentView: React.FC<ProPaymentViewProps> = ({
           <div className="space-y-3 text-center sm:text-left">
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200 text-xs font-black">
               <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-              <span>선택한 플랜: {selectedPlan.name} · ₩ {selectedPlan.price.toLocaleString()}원 ({selectedPlan.durationMonths}개월)</span>
+              <span>{selectedPlan.name} · ₩ {selectedPlan.price.toLocaleString()}원 · 30일</span>
             </div>
             <h3 className="text-xl sm:text-2xl font-black text-zinc-950">
               당신의 이름 뒤에 PRO를 붙일 시간입니다.
             </h3>
             <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed max-w-xl">
-              선택한 기간을 확인한 후 카카오톡으로 결제를 문의해 주세요. 입금 확인 후 PRO 권한이 활성화됩니다.
+              카카오톡으로 결제를 문의해 주세요. 입금 확인 후 PRO 권한이 30일 동안 활성화됩니다.
             </p>
           </div>
 
