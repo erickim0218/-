@@ -24,6 +24,7 @@ import {
   fetchPracticalResources,
   formatResourceSize,
   getMyMarketingConsent,
+  getPracticalResourceDownloadName,
   getPracticalResourceUrl,
   getPracticalResourcePreviewUrl,
   PRACTICAL_CATEGORY_LABELS,
@@ -204,6 +205,8 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
   const [previewDocument, setPreviewDocument] = useState<PDFDocumentProxy | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const previewViewportRef = useRef<HTMLDivElement | null>(null);
+  const [previewViewportWidth, setPreviewViewportWidth] = useState(0);
 
   const currentSub = onSubTabChange ? activeSubTab : localSubTab;
   const isPaidMember = currentTier === 'PRO' || currentTier === 'BOOTCAMP';
@@ -254,13 +257,25 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
     try {
       const url = await getPracticalResourceUrl(resource);
       await recordPracticalResourceDownload(resource.id);
+
+      if (resource.external_url) {
+        window.open(url, '_blank', 'noopener,noreferrer');
+        return;
+      }
+
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`파일 다운로드 실패 (${response.status})`);
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
+      link.href = objectUrl;
+      link.download = getPracticalResourceDownloadName(resource);
+      link.style.display = 'none';
       document.body.appendChild(link);
       link.click();
       link.remove();
+      // Mobile Safari can start the save flow after the click handler returns.
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
     } catch (error) {
       console.error('Failed to open practical resource:', error);
       window.alert('자료를 열지 못했습니다. 잠시 후 다시 시도해 주세요.');
@@ -305,6 +320,16 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
   };
 
   useEffect(() => {
+    if (!previewResource || !previewViewportRef.current) return;
+    const viewport = previewViewportRef.current;
+    const updateWidth = () => setPreviewViewportWidth(viewport.clientWidth);
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, [previewResource]);
+
+  useEffect(() => {
     if (!previewDocument || !previewCanvasRef.current) return;
     let cancelled = false;
     const renderPage = async () => {
@@ -312,7 +337,8 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
       try {
         const page = await previewDocument.getPage(previewPage);
         if (cancelled || !previewCanvasRef.current) return;
-        const containerWidth = Math.min(window.innerWidth - 48, 920);
+        const horizontalPadding = previewViewportWidth < 640 ? 24 : 48;
+        const containerWidth = Math.max(240, Math.min(previewViewportWidth - horizontalPadding, 920));
         const baseViewport = page.getViewport({ scale: 1 });
         const cssScale = Math.min(1.7, containerWidth / baseViewport.width);
         const outputScale = Math.min(window.devicePixelRatio || 1, 2);
@@ -333,7 +359,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
     };
     void renderPage();
     return () => { cancelled = true; };
-  }, [previewDocument, previewPage]);
+  }, [previewDocument, previewPage, previewViewportWidth]);
 
   const confirmDownload = async () => {
     if (!pendingResource) return;
@@ -655,9 +681,9 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
       ) : null}
 
       {previewResource ? (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/90 px-3 py-4 backdrop-blur-sm sm:px-6">
-          <div className="flex h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-[#FFD600]/30 bg-[#111114] shadow-2xl">
-            <div className="flex items-center justify-between gap-4 border-b border-zinc-800 px-5 py-4 sm:px-7">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/90 backdrop-blur-sm sm:px-6 sm:py-4">
+          <div className="flex h-[100dvh] w-full max-w-5xl flex-col overflow-hidden border-[#FFD600]/30 bg-[#111114] shadow-2xl sm:h-[92vh] sm:rounded-3xl sm:border">
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-zinc-800 px-4 py-3 sm:px-7 sm:py-4">
               <div className="min-w-0">
                 <span className="text-[10px] font-black tracking-[0.16em] text-[#FFD600]">5-PAGE PREVIEW</span>
                 <h2 className="mt-1 truncate text-sm font-black text-white sm:text-base">{previewResource.title}</h2>
@@ -666,25 +692,25 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="relative min-h-0 flex-1 bg-[#09090B]">
-              <div className="flex h-full items-start justify-center overflow-auto p-3 sm:p-6">
+            <div className="relative min-h-0 flex-1 overflow-hidden bg-[#09090B]">
+              <div ref={previewViewportRef} className="flex h-full w-full items-start justify-center overflow-auto overscroll-contain p-3 sm:p-6">
                 {!previewDocument || !previewUrl ? (
                   <div className="flex h-full items-center justify-center gap-2 text-sm text-zinc-500"><Loader2 className="h-5 w-5 animate-spin" /> 미리보기를 불러오고 있습니다.</div>
                 ) : (
-                  <div className="relative min-h-full">
-                    <canvas ref={previewCanvasRef} className="mx-auto max-w-full rounded-lg bg-white shadow-2xl" />
+                  <div className="relative flex min-h-full w-full items-start justify-center">
+                    <canvas ref={previewCanvasRef} className="block h-auto max-w-full rounded-lg bg-white shadow-2xl" />
                     {isPreviewLoading ? <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/45"><Loader2 className="h-7 w-7 animate-spin text-[#FFD600]" /></div> : null}
                   </div>
                 )}
               </div>
             </div>
-            <div className="flex items-center justify-between border-t border-zinc-800 px-5 py-4 sm:px-7">
-              <button type="button" onClick={() => setPreviewPage((page) => Math.max(1, page - 1))} disabled={previewPage === 1} className="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-4 py-2.5 text-xs font-black text-white disabled:opacity-30">
-                <ChevronLeft className="h-4 w-4" /> 이전
+            <div className="flex shrink-0 items-center justify-between border-t border-zinc-800 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-7 sm:py-4">
+              <button type="button" onClick={() => setPreviewPage((page) => Math.max(1, page - 1))} disabled={previewPage === 1} className="inline-flex items-center gap-1 rounded-xl border border-zinc-700 px-3 py-2.5 text-xs font-black text-white disabled:opacity-30 sm:gap-2 sm:px-4">
+                <ChevronLeft className="h-4 w-4" /> <span className="hidden min-[360px]:inline">이전</span>
               </button>
               <span className="text-xs font-black text-[#FFD600]">{previewPage} / {previewPageCount}</span>
-              <button type="button" onClick={() => setPreviewPage((page) => Math.min(previewPageCount, page + 1))} disabled={previewPage === previewPageCount} className="inline-flex items-center gap-2 rounded-xl bg-[#FFD600] px-4 py-2.5 text-xs font-black text-black disabled:opacity-30">
-                다음 <ChevronRight className="h-4 w-4" />
+              <button type="button" onClick={() => setPreviewPage((page) => Math.min(previewPageCount, page + 1))} disabled={previewPage === previewPageCount} className="inline-flex items-center gap-1 rounded-xl bg-[#FFD600] px-3 py-2.5 text-xs font-black text-black disabled:opacity-30 sm:gap-2 sm:px-4">
+                <span className="hidden min-[360px]:inline">다음</span> <ChevronRight className="h-4 w-4" />
               </button>
             </div>
           </div>
