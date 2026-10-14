@@ -70,6 +70,17 @@ export async function getPracticalResourceUrl(resource: PracticalResource) {
   return data.signedUrl;
 }
 
+export async function getPracticalResourcePreviewUrl(resource: PracticalResource) {
+  if (!resource.file_path) throw new Error('미리보기 파일이 없습니다.');
+  const { data, error } = await supabase.storage
+    .from(PRACTICAL_RESOURCE_BUCKET)
+    .createSignedUrl(resource.file_path, 60 * 10);
+  if (error || !data?.signedUrl) {
+    throw error || new Error('미리보기 주소를 만들지 못했습니다.');
+  }
+  return data.signedUrl;
+}
+
 export async function recordPracticalResourceDownload(resourceId: string) {
   const { data, error } = await supabase.rpc('increment_practical_resource_download', {
     resource_id: resourceId
