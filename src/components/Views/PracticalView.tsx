@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { getDocument, GlobalWorkerOptions, PDFDocumentProxy } from 'pdfjs-dist';
+import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import {
   ArrowRight,
   BookOpen,
@@ -30,6 +32,8 @@ import {
   setMyMarketingConsent
 } from '../../lib/practicalResources';
 import { SelfPersuasionBook } from '../SelfPersuasionBook';
+
+GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
 export type PracticalSubTab = 'resources' | 'persuasion' | 'interview';
 
@@ -196,7 +200,10 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
   const [previewResource, setPreviewResource] = useState<PracticalResource | null>(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const [previewPage, setPreviewPage] = useState(1);
+  const [previewPageCount, setPreviewPageCount] = useState(5);
+  const [previewDocument, setPreviewDocument] = useState<PDFDocumentProxy | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const currentSub = onSubTabChange ? activeSubTab : localSubTab;
   const isPaidMember = currentTier === 'PRO' || currentTier === 'BOOTCAMP';
@@ -280,9 +287,14 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
     setPreviewResource(resource);
     setPreviewUrl('');
     setPreviewPage(1);
+    setPreviewDocument(null);
     setIsPreviewLoading(true);
     try {
-      setPreviewUrl(await getPracticalResourcePreviewUrl(resource));
+      const url = await getPracticalResourcePreviewUrl(resource);
+      setPreviewUrl(url);
+      const pdf = await getDocument(url).promise;
+      setPreviewDocument(pdf);
+      setPreviewPageCount(Math.min(5, pdf.numPages));
     } catch (error) {
       console.error('Failed to open resource preview:', error);
       setPreviewResource(null);
@@ -291,6 +303,37 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
       setIsPreviewLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!previewDocument || !previewCanvasRef.current) return;
+    let cancelled = false;
+    const renderPage = async () => {
+      setIsPreviewLoading(true);
+      try {
+        const page = await previewDocument.getPage(previewPage);
+        if (cancelled || !previewCanvasRef.current) return;
+        const containerWidth = Math.min(window.innerWidth - 48, 920);
+        const baseViewport = page.getViewport({ scale: 1 });
+        const cssScale = Math.min(1.7, containerWidth / baseViewport.width);
+        const outputScale = Math.min(window.devicePixelRatio || 1, 2);
+        const viewport = page.getViewport({ scale: cssScale * outputScale });
+        const canvas = previewCanvasRef.current;
+        const context = canvas.getContext('2d');
+        if (!context) return;
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        canvas.style.width = `${viewport.width / outputScale}px`;
+        canvas.style.height = `${viewport.height / outputScale}px`;
+        await page.render({ canvas, canvasContext: context, viewport }).promise;
+      } catch (error) {
+        if (!cancelled) console.error('Failed to render PDF preview page:', error);
+      } finally {
+        if (!cancelled) setIsPreviewLoading(false);
+      }
+    };
+    void renderPage();
+    return () => { cancelled = true; };
+  }, [previewDocument, previewPage]);
 
   const confirmDownload = async () => {
     if (!pendingResource) return;
@@ -624,23 +667,23 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
               </button>
             </div>
             <div className="relative min-h-0 flex-1 bg-[#09090B]">
-              {isPreviewLoading || !previewUrl ? (
-                <div className="flex h-full items-center justify-center gap-2 text-sm text-zinc-500"><Loader2 className="h-5 w-5 animate-spin" /> 미리보기를 불러오고 있습니다.</div>
-              ) : (
-                <iframe
-                  key={previewPage}
-                  title={`${previewResource.title} ${previewPage}페이지`}
-                  src={`${previewUrl}#page=${previewPage}&view=FitH&toolbar=0&navpanes=0`}
-                  className="h-full w-full border-0 bg-white"
-                />
-              )}
+              <div className="flex h-full items-start justify-center overflow-auto p-3 sm:p-6">
+                {!previewDocument || !previewUrl ? (
+                  <div className="flex h-full items-center justify-center gap-2 text-sm text-zinc-500"><Loader2 className="h-5 w-5 animate-spin" /> 미리보기를 불러오고 있습니다.</div>
+                ) : (
+                  <div className="relative min-h-full">
+                    <canvas ref={previewCanvasRef} className="mx-auto max-w-full rounded-lg bg-white shadow-2xl" />
+                    {isPreviewLoading ? <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/45"><Loader2 className="h-7 w-7 animate-spin text-[#FFD600]" /></div> : null}
+                  </div>
+                )}
+              </div>
             </div>
             <div className="flex items-center justify-between border-t border-zinc-800 px-5 py-4 sm:px-7">
               <button type="button" onClick={() => setPreviewPage((page) => Math.max(1, page - 1))} disabled={previewPage === 1} className="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-4 py-2.5 text-xs font-black text-white disabled:opacity-30">
                 <ChevronLeft className="h-4 w-4" /> 이전
               </button>
-              <span className="text-xs font-black text-[#FFD600]">{previewPage} / 5</span>
-              <button type="button" onClick={() => setPreviewPage((page) => Math.min(5, page + 1))} disabled={previewPage === 5} className="inline-flex items-center gap-2 rounded-xl bg-[#FFD600] px-4 py-2.5 text-xs font-black text-black disabled:opacity-30">
+              <span className="text-xs font-black text-[#FFD600]">{previewPage} / {previewPageCount}</span>
+              <button type="button" onClick={() => setPreviewPage((page) => Math.min(previewPageCount, page + 1))} disabled={previewPage === previewPageCount} className="inline-flex items-center gap-2 rounded-xl bg-[#FFD600] px-4 py-2.5 text-xs font-black text-black disabled:opacity-30">
                 다음 <ChevronRight className="h-4 w-4" />
               </button>
             </div>
