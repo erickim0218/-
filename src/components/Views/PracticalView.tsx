@@ -110,7 +110,7 @@ const ResourceCard: React.FC<{
           <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-300 sm:text-[15px]">{resource.description}</p>
           <div className="mt-6 flex flex-wrap items-center gap-2 text-[11px] font-bold text-zinc-500">
             <span className="rounded-full border border-white/10 px-3 py-1.5">PDF 실전자료</span>
-            {canPreview ? <span className="rounded-full border border-white/10 px-3 py-1.5">5페이지 미리보기</span> : null}
+            {canPreview ? <span className="rounded-full border border-white/10 px-3 py-1.5">10페이지 미리보기</span> : null}
             {resource.file_size ? <span className="rounded-full border border-white/10 px-3 py-1.5">{formatResourceSize(resource.file_size)}</span> : null}
           </div>
         </div>
@@ -123,7 +123,7 @@ const ResourceCard: React.FC<{
           {canPreview ? (
             <button type="button" onClick={() => (isLocked ? onUpgrade() : onPreview(resource))} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-xs font-black text-zinc-200 transition hover:border-[#FFD600]/45 hover:text-[#FFD600]">
               {isLocked ? <Lock className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              {isLocked ? 'PRO에서 미리보기' : '첫 5페이지 미리보기'}
+              {isLocked ? 'PRO에서 미리보기' : '첫 10페이지 미리보기'}
             </button>
           ) : null}
           <button type="button" onClick={() => (isLocked ? onUpgrade() : onDownload(resource))} disabled={isDownloading} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:opacity-60 ${isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resource.access_level === 'pro' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'}`}>
@@ -201,7 +201,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
   const [previewResource, setPreviewResource] = useState<PracticalResource | null>(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const [previewPage, setPreviewPage] = useState(1);
-  const [previewPageCount, setPreviewPageCount] = useState(5);
+  const [previewPageCount, setPreviewPageCount] = useState(10);
   const [previewDocument, setPreviewDocument] = useState<PDFDocumentProxy | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -314,7 +314,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
         standardFontDataUrl: '/pdfjs/standard_fonts/'
       }).promise;
       setPreviewDocument(pdf);
-      setPreviewPageCount(Math.min(5, pdf.numPages));
+      setPreviewPageCount(Math.min(10, pdf.numPages));
     } catch (error) {
       console.error('Failed to open resource preview:', error);
       setPreviewResource(null);
@@ -690,7 +690,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
           <div className="flex h-[100dvh] w-full max-w-5xl flex-col overflow-hidden border-[#FFD600]/30 bg-[#111114] shadow-2xl sm:h-[92vh] sm:rounded-3xl sm:border">
             <div className="flex shrink-0 items-center justify-between gap-3 border-b border-zinc-800 px-4 py-3 sm:px-7 sm:py-4">
               <div className="min-w-0">
-                <span className="text-[10px] font-black tracking-[0.16em] text-[#FFD600]">5-PAGE PREVIEW</span>
+                <span className="text-[10px] font-black tracking-[0.16em] text-[#FFD600]">10-PAGE PREVIEW</span>
                 <h2 className="mt-1 truncate text-sm font-black text-white sm:text-base">{previewResource.title}</h2>
               </div>
               <button type="button" onClick={() => setPreviewResource(null)} className="rounded-xl border border-zinc-700 p-2 text-zinc-300 hover:bg-zinc-800">
