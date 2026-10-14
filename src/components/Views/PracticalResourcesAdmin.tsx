@@ -26,7 +26,7 @@ import {
 const MAX_FILE_SIZE = 50 * 1024 * 1024;
 
 function normalizeResourceTitle(fileName: string) {
-  return fileName
+  return fileName.normalize('NFC')
     .replace(/\.[^/.]+$/, '')
     .replace(/^\[(무료자료|프로자료)\]\s*/u, '')
     .replace(/\s+/g, ' ')
@@ -42,7 +42,7 @@ type ResourcePreset = {
 };
 
 function getResourcePreset(fileName: string): ResourcePreset | null {
-  const normalized = fileName.replace(/\s+/g, ' ').toLowerCase();
+  const normalized = fileName.normalize('NFC').replace(/\s+/g, ' ').toLowerCase();
 
   if (normalized.includes('[무료자료]') && normalized.includes('자소서')) {
     return {
@@ -278,7 +278,8 @@ export const PracticalResourcesAdmin: React.FC = () => {
       for (let index = 0; index < files.length; index += 1) {
         const currentFile = files[index];
         const preset = getResourcePreset(currentFile.name);
-        const accessLevel: PracticalResourceAccess = preset?.accessLevel || (currentFile.name.includes('[프로자료]') ? 'pro' : 'free');
+        const normalizedFileName = currentFile.name.normalize('NFC');
+        const accessLevel: PracticalResourceAccess = preset?.accessLevel || (normalizedFileName.includes('[프로자료]') ? 'pro' : 'free');
         setBulkProgress(`${index + 1}/${files.length} · ${currentFile.name}`);
         await createPracticalResource({
           title: preset?.title || normalizeResourceTitle(currentFile.name),
