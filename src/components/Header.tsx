@@ -219,7 +219,7 @@ export const Header: React.FC<HeaderProps> = ({
                     aria-describedby={practicalTooltipId}
                     className="px-3 py-2 rounded-xl text-xs xl:text-sm font-bold text-zinc-500 bg-zinc-900/40 border border-zinc-800/40 flex items-center gap-1.5 cursor-not-allowed select-none opacity-60"
                   >
-                    <span>리포지셔닝 실전활용</span>
+                    <span>실전활용(자료실)</span>
                   </div>
                 ) : (
                   <button
@@ -230,7 +230,7 @@ export const Header: React.FC<HeaderProps> = ({
                         : 'text-zinc-300 hover:text-white hover:bg-zinc-800/50'
                     }`}
                   >
-                    <span>리포지셔닝 실전활용</span>
+                    <span>실전활용(자료실)</span>
                   </button>
                 )}
 
@@ -378,7 +378,7 @@ export const Header: React.FC<HeaderProps> = ({
                         }}
                         className="w-full text-left px-4 py-2 text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition font-bold"
                       >
-                        리포지셔닝 실전활용
+                        실전활용(자료실)
                       </button>
                     </div>
 
