@@ -2,16 +2,20 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ArrowRight,
   BookOpen,
+  ChevronLeft,
+  ChevronRight,
   Compass,
   Download,
   ExternalLink,
   FileArchive,
   FileText,
+  Eye,
   Loader2,
   Lock,
   MessageSquare,
   RefreshCw,
-  Sparkles
+  Sparkles,
+  X
 } from 'lucide-react';
 import { MemberTier } from '../../types';
 import {
@@ -19,6 +23,7 @@ import {
   formatResourceSize,
   getMyMarketingConsent,
   getPracticalResourceUrl,
+  getPracticalResourcePreviewUrl,
   PRACTICAL_CATEGORY_LABELS,
   PracticalResource,
   recordPracticalResourceDownload,
@@ -74,21 +79,26 @@ const ResourceCard: React.FC<{
   isDownloading: boolean;
   onDownload: (resource: PracticalResource) => void;
   onUpgrade: () => void;
-}> = ({ resource, canUsePro, isDownloading, onDownload, onUpgrade }) => {
+  onPreview: (resource: PracticalResource) => void;
+}> = ({ resource, canUsePro, isDownloading, onDownload, onUpgrade, onPreview }) => {
   const isLocked = resource.access_level === 'pro' && !canUsePro;
+  const normalizedTitle = resource.title.toLowerCase();
+  const isPdf = resource.mime_type === 'application/pdf' || resource.file_name?.toLowerCase().endsWith('.pdf');
+  const canPreview = Boolean(isPdf && !normalizedTitle.includes('예시') && !normalizedTitle.includes('프롬프트'));
 
   return (
-    <article className={`group flex h-full flex-col rounded-3xl border p-6 transition sm:p-7 ${
+    <article className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border p-6 shadow-[0_18px_60px_rgba(0,0,0,0.28)] transition sm:p-7 ${
       resource.access_level === 'pro'
-        ? 'border-[#FFD600]/25 bg-gradient-to-b from-[#171712] to-[#111114] hover:border-[#FFD600]/55'
-        : 'border-zinc-800 bg-[#121216] hover:border-emerald-500/40'
+        ? 'border-[#FFD600]/35 bg-gradient-to-br from-[#1d1b0e] via-[#151516] to-[#101014] hover:border-[#FFD600]/70'
+        : 'border-white/15 bg-gradient-to-br from-[#1b1b20] via-[#151518] to-[#101014] hover:border-[#FFD600]/45'
     }`}>
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#FFD600]/80 to-transparent" />
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-wrap gap-2">
           <span className={`rounded-md px-2.5 py-1 text-[10px] font-black tracking-wide ${
             resource.access_level === 'pro'
               ? 'bg-[#FFD600] text-black'
-              : 'bg-emerald-500/15 text-emerald-300'
+              : 'border border-[#FFD600]/30 bg-[#FFD600]/10 text-[#FFD600]'
           }`}>
             {resource.access_level === 'pro' ? 'PRO' : 'FREE'}
           </span>
@@ -99,7 +109,7 @@ const ResourceCard: React.FC<{
         <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
           resource.access_level === 'pro'
             ? 'bg-[#FFD600]/10 text-[#FFD600]'
-            : 'bg-emerald-500/10 text-emerald-400'
+            : 'bg-white/10 text-white'
         }`}>
           {isLocked ? <Lock className="h-5 w-5" /> : <FileArchive className="h-5 w-5" />}
         </div>
@@ -112,6 +122,17 @@ const ResourceCard: React.FC<{
         <span className="truncate pr-3">{resource.file_name || '외부 링크'}</span>
         {resource.file_size ? <span className="shrink-0">{formatResourceSize(resource.file_size)}</span> : null}
       </div>
+
+      {canPreview ? (
+        <button
+          type="button"
+          onClick={() => (isLocked ? onUpgrade() : onPreview(resource))}
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-xs font-black text-zinc-200 transition hover:border-[#FFD600]/45 hover:text-[#FFD600]"
+        >
+          {isLocked ? <Lock className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          {isLocked ? 'PRO에서 미리보기' : '첫 5페이지 미리보기'}
+        </button>
+      ) : null}
 
       <button
         type="button"
@@ -202,6 +223,10 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
   const [consentHandledThisVisit, setConsentHandledThisVisit] = useState(false);
   const [pendingResource, setPendingResource] = useState<PracticalResource | null>(null);
   const [isSavingConsent, setIsSavingConsent] = useState(false);
+  const [previewResource, setPreviewResource] = useState<PracticalResource | null>(null);
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [previewPage, setPreviewPage] = useState(1);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
   const currentSub = onSubTabChange ? activeSubTab : localSubTab;
   const isPaidMember = currentTier === 'PRO' || currentTier === 'BOOTCAMP';
@@ -279,6 +304,22 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
     }
     setMarketingOptIn(false);
     setPendingResource(resource);
+  };
+
+  const openPreview = async (resource: PracticalResource) => {
+    setPreviewResource(resource);
+    setPreviewUrl('');
+    setPreviewPage(1);
+    setIsPreviewLoading(true);
+    try {
+      setPreviewUrl(await getPracticalResourcePreviewUrl(resource));
+    } catch (error) {
+      console.error('Failed to open resource preview:', error);
+      setPreviewResource(null);
+      window.alert('미리보기를 열지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    } finally {
+      setIsPreviewLoading(false);
+    }
   };
 
   const confirmDownload = async () => {
@@ -376,6 +417,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                         isDownloading={downloadingId === resource.id}
                         onDownload={requestDownload}
                         onUpgrade={() => onTabChange('pro-payment')}
+                        onPreview={openPreview}
                       />
                     ))}
                   </div>
@@ -494,6 +536,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                         isDownloading={downloadingId === resource.id}
                         onDownload={requestDownload}
                         onUpgrade={() => onTabChange('pro-payment')}
+                        onPreview={openPreview}
                       />
                     ))}
                   </div>
@@ -592,6 +635,43 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
               >
                 {isSavingConsent ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                 다운로드
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {previewResource ? (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/90 px-3 py-4 backdrop-blur-sm sm:px-6">
+          <div className="flex h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-[#FFD600]/30 bg-[#111114] shadow-2xl">
+            <div className="flex items-center justify-between gap-4 border-b border-zinc-800 px-5 py-4 sm:px-7">
+              <div className="min-w-0">
+                <span className="text-[10px] font-black tracking-[0.16em] text-[#FFD600]">5-PAGE PREVIEW</span>
+                <h2 className="mt-1 truncate text-sm font-black text-white sm:text-base">{previewResource.title}</h2>
+              </div>
+              <button type="button" onClick={() => setPreviewResource(null)} className="rounded-xl border border-zinc-700 p-2 text-zinc-300 hover:bg-zinc-800">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="relative min-h-0 flex-1 bg-[#09090B]">
+              {isPreviewLoading || !previewUrl ? (
+                <div className="flex h-full items-center justify-center gap-2 text-sm text-zinc-500"><Loader2 className="h-5 w-5 animate-spin" /> 미리보기를 불러오고 있습니다.</div>
+              ) : (
+                <iframe
+                  key={previewPage}
+                  title={`${previewResource.title} ${previewPage}페이지`}
+                  src={`${previewUrl}#page=${previewPage}&view=FitH&toolbar=0&navpanes=0`}
+                  className="h-full w-full border-0 bg-white"
+                />
+              )}
+            </div>
+            <div className="flex items-center justify-between border-t border-zinc-800 px-5 py-4 sm:px-7">
+              <button type="button" onClick={() => setPreviewPage((page) => Math.max(1, page - 1))} disabled={previewPage === 1} className="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-4 py-2.5 text-xs font-black text-white disabled:opacity-30">
+                <ChevronLeft className="h-4 w-4" /> 이전
+              </button>
+              <span className="text-xs font-black text-[#FFD600]">{previewPage} / 5</span>
+              <button type="button" onClick={() => setPreviewPage((page) => Math.min(5, page + 1))} disabled={previewPage === 5} className="inline-flex items-center gap-2 rounded-xl bg-[#FFD600] px-4 py-2.5 text-xs font-black text-black disabled:opacity-30">
+                다음 <ChevronRight className="h-4 w-4" />
               </button>
             </div>
           </div>
