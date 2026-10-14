@@ -25,6 +25,53 @@ import {
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024;
 
+function normalizeResourceTitle(fileName: string) {
+  return fileName
+    .replace(/\.[^/.]+$/, '')
+    .replace(/^\[(무료자료|프로자료)\]\s*/u, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function inferResourceCategory(fileName: string): PracticalResourceCategory {
+  const normalized = fileName.toLowerCase();
+  if (normalized.includes('포트폴리오')) return 'portfolio';
+  if (normalized.includes('면접')) return 'interview';
+  if (normalized.includes('자소서') || normalized.includes('자기설득서')) return 'cover_letter';
+  if (normalized.includes('이력서') || normalized.includes('real needs')) return 'resume';
+  if (normalized.includes('이직') || normalized.includes('stp')) return 'job_change';
+  return 'career';
+}
+
+function inferResourceDescription(fileName: string) {
+  const normalized = fileName.toLowerCase();
+  if (normalized.includes('포트폴리오') && normalized.includes('프롬프트')) {
+    return '지원 직무에 맞는 설득형 포트폴리오를 설계할 수 있도록 구성한 실전 프롬프트입니다.';
+  }
+  if (normalized.includes('포트폴리오') && normalized.includes('예시')) {
+    return '완벽설득포트폴리오의 구성과 흐름을 실제 예시로 확인할 수 있는 자료입니다.';
+  }
+  if (normalized.includes('포트폴리오')) {
+    return '경험 나열을 넘어, 기업이 나를 선택할 이유를 보여주는 포트폴리오 설계 방법입니다.';
+  }
+  if (normalized.includes('면접')) {
+    return '면접의 흐름을 통제하고 답변의 설득력을 높이는 완벽통제면접 실전 자료입니다.';
+  }
+  if (normalized.includes('자소서') || normalized.includes('자기설득서')) {
+    return '자기소개서를 나를 소개하는 글이 아닌, 채용을 설득하는 자기설득서로 바꾸는 방법입니다.';
+  }
+  if (normalized.includes('사용방법') && normalized.includes('이력서')) {
+    return 'REAL NEEDS 이력서의 작성 원리와 활용 방법을 예시와 함께 확인하는 자료입니다.';
+  }
+  if (normalized.includes('이력서') || normalized.includes('real needs')) {
+    return '기업의 REAL NEEDS에 맞춰 경험을 다시 배치하고 읽히는 방식을 바꾸는 이력서 자료입니다.';
+  }
+  if (normalized.includes('이직') || normalized.includes('stp')) {
+    return '취업 STP 전략으로 이직 시장과 목표 직무를 분석하고 방향을 정리하는 자료입니다.';
+  }
+  return '취업과 이직 과정에서 바로 활용할 수 있는 기획자J의 리포지셔닝 실전 자료입니다.';
+}
+
 function getHelpfulError(error: unknown) {
   const message = error instanceof Error ? error.message : String(error);
   if (message.includes('practical_resources') || message.includes('practical-resources')) {
@@ -37,6 +84,8 @@ export const PracticalResourcesAdmin: React.FC = () => {
   const [resources, setResources] = useState<PracticalResource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isBulkSaving, setIsBulkSaving] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [title, setTitle] = useState('');
@@ -115,6 +164,45 @@ export const PracticalResourcesAdmin: React.FC = () => {
       setError(getHelpfulError(saveError));
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleBulkUpload = async (selectedFiles: FileList | null) => {
+    if (!selectedFiles?.length) return;
+    const files = Array.from(selectedFiles);
+    const oversized = files.find((item) => item.size > MAX_FILE_SIZE);
+    if (oversized) {
+      setError(`${oversized.name}: 파일은 50MB 이하만 업로드할 수 있습니다.`);
+      return;
+    }
+
+    setIsBulkSaving(true);
+    setError('');
+    setMessage('');
+    try {
+      for (let index = 0; index < files.length; index += 1) {
+        const currentFile = files[index];
+        const accessLevel: PracticalResourceAccess = currentFile.name.includes('[프로자료]') ? 'pro' : 'free';
+        setBulkProgress(`${index + 1}/${files.length} · ${currentFile.name}`);
+        await createPracticalResource({
+          title: normalizeResourceTitle(currentFile.name),
+          description: inferResourceDescription(currentFile.name),
+          category: inferResourceCategory(currentFile.name),
+          accessLevel,
+          sortOrder: (index + 1) * 10,
+          file: currentFile
+        });
+      }
+      setMessage(`${files.length}개 자료를 무료/PRO로 구분해 등록했습니다.`);
+      await loadResources();
+    } catch (bulkError) {
+      setError(`일괄 등록 중 중단되었습니다. ${getHelpfulError(bulkError)}`);
+      await loadResources();
+    } finally {
+      setIsBulkSaving(false);
+      setBulkProgress('');
+      const input = document.getElementById('practical-resource-bulk-files') as HTMLInputElement | null;
+      if (input) input.value = '';
     }
   };
 
@@ -276,6 +364,33 @@ export const PracticalResourcesAdmin: React.FC = () => {
             </button>
           </div>
         </form>
+      </div>
+
+      <div className="rounded-3xl border border-[#FFD600]/30 bg-[#FFD600]/[0.04] p-6 sm:p-8">
+        <div className="flex flex-col gap-2">
+          <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">BULK UPLOAD</span>
+          <h2 className="text-xl font-black text-white">여러 자료 한 번에 등록</h2>
+          <p className="text-xs leading-relaxed text-zinc-400">
+            파일명의 [무료자료]·[프로자료]를 자동으로 구분하고 제목, 설명, 카테고리까지 설정합니다.
+          </p>
+        </div>
+        <label className={`mt-5 flex items-center justify-center gap-3 rounded-2xl border border-dashed px-5 py-6 text-sm font-black transition ${
+          isBulkSaving
+            ? 'cursor-wait border-zinc-700 bg-zinc-950 text-zinc-500'
+            : 'cursor-pointer border-[#FFD600]/50 bg-zinc-950 text-[#FFD600] hover:border-[#FFD600]'
+        }`}>
+          {isBulkSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Upload className="h-5 w-5" />}
+          <span>{isBulkSaving ? bulkProgress : '파일 여러 개 선택하기'}</span>
+          <input
+            id="practical-resource-bulk-files"
+            type="file"
+            multiple
+            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.txt"
+            disabled={isBulkSaving}
+            onChange={(event) => handleBulkUpload(event.target.files)}
+            className="sr-only"
+          />
+        </label>
       </div>
 
       {(message || error) && (
