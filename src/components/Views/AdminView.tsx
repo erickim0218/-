@@ -219,8 +219,13 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
     try {
       const { data: prodData } = await supabase.from('revenue_products').select('*').order('sort_order', { ascending: true });
       if (prodData) {
-        setProductsList(prodData);
-        const activePro = prodData.find(p => p.product_group === 'pro_membership' && p.is_active);
+        const normalizedProducts = prodData
+          .filter(p => p.product_group !== 'pro_membership' || p.plan_code === 'pro_start_30')
+          .map(p => p.plan_code === 'pro_start_30'
+            ? { ...p, plan_name: 'REPOSITION PRO 30일', default_price: 100000, is_active: true }
+            : p);
+        setProductsList(normalizedProducts);
+        const activePro = normalizedProducts.find(p => p.product_group === 'pro_membership' && p.is_active);
         if (activePro && !assignPlanCode) {
           setAssignPlanCode(activePro.plan_code);
           setAssignAmountOverride(activePro.default_price);
@@ -268,8 +273,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
       setAssignPlanCode(matchingProd.plan_code);
       setAssignAmountOverride(matchingProd.default_price);
     } else {
-      setAssignPlanCode(defaultTier === 'bootcamp' ? 'bootcamp_standard' : 'pro_monthly');
-      setAssignAmountOverride(defaultTier === 'bootcamp' ? 500000 : 99000);
+      setAssignPlanCode(defaultTier === 'bootcamp' ? 'bootcamp_standard' : 'pro_start_30');
+      setAssignAmountOverride(defaultTier === 'bootcamp' ? 500000 : 100000);
     }
 
     setIsAssignModalOpen(true);
@@ -277,6 +282,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
 
   const handleAssignTierChange = (newTier: 'free' | 'pro' | 'bootcamp') => {
     setAssignTier(newTier);
+    if (newTier === 'pro') {
+      setAssignExpireMode('1month');
+    }
     if (newTier === 'free') {
       setAssignPlanCode('');
       setAssignAmountOverride(0);
@@ -287,8 +295,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
         setAssignPlanCode(matchingProd.plan_code);
         setAssignAmountOverride(matchingProd.default_price);
       } else {
-        setAssignPlanCode(newTier === 'bootcamp' ? 'bootcamp_standard' : 'pro_monthly');
-        setAssignAmountOverride(newTier === 'bootcamp' ? 500000 : 99000);
+        setAssignPlanCode(newTier === 'bootcamp' ? 'bootcamp_standard' : 'pro_start_30');
+        setAssignAmountOverride(newTier === 'bootcamp' ? 500000 : 100000);
       }
     }
   };
@@ -1503,6 +1511,11 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
                     </span>
                   </label>
 
+                  {assignTier === 'pro' ? (
+                    <div className="rounded-xl border border-[#FFD600] bg-amber-500/10 px-4 py-3 text-center text-xs font-black text-[#FFD600]">
+                      REPOSITION PRO는 결제일로부터 30일 동안 이용할 수 있습니다.
+                    </div>
+                  ) : (
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       type="button"
@@ -1576,8 +1589,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
                       직접 날짜 선택
                     </button>
                   </div>
+                  )}
 
-                  {assignExpireMode === 'custom' && (
+                  {assignTier !== 'pro' && assignExpireMode === 'custom' && (
                     <div className="pt-2">
                       <input
                         type="date"
