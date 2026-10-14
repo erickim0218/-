@@ -1,11 +1,30 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import fs from 'node:fs';
 import path from 'path';
 import {defineConfig} from 'vite';
 
+const copyPdfJsAssets = () => ({
+  name: 'copy-pdfjs-assets',
+  closeBundle() {
+    const outputRoot = path.resolve(__dirname, 'dist/pdfjs');
+    fs.mkdirSync(outputRoot, { recursive: true });
+    fs.cpSync(
+      path.resolve(__dirname, 'node_modules/pdfjs-dist/cmaps'),
+      path.join(outputRoot, 'cmaps'),
+      { recursive: true }
+    );
+    fs.cpSync(
+      path.resolve(__dirname, 'node_modules/pdfjs-dist/standard_fonts'),
+      path.join(outputRoot, 'standard_fonts'),
+      { recursive: true }
+    );
+  }
+});
+
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), copyPdfJsAssets()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
