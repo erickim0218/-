@@ -307,7 +307,12 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
     try {
       const url = await getPracticalResourcePreviewUrl(resource);
       setPreviewUrl(url);
-      const pdf = await getDocument(url).promise;
+      const pdf = await getDocument({
+        url,
+        cMapUrl: '/pdfjs/cmaps/',
+        cMapPacked: true,
+        standardFontDataUrl: '/pdfjs/standard_fonts/'
+      }).promise;
       setPreviewDocument(pdf);
       setPreviewPageCount(Math.min(5, pdf.numPages));
     } catch (error) {
