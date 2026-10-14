@@ -208,7 +208,7 @@ export const NonMemberBlockGate: React.FC<NonMemberBlockGateProps> = ({
               className="w-full sm:flex-1 py-3 px-4 bg-gradient-to-r from-amber-500/20 to-yellow-500/10 hover:bg-amber-500/30 text-[#FFD600] border border-amber-500/40 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-pointer"
             >
               <Pen className="w-4 h-4" />
-              <span>PRO로 시작하기 (1/3/6개월 플랜)</span>
+              <span>PRO로 시작하기 (30일 이용권)</span>
             </button>
 
             <button
