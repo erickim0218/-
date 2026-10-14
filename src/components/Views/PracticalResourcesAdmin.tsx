@@ -20,6 +20,7 @@ import {
   PracticalResource,
   PracticalResourceAccess,
   PracticalResourceCategory,
+  setPracticalResourceAccess,
   setPracticalResourcePublished
 } from '../../lib/practicalResources';
 
@@ -195,7 +196,21 @@ export const PracticalResourcesAdmin: React.FC = () => {
     setIsLoading(true);
     setError('');
     try {
-      setResources(await fetchPracticalResources({ includeUnpublished: true }));
+      let loadedResources = await fetchPracticalResources({ includeUnpublished: true });
+      const misclassifiedProResources = loadedResources.filter((resource) =>
+        resource.access_level === 'free'
+        && resource.file_name?.normalize('NFC').includes('[프로자료]')
+      );
+      if (misclassifiedProResources.length > 0) {
+        await Promise.all(misclassifiedProResources.map((resource) => setPracticalResourceAccess(resource.id, 'pro')));
+        loadedResources = loadedResources.map((resource) =>
+          misclassifiedProResources.some((item) => item.id === resource.id)
+            ? { ...resource, access_level: 'pro' as const }
+            : resource
+        );
+        setMessage(`${misclassifiedProResources.length}개 자료의 PRO 권한을 자동으로 바로잡았습니다.`);
+      }
+      setResources(loadedResources);
     } catch (loadError) {
       setError(getHelpfulError(loadError));
     } finally {
