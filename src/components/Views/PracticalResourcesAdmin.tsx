@@ -21,7 +21,8 @@ import {
   PracticalResourceAccess,
   PracticalResourceCategory,
   setPracticalResourceAccess,
-  setPracticalResourcePublished
+  setPracticalResourcePublished,
+  updatePracticalResourceMetadata
 } from '../../lib/practicalResources';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024;
@@ -197,18 +198,36 @@ export const PracticalResourcesAdmin: React.FC = () => {
     setError('');
     try {
       let loadedResources = await fetchPracticalResources({ includeUnpublished: true });
-      const misclassifiedProResources = loadedResources.filter((resource) =>
-        resource.access_level === 'free'
-        && resource.file_name?.normalize('NFC').includes('[프로자료]')
-      );
-      if (misclassifiedProResources.length > 0) {
-        await Promise.all(misclassifiedProResources.map((resource) => setPracticalResourceAccess(resource.id, 'pro')));
-        loadedResources = loadedResources.map((resource) =>
-          misclassifiedProResources.some((item) => item.id === resource.id)
-            ? { ...resource, access_level: 'pro' as const }
-            : resource
-        );
-        setMessage(`${misclassifiedProResources.length}개 자료의 PRO 권한을 자동으로 바로잡았습니다.`);
+      const resourcesToRepair = loadedResources.flatMap((resource) => {
+        const preset = resource.file_name ? getResourcePreset(resource.file_name) : null;
+        if (!preset) return [];
+        const needsRepair = resource.title !== preset.title
+          || resource.description !== preset.description
+          || resource.category !== preset.category
+          || resource.access_level !== preset.accessLevel
+          || resource.sort_order !== preset.sortOrder;
+        return needsRepair ? [{ resource, preset }] : [];
+      });
+      if (resourcesToRepair.length > 0) {
+        await Promise.all(resourcesToRepair.map(({ resource, preset }) => updatePracticalResourceMetadata(resource.id, {
+          title: preset.title,
+          description: preset.description,
+          category: preset.category,
+          access_level: preset.accessLevel,
+          sort_order: preset.sortOrder
+        })));
+        loadedResources = loadedResources.map((resource) => {
+          const repair = resourcesToRepair.find((item) => item.resource.id === resource.id);
+          return repair ? {
+            ...resource,
+            title: repair.preset.title,
+            description: repair.preset.description,
+            category: repair.preset.category,
+            access_level: repair.preset.accessLevel,
+            sort_order: repair.preset.sortOrder
+          } : resource;
+        });
+        setMessage(`${resourcesToRepair.length}개 자료의 이름·설명·권한을 자동으로 정리했습니다.`);
       }
       setResources(loadedResources);
     } catch (loadError) {
