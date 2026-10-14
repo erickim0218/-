@@ -33,6 +33,101 @@ function normalizeResourceTitle(fileName: string) {
     .trim();
 }
 
+type ResourcePreset = {
+  title: string;
+  description: string;
+  category: PracticalResourceCategory;
+  accessLevel: PracticalResourceAccess;
+  sortOrder: number;
+};
+
+function getResourcePreset(fileName: string): ResourcePreset | null {
+  const normalized = fileName.replace(/\s+/g, ' ').toLowerCase();
+
+  if (normalized.includes('[무료자료]') && normalized.includes('자소서')) {
+    return {
+      title: '자기설득서: 채용을 설득하는 자소서 전략',
+      description: '자소서를 단순한 자기소개가 아닌 설득의 문서로 바꾸는 방법을 설명합니다. 기업의 니즈에 맞춰 주장·근거·어필을 연결하는 기획자J의 자소서 리포지셔닝 전략을 확인해보세요.',
+      category: 'cover_letter',
+      accessLevel: 'free',
+      sortOrder: 10
+    };
+  }
+  if (normalized.includes('[무료자료]') && normalized.includes('면접')) {
+    return {
+      title: '완벽통제면접: 면접의 주도권을 잡는 전략',
+      description: '면접의 진짜 경쟁자는 다른 지원자가 아니라 인사담당자의 인식입니다. 질문에 끌려가지 않고 내가 전달해야 할 강점과 메시지를 중심으로 면접을 이끄는 방법을 알려드립니다.',
+      category: 'interview',
+      accessLevel: 'free',
+      sortOrder: 20
+    };
+  }
+  if (normalized.includes('[무료자료]') && (normalized.includes('이직') || normalized.includes('stp'))) {
+    return {
+      title: '취업 STP 전략: 나에게 맞는 이직 방향 찾기',
+      description: '같은 직무라도 연차와 경험에 따라 기업이 원하는 사람은 달라집니다. 취업시장을 나누고, 목표를 선택하고, 나만의 위치를 정하는 STP 관점으로 이직 방향을 점검해보세요.',
+      category: 'job_change',
+      accessLevel: 'free',
+      sortOrder: 30
+    };
+  }
+  if (normalized.includes('[프로자료]') && normalized.includes('사용방법') && normalized.endsWith('.pdf')) {
+    return {
+      title: 'REAL NEEDS 이력서 실전 템플릿 & 작성 예시 (PDF)',
+      description: '기업의 핵심 과제, 필요한 역량, 내 경험의 적용 방식을 첫 장에서 연결하는 작성법을 제공합니다. 범용 템플릿과 APR 마케팅·KT IT 개발 예시를 함께 확인할 수 있습니다.',
+      category: 'resume',
+      accessLevel: 'pro',
+      sortOrder: 20
+    };
+  }
+  if (normalized.includes('[프로자료]') && normalized.includes('사용방법') && normalized.endsWith('.docx')) {
+    return {
+      title: 'REAL NEEDS 이력서 편집용 템플릿 (Word)',
+      description: '지원 기업과 직무에 맞게 직접 수정할 수 있는 편집용 Word 파일입니다. 설명을 읽는 데서 끝나지 않고 자신의 경험을 바로 적용해 이력서를 완성할 수 있습니다.',
+      category: 'resume',
+      accessLevel: 'pro',
+      sortOrder: 30
+    };
+  }
+  if (normalized.includes('[프로자료]') && normalized.includes('이력서 리포지셔닝')) {
+    return {
+      title: 'REAL NEEDS 이력서: 기업의 니즈부터 읽는 이력서 전략',
+      description: '경력과 경험을 나열하는 이력서에서 벗어나 기업이 원하는 결과와 내 경험을 연결하는 방법을 설명합니다. 이력서를 나라는 제품의 제안서로 바꾸는 핵심 전략입니다.',
+      category: 'resume',
+      accessLevel: 'pro',
+      sortOrder: 10
+    };
+  }
+  if (normalized.includes('[프로자료]') && normalized.includes('포트폴리오 리포지셔닝')) {
+    return {
+      title: '완벽설득포트폴리오: 채용을 설득하는 포트폴리오 전략',
+      description: '포트폴리오를 단순한 경험 모음이 아닌 왜 나를 뽑아야 하는가를 증명하는 자료로 만드는 방법입니다. 주장·근거·어필 구조로 프로젝트와 역량을 재배치합니다.',
+      category: 'portfolio',
+      accessLevel: 'pro',
+      sortOrder: 40
+    };
+  }
+  if (normalized.includes('[프로자료]') && normalized.includes('포트폴리오 예시')) {
+    return {
+      title: '완벽설득포트폴리오 완성 예시',
+      description: '하나의 핵심 인식을 중심으로 역량과 프로젝트를 연결한 실제 구성 예시입니다. 표지부터 대표 프로젝트, 세부 경험까지 설득의 흐름이 어떻게 이어지는지 확인할 수 있습니다.',
+      category: 'portfolio',
+      accessLevel: 'pro',
+      sortOrder: 50
+    };
+  }
+  if (normalized.includes('[프로자료]') && normalized.includes('포트폴리오 프롬프트')) {
+    return {
+      title: '인식설계 포트폴리오 리빌딩 프롬프트',
+      description: '지원 기업과 직무의 REAL NEEDS를 분석하고, 채용담당자가 지원자를 어떻게 기억해야 하는지부터 설계하는 범용 프롬프트입니다. 기존 포트폴리오를 직무별 설득 구조로 다시 만드는 데 활용할 수 있습니다.',
+      category: 'portfolio',
+      accessLevel: 'pro',
+      sortOrder: 60
+    };
+  }
+  return null;
+}
+
 function inferResourceCategory(fileName: string): PracticalResourceCategory {
   const normalized = fileName.toLowerCase();
   if (normalized.includes('포트폴리오')) return 'portfolio';
@@ -182,14 +277,15 @@ export const PracticalResourcesAdmin: React.FC = () => {
     try {
       for (let index = 0; index < files.length; index += 1) {
         const currentFile = files[index];
-        const accessLevel: PracticalResourceAccess = currentFile.name.includes('[프로자료]') ? 'pro' : 'free';
+        const preset = getResourcePreset(currentFile.name);
+        const accessLevel: PracticalResourceAccess = preset?.accessLevel || (currentFile.name.includes('[프로자료]') ? 'pro' : 'free');
         setBulkProgress(`${index + 1}/${files.length} · ${currentFile.name}`);
         await createPracticalResource({
-          title: normalizeResourceTitle(currentFile.name),
-          description: inferResourceDescription(currentFile.name),
-          category: inferResourceCategory(currentFile.name),
+          title: preset?.title || normalizeResourceTitle(currentFile.name),
+          description: preset?.description || inferResourceDescription(currentFile.name),
+          category: preset?.category || inferResourceCategory(currentFile.name),
           accessLevel,
-          sortOrder: (index + 1) * 10,
+          sortOrder: preset?.sortOrder || (index + 1) * 10,
           file: currentFile
         });
       }
