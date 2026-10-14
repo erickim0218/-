@@ -31,26 +31,10 @@ export const DEFAULT_REVENUE_PRODUCTS: Omit<RevenueProduct, 'id' | 'created_at' 
   {
     product_group: 'pro_membership',
     plan_code: 'pro_start_30',
-    plan_name: 'PRO START 30',
-    default_price: 99000,
+    plan_name: 'REPOSITION PRO 30일',
+    default_price: 100000,
     is_active: true,
     sort_order: 1
-  },
-  {
-    product_group: 'pro_membership',
-    plan_code: 'pro_position_90',
-    plan_name: 'PRO POSITION 90',
-    default_price: 249000,
-    is_active: true,
-    sort_order: 2
-  },
-  {
-    product_group: 'pro_membership',
-    plan_code: 'pro_career_180',
-    plan_name: 'PRO CAREER 180',
-    default_price: 450000,
-    is_active: true,
-    sort_order: 3
   }
 ];
 
@@ -100,7 +84,11 @@ export const fetchRevenueProducts = async (): Promise<RevenueProduct[]> => {
       return seeded || [];
     }
 
-    return data;
+    return data
+      .filter((product) => product.product_group !== 'pro_membership' || product.plan_code === 'pro_start_30')
+      .map((product) => product.plan_code === 'pro_start_30'
+        ? { ...product, plan_name: 'REPOSITION PRO 30일', default_price: 100000, is_active: true }
+        : product);
   } catch (err) {
     console.error('fetchRevenueProducts exception:', err);
     return [];
@@ -388,8 +376,8 @@ export const adminAssignMemberships = async (params: {
           await supabase.from('revenue_products').insert([{
             product_group: params.membershipTier === 'bootcamp' ? 'bootcamp' : 'pro_membership',
             plan_code: finalPlanCode,
-            plan_name: finalPlanCode === 'pro_monthly' ? 'PRO Monthly' : finalPlanCode === 'bootcamp_standard' ? '부트캠프 스탠다드' : finalPlanCode,
-            default_price: normalizedAmountOverride > 0 ? normalizedAmountOverride : (params.membershipTier === 'bootcamp' ? 500000 : 99000),
+            plan_name: finalPlanCode === 'pro_start_30' || finalPlanCode === 'pro_monthly' ? 'REPOSITION PRO 30일' : finalPlanCode === 'bootcamp_standard' ? '부트캠프 스탠다드' : finalPlanCode,
+            default_price: normalizedAmountOverride > 0 ? normalizedAmountOverride : (params.membershipTier === 'bootcamp' ? 500000 : 100000),
             is_active: true,
             sort_order: 1,
             created_at: new Date().toISOString(),
