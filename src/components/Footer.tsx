@@ -133,7 +133,7 @@ export const Footer: React.FC<FooterProps> = ({ onTabChange, siteFeatures }) => 
               )}
 
               <button onClick={() => onTabChange('pro-payment')} className="text-left text-[#FFD600] hover:text-yellow-300 font-bold transition flex items-center gap-1.5">
-                <span>PRO 멤버십 결제 (1/3/6개월)</span>
+                <span>PRO 멤버십 결제 (30일)</span>
               </button>
               <button onClick={() => onTabChange('mylms')} className="text-left text-zinc-400 hover:text-white transition">
                 내 강의실
