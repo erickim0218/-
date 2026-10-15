@@ -16,11 +16,12 @@ import {
   deletePracticalResource,
   fetchPracticalResources,
   formatResourceSize,
+  getPracticalResourceGroup,
   PRACTICAL_CATEGORY_LABELS,
   PracticalResource,
   PracticalResourceAccess,
   PracticalResourceCategory,
-  setPracticalResourceAccess,
+  PracticalResourceGroup,
   setPracticalResourcePublished,
   updatePracticalResourceMetadata
 } from '../../lib/practicalResources';
@@ -30,7 +31,7 @@ const MAX_FILE_SIZE = 50 * 1024 * 1024;
 function normalizeResourceTitle(fileName: string) {
   return fileName.normalize('NFC')
     .replace(/\.[^/.]+$/, '')
-    .replace(/^\[(무료자료|프로자료)\]\s*/u, '')
+    .replace(/^\[(무료자료|프로자료|필수자료|실전자료)\]\s*/u, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -40,90 +41,102 @@ type ResourcePreset = {
   description: string;
   category: PracticalResourceCategory;
   accessLevel: PracticalResourceAccess;
+  resourceGroup: PracticalResourceGroup;
   sortOrder: number;
 };
 
 function getResourcePreset(fileName: string): ResourcePreset | null {
   const normalized = fileName.normalize('NFC').replace(/\s+/g, ' ').toLowerCase();
+  const isEssentialResource = normalized.includes('[무료자료]') || normalized.includes('[필수자료]');
+  const isPracticalResource = normalized.includes('[프로자료]') || normalized.includes('[실전자료]');
 
-  if (normalized.includes('[무료자료]') && normalized.includes('자소서')) {
+  if (isEssentialResource && normalized.includes('자소서')) {
     return {
       title: '자기설득서: 채용을 설득하는 자소서 전략',
       description: '자소서를 단순한 자기소개가 아닌 설득의 문서로 바꾸는 방법을 설명합니다. 기업의 니즈에 맞춰 주장·근거·어필을 연결하는 기획자J의 자소서 리포지셔닝 전략을 확인해보세요.',
       category: 'cover_letter',
       accessLevel: 'free',
+      resourceGroup: 'essential',
       sortOrder: 10
     };
   }
-  if (normalized.includes('[무료자료]') && normalized.includes('면접')) {
+  if (isEssentialResource && normalized.includes('면접')) {
     return {
       title: '완벽통제면접: 면접의 주도권을 잡는 전략',
       description: '면접의 진짜 경쟁자는 다른 지원자가 아니라 인사담당자의 인식입니다. 질문에 끌려가지 않고 내가 전달해야 할 강점과 메시지를 중심으로 면접을 이끄는 방법을 알려드립니다.',
       category: 'interview',
       accessLevel: 'free',
+      resourceGroup: 'essential',
       sortOrder: 20
     };
   }
-  if (normalized.includes('[무료자료]') && (normalized.includes('이직') || normalized.includes('stp'))) {
+  if (isEssentialResource && (normalized.includes('이직') || normalized.includes('stp'))) {
     return {
       title: '취업 STP 전략: 나에게 맞는 이직 방향 찾기',
       description: '같은 직무라도 연차와 경험에 따라 기업이 원하는 사람은 달라집니다. 취업시장을 나누고, 목표를 선택하고, 나만의 위치를 정하는 STP 관점으로 이직 방향을 점검해보세요.',
       category: 'job_change',
       accessLevel: 'free',
+      resourceGroup: 'essential',
       sortOrder: 30
     };
   }
-  if (normalized.includes('[프로자료]') && normalized.includes('사용방법') && normalized.endsWith('.pdf')) {
+  if (isPracticalResource && normalized.includes('사용방법') && normalized.endsWith('.pdf')) {
     return {
       title: 'REAL NEEDS 이력서 실전 템플릿 & 작성 예시 (PDF)',
       description: '기업의 핵심 과제, 필요한 역량, 내 경험의 적용 방식을 첫 장에서 연결하는 작성법을 제공합니다. 범용 템플릿과 APR 마케팅·KT IT 개발 예시를 함께 확인할 수 있습니다.',
       category: 'resume',
-      accessLevel: 'pro',
+      accessLevel: 'free',
+      resourceGroup: 'practical',
       sortOrder: 20
     };
   }
-  if (normalized.includes('[프로자료]') && normalized.includes('사용방법') && normalized.endsWith('.docx')) {
+  if (isPracticalResource && normalized.includes('사용방법') && normalized.endsWith('.docx')) {
     return {
       title: 'REAL NEEDS 이력서 편집용 템플릿 (Word)',
       description: '지원 기업과 직무에 맞게 직접 수정할 수 있는 편집용 Word 파일입니다. 설명을 읽는 데서 끝나지 않고 자신의 경험을 바로 적용해 이력서를 완성할 수 있습니다.',
       category: 'resume',
-      accessLevel: 'pro',
+      accessLevel: 'free',
+      resourceGroup: 'practical',
       sortOrder: 30
     };
   }
-  if (normalized.includes('[프로자료]') && normalized.includes('이력서 리포지셔닝')) {
+  if (isPracticalResource && normalized.includes('이력서 리포지셔닝')) {
     return {
       title: 'REAL NEEDS 이력서: 기업의 니즈부터 읽는 이력서 전략',
       description: '경력과 경험을 나열하는 이력서에서 벗어나 기업이 원하는 결과와 내 경험을 연결하는 방법을 설명합니다. 이력서를 나라는 제품의 제안서로 바꾸는 핵심 전략입니다.',
       category: 'resume',
-      accessLevel: 'pro',
+      accessLevel: 'free',
+      resourceGroup: 'practical',
       sortOrder: 10
     };
   }
-  if (normalized.includes('[프로자료]') && normalized.includes('포트폴리오 리포지셔닝')) {
+  if (isPracticalResource && normalized.includes('포트폴리오 리포지셔닝')) {
     return {
       title: '완벽설득포트폴리오: 채용을 설득하는 포트폴리오 전략',
       description: '포트폴리오를 단순한 경험 모음이 아닌 왜 나를 뽑아야 하는가를 증명하는 자료로 만드는 방법입니다. 주장·근거·어필 구조로 프로젝트와 역량을 재배치합니다.',
       category: 'portfolio',
-      accessLevel: 'pro',
+      accessLevel: 'free',
+      resourceGroup: 'practical',
       sortOrder: 40
     };
   }
-  if (normalized.includes('[프로자료]') && normalized.includes('포트폴리오 예시')) {
+  if (isPracticalResource && normalized.includes('포트폴리오 예시')) {
     return {
       title: '완벽설득포트폴리오 완성 예시',
       description: '하나의 핵심 인식을 중심으로 역량과 프로젝트를 연결한 실제 구성 예시입니다. 표지부터 대표 프로젝트, 세부 경험까지 설득의 흐름이 어떻게 이어지는지 확인할 수 있습니다.',
       category: 'portfolio',
       accessLevel: 'pro',
+      resourceGroup: 'practical',
       sortOrder: 50
     };
   }
-  if (normalized.includes('[프로자료]') && normalized.includes('포트폴리오 프롬프트')) {
+  if (isPracticalResource && normalized.includes('포트폴리오 프롬프트')) {
     return {
       title: '인식설계 포트폴리오 리빌딩 프롬프트',
       description: '지원 기업과 직무의 REAL NEEDS를 분석하고, 채용담당자가 지원자를 어떻게 기억해야 하는지부터 설계하는 범용 프롬프트입니다. 기존 포트폴리오를 직무별 설득 구조로 다시 만드는 데 활용할 수 있습니다.',
       category: 'portfolio',
       accessLevel: 'pro',
+      resourceGroup: 'practical',
       sortOrder: 60
     };
   }
@@ -189,6 +202,7 @@ export const PracticalResourcesAdmin: React.FC = () => {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<PracticalResourceCategory>('career');
   const [accessLevel, setAccessLevel] = useState<PracticalResourceAccess>('free');
+  const [resourceGroup, setResourceGroup] = useState<PracticalResourceGroup>('essential');
   const [sortOrder, setSortOrder] = useState(0);
   const [externalUrl, setExternalUrl] = useState('');
   const [file, setFile] = useState<File | null>(null);
@@ -246,6 +260,7 @@ export const PracticalResourcesAdmin: React.FC = () => {
     setDescription('');
     setCategory('career');
     setAccessLevel('free');
+    setResourceGroup('essential');
     setSortOrder(0);
     setExternalUrl('');
     setFile(null);
@@ -267,7 +282,7 @@ export const PracticalResourcesAdmin: React.FC = () => {
       return;
     }
     if (accessLevel === 'pro' && !file) {
-      setError('PRO 자료는 권한 보호를 위해 파일로 업로드해 주세요.');
+      setError('클래스 수강자 전용 자료는 권한 보호를 위해 파일로 업로드해 주세요.');
       return;
     }
     if (file && file.size > MAX_FILE_SIZE) {
@@ -282,6 +297,7 @@ export const PracticalResourcesAdmin: React.FC = () => {
         description,
         category,
         accessLevel,
+        resourceGroup,
         sortOrder,
         file,
         externalUrl
@@ -313,18 +329,22 @@ export const PracticalResourcesAdmin: React.FC = () => {
         const currentFile = files[index];
         const preset = getResourcePreset(currentFile.name);
         const normalizedFileName = currentFile.name.normalize('NFC');
-        const accessLevel: PracticalResourceAccess = preset?.accessLevel || (normalizedFileName.includes('[프로자료]') ? 'pro' : 'free');
+        const accessLevel: PracticalResourceAccess = preset?.accessLevel
+          || (normalizedFileName.includes('예시') || normalizedFileName.includes('프롬프트') ? 'pro' : 'free');
+        const resourceGroup: PracticalResourceGroup = preset?.resourceGroup
+          || (normalizedFileName.includes('[프로자료]') || normalizedFileName.includes('[실전자료]') ? 'practical' : 'essential');
         setBulkProgress(`${index + 1}/${files.length} · ${currentFile.name}`);
         await createPracticalResource({
           title: preset?.title || normalizeResourceTitle(currentFile.name),
           description: preset?.description || inferResourceDescription(currentFile.name),
           category: preset?.category || inferResourceCategory(currentFile.name),
           accessLevel,
+          resourceGroup,
           sortOrder: preset?.sortOrder || (index + 1) * 10,
           file: currentFile
         });
       }
-      setMessage(`${files.length}개 자료를 무료/PRO로 구분해 등록했습니다.`);
+      setMessage(`${files.length}개 자료를 필수/실전자료와 공개 권한으로 구분해 등록했습니다.`);
       await loadResources();
     } catch (bulkError) {
       setError(`일괄 등록 중 중단되었습니다. ${getHelpfulError(bulkError)}`);
@@ -370,7 +390,7 @@ export const PracticalResourcesAdmin: React.FC = () => {
           <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">PRACTICAL LIBRARY</span>
           <h2 className="text-xl font-black text-white">실전활용 자료 등록</h2>
           <p className="text-xs leading-relaxed text-zinc-400">
-            무료자료는 누구나 내려받을 수 있고, PRO 자료는 활성 PRO·부트캠프 회원에게만 열립니다.
+            자료 종류와 공개 권한을 따로 설정합니다. 예시 파일과 프롬프트만 클래스 수강자 전용으로 운영합니다.
           </p>
         </div>
 
@@ -422,7 +442,35 @@ export const PracticalResourcesAdmin: React.FC = () => {
           </label>
 
           <fieldset className="space-y-2">
-            <legend className="text-xs font-bold text-zinc-300">공개 범위</legend>
+            <legend className="text-xs font-bold text-zinc-300">자료 종류</legend>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setResourceGroup('essential')}
+                className={`rounded-xl border px-4 py-3 text-xs font-black transition ${
+                  resourceGroup === 'essential'
+                    ? 'border-white/40 bg-white/10 text-white'
+                    : 'border-zinc-700 bg-zinc-950 text-zinc-500'
+                }`}
+              >
+                필수자료
+              </button>
+              <button
+                type="button"
+                onClick={() => setResourceGroup('practical')}
+                className={`rounded-xl border px-4 py-3 text-xs font-black transition ${
+                  resourceGroup === 'practical'
+                    ? 'border-[#FFD600] bg-[#FFD600]/10 text-[#FFD600]'
+                    : 'border-zinc-700 bg-zinc-950 text-zinc-500'
+                }`}
+              >
+                실전자료
+              </button>
+            </div>
+          </fieldset>
+
+          <fieldset className="space-y-2">
+            <legend className="text-xs font-bold text-zinc-300">공개 권한</legend>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
@@ -433,7 +481,7 @@ export const PracticalResourcesAdmin: React.FC = () => {
                     : 'border-zinc-700 bg-zinc-950 text-zinc-500'
                 }`}
               >
-                무료자료
+                무료배포
               </button>
               <button
                 type="button"
@@ -447,7 +495,7 @@ export const PracticalResourcesAdmin: React.FC = () => {
                     : 'border-zinc-700 bg-zinc-950 text-zinc-500'
                 }`}
               >
-                PRO 자료
+                클래스 수강자 전용
               </button>
             </div>
           </fieldset>
@@ -455,7 +503,7 @@ export const PracticalResourcesAdmin: React.FC = () => {
           <label className="space-y-2 text-xs font-bold text-zinc-300">
             <span>
               외부 링크{' '}
-              <span className="font-normal text-zinc-600">(무료자료만 파일 대신 사용 가능)</span>
+              <span className="font-normal text-zinc-600">(무료배포 자료만 파일 대신 사용 가능)</span>
             </span>
             <input
               type="url"
@@ -502,7 +550,7 @@ export const PracticalResourcesAdmin: React.FC = () => {
           <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">BULK UPLOAD</span>
           <h2 className="text-xl font-black text-white">여러 자료 한 번에 등록</h2>
           <p className="text-xs leading-relaxed text-zinc-400">
-            파일명의 [무료자료]·[프로자료]를 자동으로 구분하고 제목, 설명, 카테고리까지 설정합니다.
+            파일명의 [필수자료]·[실전자료] 또는 기존 [무료자료]·[프로자료]를 인식해 자동으로 구분합니다.
           </p>
         </div>
         <label className={`mt-5 flex items-center justify-center gap-3 rounded-2xl border border-dashed px-5 py-6 text-sm font-black transition ${
@@ -563,11 +611,18 @@ export const PracticalResourcesAdmin: React.FC = () => {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className={`rounded-md px-2 py-1 text-[10px] font-black ${
+                    getPracticalResourceGroup(resource) === 'essential'
+                      ? 'bg-white/10 text-zinc-200'
+                      : 'bg-[#FFD600]/10 text-[#FFD600]'
+                  }`}>
+                    {getPracticalResourceGroup(resource) === 'essential' ? '필수자료' : '실전자료'}
+                  </span>
+                  <span className={`rounded-md px-2 py-1 text-[10px] font-black ${
                     resource.access_level === 'free'
                       ? 'bg-emerald-500/15 text-emerald-300'
                       : 'bg-[#FFD600]/10 text-[#FFD600]'
                   }`}>
-                    {resource.access_level === 'free' ? 'FREE' : 'PRO'}
+                    {resource.access_level === 'free' ? '무료배포' : '클래스 전용'}
                   </span>
                   <span className="text-[11px] font-bold text-zinc-500">
                     {PRACTICAL_CATEGORY_LABELS[resource.category]}
@@ -609,11 +664,11 @@ export const PracticalResourcesAdmin: React.FC = () => {
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           <div className="flex items-start gap-3 rounded-xl bg-emerald-500/5 p-4 text-xs text-zinc-400">
             <Users className="h-4 w-4 shrink-0 text-emerald-400" />
-            <span><strong className="text-emerald-300">무료자료</strong>는 비회원과 무료회원도 내려받을 수 있습니다.</span>
+            <span><strong className="text-emerald-300">무료배포</strong> 자료는 로그인한 일반 회원도 내려받을 수 있습니다.</span>
           </div>
           <div className="flex items-start gap-3 rounded-xl bg-[#FFD600]/5 p-4 text-xs text-zinc-400">
             <LockKeyhole className="h-4 w-4 shrink-0 text-[#FFD600]" />
-            <span><strong className="text-[#FFD600]">PRO 자료</strong>는 활성 PRO·부트캠프 회원에게만 열립니다.</span>
+            <span><strong className="text-[#FFD600]">클래스 수강자 전용</strong> 자료는 활성 클래스·부트캠프 회원에게만 열립니다.</span>
           </div>
         </div>
       </div>
