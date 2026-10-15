@@ -379,7 +379,11 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
       window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
     } catch (error) {
       console.error('Failed to open practical resource:', error);
-      const message = error instanceof Error ? error.message : String(error);
+      const message = error instanceof Error
+        ? error.message
+        : error && typeof error === 'object' && 'message' in error
+          ? String((error as { message?: unknown }).message || '알 수 없는 오류')
+          : String(error);
       if (message.includes('DOWNLOAD_LIMIT_REACHED')) {
         window.alert('이 자료는 선착순 100명 배포가 마감되었습니다.');
         void loadResources();
