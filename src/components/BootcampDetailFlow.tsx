@@ -234,8 +234,8 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 스펙은 바꾸지 않습니다. <span className="text-[#FFD600]">읽히는 방식을 바꿉니다.</span>
               </p>
               <p className="text-sm text-zinc-300 font-medium leading-relaxed">
-                단 4주, 기획자 J의 브랜딩 취업 컨설팅 노하우를 바탕으로<br />
-                기업이 당신을 선택할 이유를 만들어 드립니다.
+                단 3주, 특강·과제·1:1 피드백으로 끝까지 밀착해<br />
+                기업의 니즈를 읽고 자신의 경험을 전략으로 바꾸는 최정예 취업·이직 리포지셔너로 만들어 드립니다.
               </p>
             </div>
           </div>
@@ -505,7 +505,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   당신의 경험과 역량을 인사담당자의 뇌리에 남을 <strong className="text-amber-900 bg-amber-100 px-2 py-0.5 rounded font-black">선명한 메시지</strong>로 재설계합니다.
                 </p>
                 <p className="text-xs sm:text-sm text-zinc-600 font-normal leading-relaxed">
-                  스펙 탓만 하며 방황하는 구직 기간을 끝내고, 남들과 차별화된 전략으로 목표 기업에 강력하게 도전하도록 돕습니다.
+                  스펙 탓만 하며 방황하는 구직 기간을 끝내고, 3주 동안 배우고 적용하고 점검하는 과정을 반복하며 목표 기업에 도전할 전략을 완성합니다.
                 </p>
               </div>
 
@@ -529,7 +529,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   </div>
                   <h3 className="text-sm sm:text-base font-bold text-zinc-900">서류 첨삭부터 면접 대비까지</h3>
                   <p className="text-xs text-zinc-600 leading-relaxed">
-                    브랜드 기획 전문가가 직접 전담하여 자소서 작성부터 면접 질문 주도권 확보까지 함께합니다.
+                    브랜드 기획 전문가가 3주 동안 직접 밀착해 자소서 작성부터 면접 질문 주도권 확보까지 함께합니다.
                   </p>
                 </div>
               </div>
