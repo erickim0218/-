@@ -228,17 +228,17 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 기획자J의 <span className="text-[#FFD600]">리포지셔닝 부트캠프</span>
               </h1>
               <p className="mt-3 text-base sm:text-xl font-black text-[#FFD600] tracking-tight leading-snug">
-                3주 동안, 최정예 취업·이직 리포지셔너로 만들어드립니다.
+                단 3주, 당신을 취업·이직 최정예 리포지셔너로 만들어드립니다.
               </p>
             </div>
 
-            <div className="py-2 space-y-2">
-              <p className="text-xl sm:text-2xl font-black text-white tracking-tight leading-snug">
-                스펙은 바꾸지 않습니다. <span className="text-[#FFD600]">읽히는 방식을 바꿉니다.</span>
-              </p>
-              <p className="text-sm text-zinc-300 font-medium leading-relaxed">
-                특강·과제·1:1 피드백으로 끝까지 밀착해<br />
-                기업의 니즈를 읽고 자신의 경험을 전략으로 바꾸는 방법을 함께 완성합니다.
+            <div className="py-2">
+              <p className="text-sm text-zinc-300 font-medium leading-relaxed sm:text-base sm:leading-7">
+                <strong className="block font-black text-white">특강·과제·1:1 밀착 컨설팅 및 피드백으로</strong>
+                <span className="block">
+                  당신의 스펙이 <strong className="font-black text-[#FFD600]">기업의 니즈에 부합한 최적의 스펙으로 인식되도록</strong>
+                </span>
+                <strong className="block font-black text-white">경험을 브랜딩 전략으로 바꾸는 방법을 함께 완성합니다.</strong>
               </p>
             </div>
           </div>
