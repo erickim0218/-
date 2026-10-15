@@ -29,8 +29,8 @@ import {
   getMyMarketingConsent,
   getPracticalResourceDownloadName,
   getPracticalResourceDisplayName,
-  getPracticalResourceUrl,
   getPracticalResourcePreviewUrl,
+  PRACTICAL_RESOURCE_BUCKET,
   PRACTICAL_CATEGORY_LABELS,
   PracticalResource,
   recordPracticalResourceDownload,
@@ -339,8 +339,6 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
   const handleDownload = async (resource: PracticalResource) => {
     setDownloadingId(resource.id);
     try {
-      const url = await getPracticalResourceUrl(resource);
-
       if (resource.external_url) {
         const downloadId = await recordPracticalResourceDownload(resource.id);
         if (!downloadId) throw new Error('RESOURCE_ALREADY_CLAIMED');
@@ -350,13 +348,17 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
             ? { ...item, download_count: Math.min((item.download_count || 0) + 1, 100) }
             : item
         )));
-        window.open(url, '_blank', 'noopener,noreferrer');
+        window.open(resource.external_url, '_blank', 'noopener,noreferrer');
         return;
       }
 
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`파일 다운로드 실패 (${response.status})`);
-      const blob = await response.blob();
+      if (!resource.file_path) throw new Error('RESOURCE_FILE_NOT_CONNECTED');
+      const { data: blob, error: storageError } = await supabase.storage
+        .from(PRACTICAL_RESOURCE_BUCKET)
+        .download(resource.file_path);
+      if (storageError || !blob) {
+        throw new Error(`STORAGE_DOWNLOAD_FAILED:${storageError?.message || 'EMPTY_FILE'}`);
+      }
       const downloadId = await recordPracticalResourceDownload(resource.id);
       if (!downloadId) throw new Error('RESOURCE_ALREADY_CLAIMED');
       setClaimedResourceIds((current) => new Set(current).add(resource.id));
@@ -386,8 +388,14 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
         window.alert('이미 다운로드한 자료입니다. 자료는 회원 1명당 한 번만 받을 수 있습니다.');
       } else if (message.includes('RESOURCE_ACCESS_DENIED') || message.includes('권한이 없습니다')) {
         window.alert('이 자료를 다운로드할 권한을 확인하지 못했습니다. 다시 로그인한 뒤 시도해 주세요.');
+      } else if (message.includes('RESOURCE_FILE_NOT_CONNECTED')) {
+        window.alert('이 자료에 연결된 파일이 없습니다. 관리자에게 문의해 주세요.');
+      } else if (message.includes('STORAGE_DOWNLOAD_FAILED')) {
+        const detail = message.split('STORAGE_DOWNLOAD_FAILED:')[1]?.slice(0, 120) || '파일 요청 실패';
+        window.alert(`파일을 불러오지 못했습니다. (${detail})`);
       } else {
-        window.alert('자료 다운로드 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+        const detail = message.slice(0, 120);
+        window.alert(`자료 다운로드 기록 처리 중 오류가 발생했습니다. (${detail})`);
       }
     } finally {
       setDownloadingId('');
