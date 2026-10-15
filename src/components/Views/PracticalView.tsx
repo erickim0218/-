@@ -6,6 +6,7 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
+  CheckCircle2,
   Compass,
   Download,
   ExternalLink,
@@ -22,6 +23,7 @@ import {
 import { MemberTier } from '../../types';
 import {
   fetchPracticalResources,
+  fetchMyPracticalResourceClaims,
   formatResourceSize,
   getPracticalResourceGroup,
   getMyMarketingConsent,
@@ -94,11 +96,12 @@ const PaidContentLock: React.FC<{
 const ResourceCard: React.FC<{
   resource: PracticalResource;
   canUsePro: boolean;
+  isClaimed: boolean;
   isDownloading: boolean;
   onDownload: (resource: PracticalResource) => void;
   onUpgrade: () => void;
   onPreview: (resource: PracticalResource) => void;
-}> = ({ resource, canUsePro, isDownloading, onDownload, onUpgrade, onPreview }) => {
+}> = ({ resource, canUsePro, isClaimed, isDownloading, onDownload, onUpgrade, onPreview }) => {
   const downloadLimit = 100;
   const isClassOnly = isClassOnlyResource(resource);
   const isLocked = isClassOnly && !canUsePro;
@@ -164,9 +167,9 @@ const ResourceCard: React.FC<{
               {isLocked ? '클래스에서 미리보기' : '첫 10페이지 미리보기'}
             </button>
           ) : null}
-          <button type="button" onClick={() => (isLocked ? onUpgrade() : onDownload(resource))} disabled={isDownloading || isDistributionClosed} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:cursor-not-allowed disabled:opacity-60 ${isDistributionClosed ? 'border border-rose-400/25 bg-rose-400/5 text-rose-300' : isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resourceGroup === 'practical' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'}`}>
-            {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : isDistributionClosed || isLocked ? <Lock className="h-4 w-4" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
-            {isDownloading ? '준비 중...' : isDistributionClosed ? '선착순 배포 마감' : isLocked ? '클래스에서 이용하기' : resource.external_url ? '자료 열기' : '무료 다운로드'}
+          <button type="button" onClick={() => (isLocked ? onUpgrade() : onDownload(resource))} disabled={isDownloading || isDistributionClosed || isClaimed} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:cursor-not-allowed ${isClaimed ? 'border border-emerald-400/25 bg-emerald-400/10 text-emerald-300' : isDistributionClosed ? 'border border-rose-400/25 bg-rose-400/5 text-rose-300' : isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resourceGroup === 'practical' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'} ${isDownloading ? 'opacity-60' : ''}`}>
+            {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : isClaimed ? <CheckCircle2 className="h-4 w-4" /> : isDistributionClosed || isLocked ? <Lock className="h-4 w-4" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
+            {isDownloading ? '준비 중...' : isClaimed ? '다운로드 완료' : isDistributionClosed ? '선착순 배포 마감' : isLocked ? '클래스에서 이용하기' : resource.external_url ? '자료 열기' : '무료 다운로드'}
           </button>
         </div>
       </div>
@@ -226,6 +229,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
 }) => {
   const [localSubTab, setLocalSubTab] = useState<PracticalSubTab>(activeSubTab);
   const [resources, setResources] = useState<PracticalResource[]>([]);
+  const [claimedResourceIds, setClaimedResourceIds] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [downloadingId, setDownloadingId] = useState('');
@@ -287,6 +291,22 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
   }, [loadResources, currentTier]);
 
   useEffect(() => {
+    let active = true;
+    if (currentTier === 'NON_MEMBER') {
+      setClaimedResourceIds(new Set());
+      return;
+    }
+    fetchMyPracticalResourceClaims()
+      .then((ids) => {
+        if (active) setClaimedResourceIds(new Set(ids));
+      })
+      .catch((error) => console.warn('Failed to load resource claims:', error));
+    return () => {
+      active = false;
+    };
+  }, [currentTier]);
+
+  useEffect(() => {
     const channel = supabase
       .channel('practical-resource-download-counts')
       .on(
@@ -320,16 +340,16 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
     setDownloadingId(resource.id);
     try {
       const url = await getPracticalResourceUrl(resource);
-      const downloadId = await recordPracticalResourceDownload(resource.id);
-      if (downloadId) {
+
+      if (resource.external_url) {
+        const downloadId = await recordPracticalResourceDownload(resource.id);
+        if (!downloadId) throw new Error('RESOURCE_ALREADY_CLAIMED');
+        setClaimedResourceIds((current) => new Set(current).add(resource.id));
         setResources((current) => current.map((item) => (
           item.id === resource.id
             ? { ...item, download_count: Math.min((item.download_count || 0) + 1, 100) }
             : item
         )));
-      }
-
-      if (resource.external_url) {
         window.open(url, '_blank', 'noopener,noreferrer');
         return;
       }
@@ -337,6 +357,14 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
       const response = await fetch(url);
       if (!response.ok) throw new Error(`파일 다운로드 실패 (${response.status})`);
       const blob = await response.blob();
+      const downloadId = await recordPracticalResourceDownload(resource.id);
+      if (!downloadId) throw new Error('RESOURCE_ALREADY_CLAIMED');
+      setClaimedResourceIds((current) => new Set(current).add(resource.id));
+      setResources((current) => current.map((item) => (
+        item.id === resource.id
+          ? { ...item, download_count: Math.min((item.download_count || 0) + 1, 100) }
+          : item
+      )));
       const objectUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = objectUrl;
@@ -353,6 +381,9 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
       if (message.includes('DOWNLOAD_LIMIT_REACHED')) {
         window.alert('이 자료는 선착순 100명 배포가 마감되었습니다.');
         void loadResources();
+      } else if (message.includes('RESOURCE_ALREADY_CLAIMED')) {
+        setClaimedResourceIds((current) => new Set(current).add(resource.id));
+        window.alert('이미 다운로드한 자료입니다. 자료는 회원 1명당 한 번만 받을 수 있습니다.');
       } else {
         window.alert('자료를 열지 못했습니다. 잠시 후 다시 시도해 주세요.');
       }
@@ -534,6 +565,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                         key={resource.id}
                         resource={resource}
                         canUsePro={isPaidMember}
+                        isClaimed={claimedResourceIds.has(resource.id)}
                         isDownloading={downloadingId === resource.id}
                         onDownload={requestDownload}
                         onUpgrade={() => onTabChange('pro-payment')}
