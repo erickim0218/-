@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, Clock3, X } from 'lucide-react';
 import { trackAnalyticsEvent } from '../lib/analytics';
+import { supabase } from '../lib/supabase';
 
 interface BootcampCampaignPopupProps {
   currentTab: string;
@@ -11,6 +12,18 @@ interface BootcampCampaignPopupProps {
 const HIDE_UNTIL_KEY = 'reposition_bootcamp_popup_hide_until';
 const VARIANT_INDEX_KEY = 'reposition_bootcamp_popup_variant_index';
 const SIX_HOURS = 6 * 60 * 60 * 1000;
+const BOOTCAMP_DEADLINE = new Date('2026-10-23T21:00:00+09:00').getTime();
+const BOOTCAMP_CAPACITY = 5;
+
+function getRemainingTime(now: number) {
+  const difference = Math.max(0, BOOTCAMP_DEADLINE - now);
+  return {
+    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((difference / (1000 * 60)) % 60),
+    seconds: Math.floor((difference / 1000) % 60)
+  };
+}
 
 const variants = [
   {
@@ -51,8 +64,54 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [variantIndex, setVariantIndex] = useState(0);
+  const [confirmedCount, setConfirmedCount] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
   const isEligiblePage = ['home', 'repositioning', 'classes', 'consulting', 'practical'].includes(currentTab);
   const variant = variants[variantIndex];
+  const timeLeft = getRemainingTime(now);
+  const displayCount = Math.min(BOOTCAMP_CAPACITY, Math.max(0, confirmedCount));
+  const remainingSlots = Math.max(0, BOOTCAMP_CAPACITY - displayCount);
+  const progressPercent = Math.min(100, Math.round((displayCount / BOOTCAMP_CAPACITY) * 100));
+  const isExpired = now >= BOOTCAMP_DEADLINE;
+  const isFull = displayCount >= BOOTCAMP_CAPACITY;
+  const isClosed = isExpired || isFull;
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled || !isEligiblePage) return;
+
+    const fetchConfirmedCount = async () => {
+      try {
+        const { count, error } = await supabase
+          .from('user_access')
+          .select('user_id', { count: 'exact', head: true })
+          .eq('membership_tier', 'bootcamp')
+          .eq('bootcamp_cohort', '9기');
+
+        if (!error && count !== null && count !== undefined) {
+          setConfirmedCount(count);
+        }
+      } catch {
+        // Keep the last successfully loaded count.
+      }
+    };
+
+    void fetchConfirmedCount();
+    const statsTimer = window.setInterval(fetchConfirmedCount, 10_000);
+    const refreshStats = () => void fetchConfirmedCount();
+    window.addEventListener('focus', refreshStats);
+    window.addEventListener('bootcamp_stats_updated', refreshStats);
+
+    return () => {
+      window.clearInterval(statsTimer);
+      window.removeEventListener('focus', refreshStats);
+      window.removeEventListener('bootcamp_stats_updated', refreshStats);
+    };
+  }, [currentTab, enabled, isEligiblePage]);
 
   useEffect(() => {
     setIsOpen(false);
@@ -166,8 +225,34 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
               ))}
             </div>
           </div>
+          <div className="mt-5 rounded-lg bg-[#111114] p-4 text-white sm:p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-black tracking-[0.12em] text-zinc-400">
+                  {isClosed ? '리포지셔닝 부트캠프 9기' : '10월 23일 오후 9시 마감'}
+                </p>
+                <p className="mt-1.5 font-mono text-lg font-black tracking-tight text-[#FFD600] sm:text-xl">
+                  {isExpired
+                    ? '모집이 마감되었습니다'
+                    : isFull
+                      ? '선착순 모집이 마감되었습니다'
+                      : `${timeLeft.days}일 ${String(timeLeft.hours).padStart(2, '0')}:${String(timeLeft.minutes).padStart(2, '0')}:${String(timeLeft.seconds).padStart(2, '0')}`}
+                </p>
+              </div>
+              <div className="shrink-0 text-right">
+                <p className="text-[10px] font-bold text-zinc-500">선착순 {BOOTCAMP_CAPACITY}명</p>
+                <p className="mt-1 text-sm font-black text-white">{displayCount}/{BOOTCAMP_CAPACITY}명</p>
+              </div>
+            </div>
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+              <div className="h-full rounded-full bg-[#FFD600] transition-[width] duration-500" style={{ width: `${progressPercent}%` }} />
+            </div>
+            <p className={`mt-2 text-[11px] font-black ${isClosed ? 'text-zinc-400' : 'text-emerald-400'}`}>
+              {isClosed ? '9기 모집 종료' : `현재 ${displayCount}명 신청 · 잔여 ${remainingSlots}명`}
+            </p>
+          </div>
           <span className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FFD600] px-5 py-4 text-sm font-black text-black transition hover:bg-yellow-300">
-            {variant.cta}
+            {isClosed ? '9기 모집 마감' : variant.cta}
             <ArrowRight className="h-4 w-4" />
           </span>
         </button>
