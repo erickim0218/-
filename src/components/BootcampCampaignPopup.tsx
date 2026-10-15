@@ -71,10 +71,14 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
   const timeLeft = getRemainingTime(now);
   const displayCount = Math.min(BOOTCAMP_CAPACITY, Math.max(0, confirmedCount));
   const remainingSlots = Math.max(0, BOOTCAMP_CAPACITY - displayCount);
-  const progressPercent = Math.min(100, Math.round((displayCount / BOOTCAMP_CAPACITY) * 100));
   const isExpired = now >= BOOTCAMP_DEADLINE;
   const isFull = displayCount >= BOOTCAMP_CAPACITY;
   const isClosed = isExpired || isFull;
+  const countdownText = isExpired
+    ? '모집 마감'
+    : isFull
+      ? '선착순 마감'
+      : `D-${timeLeft.days} ${String(timeLeft.hours).padStart(2, '0')}:${String(timeLeft.minutes).padStart(2, '0')}:${String(timeLeft.seconds).padStart(2, '0')}`;
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
@@ -201,9 +205,22 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
         </button>
 
         <button type="button" onClick={openBootcamp} className="relative block w-full px-6 pb-5 pt-7 text-left sm:px-9 sm:pb-7 sm:pt-9">
-          <span className="inline-flex rounded-full border border-[#E5BD00]/35 bg-[#FFD600]/20 px-3 py-1.5 text-[11px] font-black text-[#7A6500]">
-            {variant.badge}
-          </span>
+          <div className="flex items-start justify-between gap-4 pr-11">
+            <span className="inline-flex shrink-0 rounded-full border border-[#E5BD00]/35 bg-[#FFD600]/20 px-3 py-1.5 text-[11px] font-black text-[#7A6500]">
+              {variant.badge}
+            </span>
+            <div className="hidden text-right sm:block">
+              <p className="text-[9px] font-bold text-zinc-500">10월 23일 오후 9시 마감</p>
+              <p className="mt-0.5 font-mono text-xs font-black text-black">{countdownText}</p>
+              <p className="mt-0.5 text-[9px] font-bold text-zinc-500">
+                현재 {displayCount}/{BOOTCAMP_CAPACITY}명 · 잔여 {remainingSlots}명
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 flex items-center justify-between gap-3 border-b border-black/10 pb-3 text-[10px] font-bold sm:hidden">
+            <span className="font-mono font-black text-black">{countdownText}</span>
+            <span className="text-zinc-500">현재 {displayCount}/{BOOTCAMP_CAPACITY}명 · 잔여 {remainingSlots}명</span>
+          </div>
           <h2 className="mt-5 pr-5 text-[28px] font-black leading-[1.2] tracking-[-0.04em] text-[#111114] sm:text-[38px]">
             {variant.title}
           </h2>
@@ -225,27 +242,7 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
               ))}
             </div>
           </div>
-          <div className="mt-4 flex justify-end">
-            <div className="w-full max-w-[310px] text-right">
-              <p className="text-[10px] font-bold text-zinc-500">
-                {isClosed ? '리포지셔닝 부트캠프 9기' : '10월 23일 오후 9시 마감 · 선착순 5명'}
-              </p>
-              <p className="mt-1 font-mono text-sm font-black tracking-tight text-black">
-                {isExpired
-                  ? '모집이 마감되었습니다'
-                  : isFull
-                    ? '선착순 모집이 마감되었습니다'
-                    : `마감까지 ${timeLeft.days}일 ${String(timeLeft.hours).padStart(2, '0')}:${String(timeLeft.minutes).padStart(2, '0')}:${String(timeLeft.seconds).padStart(2, '0')}`}
-              </p>
-              <div className="mt-2 h-1 overflow-hidden rounded-full bg-zinc-200">
-                <div className="h-full rounded-full bg-[#FFD600] transition-[width] duration-500" style={{ width: `${progressPercent}%` }} />
-              </div>
-              <p className="mt-1.5 text-[10px] font-bold text-zinc-600">
-                {isClosed ? '9기 모집 종료' : `현재 ${displayCount}/${BOOTCAMP_CAPACITY}명 · 잔여 ${remainingSlots}명`}
-              </p>
-            </div>
-          </div>
-          <span className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FFD600] px-5 py-4 text-sm font-black text-black transition hover:bg-yellow-300">
+          <span className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FFD600] px-5 py-4 text-sm font-black text-black transition hover:bg-yellow-300">
             {isClosed ? '9기 모집 마감' : variant.cta}
             <ArrowRight className="h-4 w-4" />
           </span>
