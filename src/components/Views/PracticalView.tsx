@@ -384,8 +384,10 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
       } else if (message.includes('RESOURCE_ALREADY_CLAIMED')) {
         setClaimedResourceIds((current) => new Set(current).add(resource.id));
         window.alert('이미 다운로드한 자료입니다. 자료는 회원 1명당 한 번만 받을 수 있습니다.');
+      } else if (message.includes('RESOURCE_ACCESS_DENIED') || message.includes('권한이 없습니다')) {
+        window.alert('이 자료를 다운로드할 권한을 확인하지 못했습니다. 다시 로그인한 뒤 시도해 주세요.');
       } else {
-        window.alert('자료를 열지 못했습니다. 잠시 후 다시 시도해 주세요.');
+        window.alert('자료 다운로드 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
       }
     } finally {
       setDownloadingId('');
