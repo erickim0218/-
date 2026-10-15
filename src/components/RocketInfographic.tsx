@@ -16,7 +16,7 @@ export const RocketInfographic: React.FC = () => {
             부트캠프 수강 전과 후의 합격 곡선
           </h3>
           <p className="text-xs sm:text-sm text-zinc-400 max-w-xl mx-auto leading-relaxed">
-            반복되는 서류 탈락 상태에서 올바른 관점을 세우고 목표 기업 합격 궤도로 올라서는 실질적 변화입니다.
+            3주 동안 배우고 적용하고 점검하며, 스스로 합격 전략을 설계할 수 있도록 밀착해 만드는 변화입니다.
           </p>
         </div>
 
@@ -204,7 +204,7 @@ export const RocketInfographic: React.FC = () => {
                   02. 리포지셔닝 부트캠프
                 </h4>
                 <p className="text-xs text-amber-300 font-semibold mt-0.5">
-                  1:1 밀착 코칭 & 무기 구축
+                  3주 1:1 밀착 코칭 & 합격 무기 구축
                 </p>
               </div>
 
@@ -219,7 +219,7 @@ export const RocketInfographic: React.FC = () => {
                 </div>
                 <div className="flex items-start gap-2">
                   <span className="text-amber-400 font-bold">•</span>
-                  <span><strong>1:1 3회 개별 피드백</strong>: 개인 맞춤 방향성 수립 및 점검</span>
+                  <span><strong>주차별 1:1 개별 피드백</strong>: 개인 맞춤 방향성 수립부터 적용까지 밀착 점검</span>
                 </div>
               </div>
             </div>
