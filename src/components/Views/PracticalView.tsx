@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getDocument, GlobalWorkerOptions, PDFDocumentProxy } from 'pdfjs-dist';
 import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import {
@@ -106,13 +106,13 @@ const ResourceCard: React.FC<{
   const canPreview = Boolean(isPdf && !normalizedTitle.includes('예시') && !normalizedTitle.includes('프롬프트'));
 
   return (
-    <article className={`group relative overflow-hidden rounded-3xl border shadow-[0_18px_60px_rgba(0,0,0,0.28)] transition ${
+    <article className={`group relative w-full min-w-0 overflow-hidden rounded-3xl border shadow-[0_18px_60px_rgba(0,0,0,0.28)] transition ${
       resourceGroup === 'practical'
         ? 'border-[#FFD600]/35 bg-gradient-to-br from-[#1d1b0e] via-[#151516] to-[#101014] hover:border-[#FFD600]/70'
         : 'border-white/15 bg-gradient-to-br from-[#1b1b20] via-[#151518] to-[#101014] hover:border-[#FFD600]/45'
     }`}>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#FFD600]/80 to-transparent" />
-      <div className="grid gap-6 p-6 sm:p-8 md:grid-cols-[minmax(0,1fr)_260px] md:items-stretch lg:gap-10 lg:p-10">
+      <div className="grid min-w-0 gap-5 p-5 sm:gap-6 sm:p-8 md:grid-cols-[minmax(0,1fr)_260px] md:items-stretch lg:gap-10 lg:p-10">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <span className={`rounded-md px-3 py-1.5 text-[10px] font-black tracking-wide ${resourceGroup === 'practical' ? 'bg-[#FFD600] text-black' : 'border border-white/20 bg-white/10 text-white'}`}>
@@ -123,8 +123,8 @@ const ResourceCard: React.FC<{
             </span>
             <span className="rounded-md bg-white/10 px-3 py-1.5 text-[10px] font-bold text-zinc-300">{PRACTICAL_CATEGORY_LABELS[resource.category]}</span>
           </div>
-          <h3 className="mt-6 text-xl font-black leading-tight text-white sm:text-2xl">{resource.title}</h3>
-          <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-300 sm:text-[15px]">{resource.description}</p>
+          <h3 className="mt-5 break-words text-xl font-black leading-tight text-white [overflow-wrap:anywhere] sm:mt-6 sm:text-2xl">{resource.title}</h3>
+          <p className="mt-4 max-w-3xl break-words text-sm leading-7 text-zinc-300 [overflow-wrap:anywhere] sm:text-[15px]">{resource.description}</p>
           <div className="mt-6 flex flex-wrap items-center gap-2 text-[11px] font-bold text-zinc-500">
             <span className="rounded-full border border-white/10 px-3 py-1.5">PDF 실전자료</span>
             {canPreview ? <span className="rounded-full border border-white/10 px-3 py-1.5">10페이지 미리보기</span> : null}
@@ -132,11 +132,11 @@ const ResourceCard: React.FC<{
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-black/25 p-5 text-center sm:p-6">
+        <div className="flex w-full min-w-0 flex-col items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-black/25 p-4 text-center sm:p-6">
           <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${resourceGroup === 'practical' ? 'bg-[#FFD600]/10 text-[#FFD600]' : 'bg-white/10 text-white'}`}>
             {isLocked ? <Lock className="h-7 w-7" /> : <FileText className="h-7 w-7" />}
           </div>
-          <p className="mt-3 max-w-full truncate text-xs font-bold text-zinc-400">{resource.file_name ? getPracticalResourceDisplayName(resource.file_name) : '온라인 자료'}</p>
+          <p className="mt-3 w-full min-w-0 break-all text-xs font-bold leading-5 text-zinc-400">{resource.file_name ? getPracticalResourceDisplayName(resource.file_name) : '온라인 자료'}</p>
           {canPreview ? (
             <button type="button" onClick={() => (isLocked ? onUpgrade() : onPreview(resource))} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-xs font-black text-zinc-200 transition hover:border-[#FFD600]/45 hover:text-[#FFD600]">
               {isLocked ? <Lock className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -226,6 +226,22 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
 
   const currentSub = onSubTabChange ? activeSubTab : localSubTab;
   const isPaidMember = currentTier === 'PRO' || currentTier === 'BOOTCAMP';
+  const sortedResources = useMemo(() => {
+    const rank = (resource: PracticalResource) => {
+      if (isClassOnlyResource(resource)) return 2;
+      return getPracticalResourceGroup(resource) === 'essential' ? 0 : 1;
+    };
+
+    return resources
+      .map((resource, index) => ({ resource, index }))
+      .sort((a, b) => {
+        const rankDifference = rank(a.resource) - rank(b.resource);
+        if (rankDifference !== 0) return rankDifference;
+        const sortDifference = a.resource.sort_order - b.resource.sort_order;
+        return sortDifference !== 0 ? sortDifference : a.index - b.index;
+      })
+      .map(({ resource }) => resource);
+  }, [resources]);
 
   const setSub = (tab: PracticalSubTab) => {
     if (onSubTabChange) onSubTabChange(tab);
@@ -456,7 +472,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                   </div>
                 ) : (
                   <div className="space-y-5">
-                    {resources.map((resource) => (
+                    {sortedResources.map((resource) => (
                       <ResourceCard
                         key={resource.id}
                         resource={resource}
