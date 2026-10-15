@@ -26,6 +26,7 @@ import {
   getPracticalResourceGroup,
   getMyMarketingConsent,
   getPracticalResourceDownloadName,
+  getPracticalResourceDisplayName,
   getPracticalResourceUrl,
   getPracticalResourcePreviewUrl,
   PRACTICAL_CATEGORY_LABELS,
@@ -124,11 +125,11 @@ const ResourceCard: React.FC<{
           <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${resourceGroup === 'practical' ? 'bg-[#FFD600]/10 text-[#FFD600]' : 'bg-white/10 text-white'}`}>
             {isLocked ? <Lock className="h-7 w-7" /> : <FileText className="h-7 w-7" />}
           </div>
-          <p className="mt-3 max-w-full truncate text-xs font-bold text-zinc-400">{resource.file_name || '온라인 자료'}</p>
+          <p className="mt-3 max-w-full truncate text-xs font-bold text-zinc-400">{resource.file_name ? getPracticalResourceDisplayName(resource.file_name) : '온라인 자료'}</p>
           {canPreview ? (
             <button type="button" onClick={() => (isLocked ? onUpgrade() : onPreview(resource))} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-xs font-black text-zinc-200 transition hover:border-[#FFD600]/45 hover:text-[#FFD600]">
               {isLocked ? <Lock className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              {isLocked ? 'PRO에서 미리보기' : '첫 10페이지 미리보기'}
+              {isLocked ? '클래스에서 미리보기' : '첫 10페이지 미리보기'}
             </button>
           ) : null}
           <button type="button" onClick={() => (isLocked ? onUpgrade() : onDownload(resource))} disabled={isDownloading} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:opacity-60 ${isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resourceGroup === 'practical' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'}`}>
