@@ -17,29 +17,29 @@ const variants = [
     id: 'bootcamp_popup_1',
     badge: '리포지셔닝 부트캠프 9기',
     title: <>단 3주,<br /><span className="text-[#B38F00]">최정예 취업·이직 리포지셔너</span>로 만들어드립니다.</>,
-    body: <>스펙을 더 쌓기 전에,<br />기업이 원하는 방식으로 나를 다시 설계하세요.</>,
+    body: <>기업의 니즈를 찾고 내 경험을 다시 해석해,<br />이력서·자소서·면접을 하나의 합격 논리로 완성합니다.</>,
     cta: '9기 모집 확인하기'
   },
   {
     id: 'bootcamp_popup_2',
-    badge: '혼자 준비하고 있다면',
+    badge: '리포지셔닝 부트캠프 9기',
     title: <>아직도<br /><span className="text-[#B38F00]">혼자 준비하세요?</span></>,
-    body: <>방향을 모르면 오래 준비해도 제자리입니다.<br />3주 동안 이력서부터 면접까지 제대로 완성하세요.</>,
+    body: <>기획자 J와 3주간 방향을 바로잡고,<br />과제와 밀착 피드백으로 실제 지원 결과물을 완성합니다.</>,
     cta: '9기 모집 확인하기'
   },
   {
     id: 'bootcamp_popup_3',
-    badge: '반복되는 탈락을 끝낼 때',
+    badge: '리포지셔닝 부트캠프 9기',
     title: <>떨어질 때마다<br /><span className="text-[#B38F00]">자소서만 고치세요?</span></>,
-    body: <>문장이 아니라 방향이 문제일 수 있습니다.<br />내 경험을 기업이 선택할 이유로 바꿔드립니다.</>,
+    body: <>문장 몇 줄을 고치는 과정이 아닙니다.<br />기업이 나를 선택할 이유부터 다시 세웁니다.</>,
     cta: '합격의 방향 바꾸기'
   },
   {
     id: 'bootcamp_popup_4',
-    badge: '쓰레드 팔로워 1만 명',
+    badge: '리포지셔닝 부트캠프 9기',
     title: <>수많은 후기가 증명한<br /><span className="text-[#B38F00]">3주의 리포지셔닝</span></>,
-    metric: '부트캠프 만족도 98.6%',
-    body: <>혼자서는 보이지 않던 방향부터<br />이력서와 면접까지 제대로 완성합니다.</>,
+    metric: '쓰레드 팔로워 1만 · 부트캠프 만족도 98.6%',
+    body: <>혼자서는 보이지 않던 강점을 찾고,<br />서류와 면접에서 통하는 전략으로 바꿉니다.</>,
     cta: '후기와 9기 모집 확인하기'
   }
 ] as const;
@@ -130,7 +130,7 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
 
   return (
     <div className="fixed inset-0 z-[120] flex items-end justify-center bg-black/35 px-3 pb-3 pt-20 sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-label="리포지셔닝 부트캠프 9기 안내">
-      <div className="relative w-full max-w-[540px] overflow-hidden rounded-[28px] border border-black/10 bg-white shadow-[0_30px_100px_rgba(0,0,0,0.48)] ring-1 ring-white/70">
+      <div className="relative max-h-[calc(100dvh-1.5rem)] w-full max-w-[560px] overflow-y-auto rounded-2xl border border-black/10 bg-white shadow-[0_30px_100px_rgba(0,0,0,0.48)] ring-1 ring-white/70">
         <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#FFD600]/20 blur-3xl" />
         <button
           type="button"
@@ -156,7 +156,17 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
           <p className="mt-5 text-sm font-medium leading-6 text-zinc-600 sm:text-[15px] sm:leading-7">
             {variant.body}
           </p>
-          <span className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#FFD600] px-5 py-4 text-sm font-black text-black transition hover:bg-yellow-300">
+          <div className="mt-6 border-y border-black/10 py-4">
+            <p className="text-[10px] font-black tracking-[0.12em] text-zinc-400">3주 후, 이렇게 달라집니다</p>
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              {['지원 방향 확정', '경험을 강점으로', '서류·면접 완성'].map((benefit) => (
+                <span key={benefit} className="flex min-h-12 items-center justify-center rounded-lg bg-zinc-100 px-2 text-center text-[11px] font-black leading-4 text-zinc-800 sm:text-xs">
+                  {benefit}
+                </span>
+              ))}
+            </div>
+          </div>
+          <span className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FFD600] px-5 py-4 text-sm font-black text-black transition hover:bg-yellow-300">
             {variant.cta}
             <ArrowRight className="h-4 w-4" />
           </span>
