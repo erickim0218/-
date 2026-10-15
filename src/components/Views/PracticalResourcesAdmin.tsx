@@ -95,7 +95,7 @@ function getResourcePreset(fileName: string): ResourcePreset | null {
       title: 'REAL NEEDS 이력서 편집용 템플릿 (Word)',
       description: '지원 기업과 직무에 맞게 직접 수정할 수 있는 편집용 Word 파일입니다. 설명을 읽는 데서 끝나지 않고 자신의 경험을 바로 적용해 이력서를 완성할 수 있습니다.',
       category: 'resume',
-      accessLevel: 'free',
+      accessLevel: 'pro',
       resourceGroup: 'practical',
       sortOrder: 30
     };
