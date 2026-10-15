@@ -191,12 +191,12 @@ export const AnalyticsAdminTab: React.FC = () => {
       clicks,
       closes,
       snoozes,
-      conversionRate: views > 0 ? ((clicks / views) * 100).toFixed(1) : '0.0'
+      clickRate: views > 0 ? ((clicks / views) * 100).toFixed(1) : '0.0'
     };
   });
   const totalPopupViews = popupStats.reduce((sum, item) => sum + item.views, 0);
   const totalPopupClicks = popupStats.reduce((sum, item) => sum + item.clicks, 0);
-  const totalPopupConversionRate = totalPopupViews > 0
+  const totalPopupClickRate = totalPopupViews > 0
     ? ((totalPopupClicks / totalPopupViews) * 100).toFixed(1)
     : '0.0';
 
@@ -391,11 +391,11 @@ export const AnalyticsAdminTab: React.FC = () => {
               <Sparkles className="w-5 h-5 text-[#FFD600]" />
               <span>부트캠프 팝업광고 성과</span>
             </h3>
-            <p className="mt-2 text-xs text-zinc-500">광고 본문 또는 버튼 클릭으로 부트캠프 상세페이지에 이동한 비율입니다.</p>
+            <p className="mt-2 text-xs text-zinc-500">팝업을 본 횟수 중 본문 또는 버튼을 눌러 부트캠프 상세페이지로 들어온 비율입니다.</p>
           </div>
           <div className="rounded-xl border border-[#FFD600]/25 bg-[#FFD600]/5 px-4 py-3 text-right">
-            <div className="text-[10px] font-bold text-zinc-500">전체 상세페이지 전환율</div>
-            <div className="mt-1 text-xl font-black text-[#FFD600]">{totalPopupConversionRate}%</div>
+            <div className="text-[10px] font-bold text-zinc-500">전체 팝업 클릭률</div>
+            <div className="mt-1 text-xl font-black text-[#FFD600]">{totalPopupClickRate}%</div>
           </div>
         </div>
 
@@ -408,7 +408,7 @@ export const AnalyticsAdminTab: React.FC = () => {
                   <h4 className="mt-1 text-sm font-black text-white">{item.label}</h4>
                 </div>
                 <span className="shrink-0 rounded-lg bg-[#FFD600]/10 px-2.5 py-1.5 text-xs font-black text-[#FFD600]">
-                  전환 {item.conversionRate}%
+                  클릭률 {item.clickRate}%
                 </span>
               </div>
               <div className="mt-4 grid grid-cols-4 gap-2 text-center">
