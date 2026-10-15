@@ -241,13 +241,13 @@ export const Header: React.FC<HeaderProps> = ({
                       onClick={() => onTabChange('practical', 'resources')}
                       className="w-full text-left px-4 py-2.5 text-xs font-semibold text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition flex items-center justify-between"
                     >
-                      <span>필수자료</span>
+                      <span>자료 다운로드</span>
                     </button>
                     <button
                       onClick={() => onTabChange('practical', 'persuasion')}
                       className="w-full text-left px-4 py-2.5 text-xs font-semibold text-zinc-300 hover:text-[#FFD600] hover:bg-zinc-800/60 transition flex items-center justify-between"
                     >
-                      <span>실전자료</span>
+                      <span>Building Up Book</span>
                     </button>
                   </div>
                 )}
