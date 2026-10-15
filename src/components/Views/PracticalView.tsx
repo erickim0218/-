@@ -23,6 +23,7 @@ import { MemberTier } from '../../types';
 import {
   fetchPracticalResources,
   formatResourceSize,
+  getPracticalResourceGroup,
   getMyMarketingConsent,
   getPracticalResourceDownloadName,
   getPracticalResourceUrl,
@@ -51,8 +52,8 @@ const tabItems: Array<{
   shortTitle: string;
   icon: React.ComponentType<{ className?: string }>;
 }> = [
-  { id: 'resources', title: '무료자료', shortTitle: '무료자료', icon: Download },
-  { id: 'persuasion', title: '프로 전용 실전자료', shortTitle: '프로 전용', icon: Sparkles }
+  { id: 'resources', title: '필수자료', shortTitle: '필수자료', icon: Download },
+  { id: 'persuasion', title: '실전자료', shortTitle: '실전자료', icon: Sparkles }
 ];
 
 const PaidContentLock: React.FC<{
@@ -64,7 +65,7 @@ const PaidContentLock: React.FC<{
     <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-[#FFD600]/30 bg-[#FFD600]/10 text-[#FFD600]">
       <Lock className="h-8 w-8" />
     </div>
-    <span className="mt-6 block text-xs font-black tracking-[0.18em] text-[#FFD600]">PRO CONTENT</span>
+    <span className="mt-6 block text-xs font-black tracking-[0.18em] text-[#FFD600]">CLASS CONTENT</span>
     <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">{title}</h2>
     <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-zinc-400">{description}</p>
     <button
@@ -72,7 +73,7 @@ const PaidContentLock: React.FC<{
       onClick={() => onTabChange('pro-payment')}
       className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFD600] px-7 py-4 text-sm font-black text-black transition hover:bg-yellow-300 sm:w-auto"
     >
-      프로로 시작하기
+      리포지셔닝 클래스 수강하기
       <ArrowRight className="h-4 w-4" />
     </button>
   </div>
@@ -87,13 +88,14 @@ const ResourceCard: React.FC<{
   onPreview: (resource: PracticalResource) => void;
 }> = ({ resource, canUsePro, isDownloading, onDownload, onUpgrade, onPreview }) => {
   const isLocked = resource.access_level === 'pro' && !canUsePro;
+  const resourceGroup = getPracticalResourceGroup(resource);
   const normalizedTitle = resource.title.toLowerCase();
   const isPdf = resource.mime_type === 'application/pdf' || resource.file_name?.toLowerCase().endsWith('.pdf');
   const canPreview = Boolean(isPdf && !normalizedTitle.includes('예시') && !normalizedTitle.includes('프롬프트'));
 
   return (
     <article className={`group relative overflow-hidden rounded-3xl border shadow-[0_18px_60px_rgba(0,0,0,0.28)] transition ${
-      resource.access_level === 'pro'
+      resourceGroup === 'practical'
         ? 'border-[#FFD600]/35 bg-gradient-to-br from-[#1d1b0e] via-[#151516] to-[#101014] hover:border-[#FFD600]/70'
         : 'border-white/15 bg-gradient-to-br from-[#1b1b20] via-[#151518] to-[#101014] hover:border-[#FFD600]/45'
     }`}>
@@ -101,8 +103,11 @@ const ResourceCard: React.FC<{
       <div className="grid gap-6 p-6 sm:p-8 md:grid-cols-[minmax(0,1fr)_260px] md:items-stretch lg:gap-10 lg:p-10">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <span className={`rounded-md px-3 py-1.5 text-[10px] font-black tracking-wide ${resource.access_level === 'pro' ? 'bg-[#FFD600] text-black' : 'border border-[#FFD600]/30 bg-[#FFD600]/10 text-[#FFD600]'}`}>
-              {resource.access_level === 'pro' ? 'PRO 자료' : '무료자료'}
+            <span className={`rounded-md px-3 py-1.5 text-[10px] font-black tracking-wide ${resourceGroup === 'practical' ? 'bg-[#FFD600] text-black' : 'border border-white/20 bg-white/10 text-white'}`}>
+              {resourceGroup === 'practical' ? '실전자료' : '필수자료'}
+            </span>
+            <span className={`rounded-md px-3 py-1.5 text-[10px] font-black ${resource.access_level === 'pro' ? 'border border-[#FFD600]/30 bg-[#FFD600]/10 text-[#FFD600]' : 'bg-emerald-500/10 text-emerald-300'}`}>
+              {resource.access_level === 'pro' ? '클래스 수강자 전용' : '무료배포'}
             </span>
             <span className="rounded-md bg-white/10 px-3 py-1.5 text-[10px] font-bold text-zinc-300">{PRACTICAL_CATEGORY_LABELS[resource.category]}</span>
           </div>
@@ -116,7 +121,7 @@ const ResourceCard: React.FC<{
         </div>
 
         <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-black/25 p-5 text-center sm:p-6">
-          <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${resource.access_level === 'pro' ? 'bg-[#FFD600]/10 text-[#FFD600]' : 'bg-white/10 text-white'}`}>
+          <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${resourceGroup === 'practical' ? 'bg-[#FFD600]/10 text-[#FFD600]' : 'bg-white/10 text-white'}`}>
             {isLocked ? <Lock className="h-7 w-7" /> : <FileText className="h-7 w-7" />}
           </div>
           <p className="mt-3 max-w-full truncate text-xs font-bold text-zinc-400">{resource.file_name || '온라인 자료'}</p>
@@ -126,9 +131,9 @@ const ResourceCard: React.FC<{
               {isLocked ? 'PRO에서 미리보기' : '첫 10페이지 미리보기'}
             </button>
           ) : null}
-          <button type="button" onClick={() => (isLocked ? onUpgrade() : onDownload(resource))} disabled={isDownloading} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:opacity-60 ${isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resource.access_level === 'pro' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'}`}>
+          <button type="button" onClick={() => (isLocked ? onUpgrade() : onDownload(resource))} disabled={isDownloading} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:opacity-60 ${isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resourceGroup === 'practical' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'}`}>
             {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : isLocked ? <Lock className="h-4 w-4" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
-            {isDownloading ? '준비 중...' : isLocked ? 'PRO에서 이용하기' : resource.external_url ? '자료 열기' : '자료 다운로드'}
+            {isDownloading ? '준비 중...' : isLocked ? '클래스에서 이용하기' : resource.external_url ? '자료 열기' : '무료 다운로드'}
           </button>
         </div>
       </div>
@@ -241,13 +246,19 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
   }, [currentTier]);
 
   const groupedResources = useMemo(() => ({
-    free: resources.filter((resource) => resource.access_level === 'free'),
-    pro: resources.filter((resource) => resource.access_level === 'pro')
+    essential: resources.filter((resource) => getPracticalResourceGroup(resource) === 'essential'),
+    practical: resources.filter((resource) => getPracticalResourceGroup(resource) === 'practical')
   }), [resources]);
 
   const realNeedsResume = useMemo(() => resources.find((resource) => {
     const normalizedTitle = resource.title.toLowerCase().replace(/[\s_-]/g, '');
-    return resource.access_level === 'pro'
+    return getPracticalResourceGroup(resource) === 'practical'
+      && (normalizedTitle.includes('realneeds') || normalizedTitle.includes('리얼니즈'))
+      && normalizedTitle.includes('이력서')
+      && resource.file_name?.toLowerCase().endsWith('.docx');
+  }) || resources.find((resource) => {
+    const normalizedTitle = resource.title.toLowerCase().replace(/[\s_-]/g, '');
+    return getPracticalResourceGroup(resource) === 'practical'
       && (normalizedTitle.includes('realneeds') || normalizedTitle.includes('리얼니즈'))
       && normalizedTitle.includes('이력서');
   }), [resources]);
@@ -396,8 +407,8 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
           </span>
           <h1 className="mt-5 text-3xl font-black tracking-tight text-white sm:text-5xl">리포지셔닝 실전활용</h1>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-zinc-400 sm:text-base">
-            이직 방향을 점검하는 무료자료부터 기업별 지원에 바로 쓰는 PRO 자료까지,
-            지금 필요한 내용을 골라 활용해보세요.
+            취업의 기준을 세우는 필수자료부터 지원서에 바로 적용하는 실전자료까지,
+            회원이라면 대부분의 자료를 무료로 이용할 수 있습니다.
           </p>
 
           <div className="mt-9 grid grid-cols-2 gap-2 rounded-2xl border border-zinc-800 bg-[#09090B] p-2 sm:inline-grid sm:min-w-[560px]">
@@ -415,7 +426,6 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                 <Icon className="h-4 w-4 shrink-0" />
                 <span className="sm:hidden">{shortTitle}</span>
                 <span className="hidden sm:inline">{title}</span>
-                {id !== 'resources' && !isPaidMember ? <Lock className="hidden h-3.5 w-3.5 sm:block" /> : null}
               </button>
             ))}
           </div>
@@ -427,8 +437,8 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
           <div className="animate-fade-in">
             <section>
               <div className="text-center">
-                <span className="text-xs font-black tracking-[0.18em] text-emerald-400">FREE RESOURCES</span>
-                <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">방향을 잡는 데 필요한 무료자료</h2>
+                <span className="text-xs font-black tracking-[0.18em] text-emerald-400">ESSENTIAL RESOURCES</span>
+                <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">먼저 읽어야 할 필수자료</h2>
                 <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-zinc-500">
                   경력을 다시 정리하고 이직 준비의 기준을 세울 때 먼저 확인해보세요.
                 </p>
@@ -446,14 +456,14 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                       <RefreshCw className="h-4 w-4" /> 다시 불러오기
                     </button>
                   </div>
-                ) : groupedResources.free.length === 0 ? (
+                ) : groupedResources.essential.length === 0 ? (
                   <div className="rounded-2xl border border-dashed border-zinc-700 bg-[#121216]/50 py-14 text-center">
                     <FileText className="mx-auto h-7 w-7 text-zinc-600" />
-                    <p className="mt-4 text-sm font-bold text-zinc-400">첫 무료자료를 준비하고 있습니다.</p>
+                    <p className="mt-4 text-sm font-bold text-zinc-400">필수자료를 준비하고 있습니다.</p>
                   </div>
                 ) : (
                   <div className="space-y-5">
-                    {groupedResources.free.map((resource) => (
+                    {groupedResources.essential.map((resource) => (
                       <ResourceCard
                         key={resource.id}
                         resource={resource}
@@ -475,10 +485,10 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
         {(currentSub === 'persuasion' || currentSub === 'interview') && (
           <div className="animate-fade-in">
             <div className="text-center">
-              <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">PRO PRACTICAL TOOLS</span>
-              <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">프로 전용 실전자료</h2>
+              <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">PRACTICAL RESOURCES</span>
+              <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">지원에 바로 적용하는 실전자료</h2>
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-zinc-500">
-                읽고 끝나는 자료가 아니라, 지금 지원하는 기업에 바로 적용하는 실전 도구입니다.
+                대부분 무료로 배포하며, 완성 예시와 프롬프트는 클래스 수강자에게만 제공합니다.
               </p>
             </div>
 
@@ -509,7 +519,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                 <div className="grid items-center gap-8 md:grid-cols-[1.35fr_0.65fr]">
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="rounded-md bg-[#FFD600] px-2.5 py-1 text-[10px] font-black tracking-wide text-black">PRO 대표자료</span>
+                      <span className="rounded-md bg-[#FFD600] px-2.5 py-1 text-[10px] font-black tracking-wide text-black">실전자료 · 무료배포</span>
                       <span className="rounded-md bg-white/10 px-2.5 py-1 text-[10px] font-bold text-zinc-300">이력서 · 경력기술서</span>
                     </div>
                     <h3 className="mt-5 text-2xl font-black tracking-tight text-white sm:text-3xl">REAL NEEDS 이력서</h3>
@@ -530,21 +540,21 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                     <button
                       type="button"
                       onClick={() => {
-                        if (!isPaidMember) {
+                        if (realNeedsResume?.access_level === 'pro' && !isPaidMember) {
                           onTabChange('pro-payment');
                         } else if (realNeedsResume) {
                           requestDownload(realNeedsResume);
                         }
                       }}
-                      disabled={isPaidMember && (!realNeedsResume || downloadingId === realNeedsResume.id)}
+                      disabled={!realNeedsResume || downloadingId === realNeedsResume.id}
                       className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFD600] px-4 py-3.5 text-xs font-black text-black transition hover:bg-yellow-300 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {downloadingId === realNeedsResume?.id ? (
                         <><Loader2 className="h-4 w-4 animate-spin" /> 준비 중...</>
-                      ) : !isPaidMember ? (
-                        <><Lock className="h-4 w-4" /> 프로로 전체 자료 열기</>
+                      ) : realNeedsResume?.access_level === 'pro' && !isPaidMember ? (
+                        <><Lock className="h-4 w-4" /> 클래스에서 이용하기</>
                       ) : realNeedsResume ? (
-                        <><Download className="h-4 w-4" /> REAL NEEDS 이력서 받기</>
+                        <><Download className="h-4 w-4" /> REAL NEEDS 이력서 무료로 받기</>
                       ) : (
                         '자료 업로드 준비 중'
                       )}
@@ -565,14 +575,14 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                       <RefreshCw className="h-4 w-4" /> 다시 불러오기
                     </button>
                   </div>
-                ) : groupedResources.pro.length === 0 ? (
+                ) : groupedResources.practical.length === 0 ? (
                   <div className="rounded-2xl border border-dashed border-[#FFD600]/25 bg-[#FFD600]/5 py-14 text-center">
                     <BookOpen className="mx-auto h-7 w-7 text-[#FFD600]/60" />
-                    <p className="mt-4 text-sm font-bold text-zinc-400">PRO 전용 자료를 준비하고 있습니다.</p>
+                    <p className="mt-4 text-sm font-bold text-zinc-400">실전자료를 준비하고 있습니다.</p>
                   </div>
                 ) : (
                   <div className="space-y-5">
-                    {groupedResources.pro.filter((resource) => resource.id !== realNeedsResume?.id).map((resource) => (
+                    {groupedResources.practical.filter((resource) => resource.id !== realNeedsResume?.id).map((resource) => (
                       <ResourceCard
                         key={resource.id}
                         resource={resource}
@@ -626,8 +636,8 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
               <PaidContentLock
                 title={buildingBookTab === 'persuasion' ? '자기설득서 Building Up Book' : '면접통제 Building Up Book'}
                 description={buildingBookTab === 'persuasion'
-                  ? '기업의 질문 의도를 확인하고, 주장·근거·어필의 구조로 나를 채용해야 할 이유를 직접 정리하는 PRO 전용 워크북입니다.'
-                  : '자기소개부터 약점 질문과 역질문까지, 면접에서 보여줄 핵심 메시지를 한 흐름으로 정리하는 PRO 전용 워크북입니다.'}
+                  ? '기업의 질문 의도를 확인하고, 주장·근거·어필의 구조로 나를 채용해야 할 이유를 직접 정리하는 클래스 수강자 전용 워크북입니다.'
+                  : '자기소개부터 약점 질문과 역질문까지, 면접에서 보여줄 핵심 메시지를 한 흐름으로 정리하는 클래스 수강자 전용 워크북입니다.'}
                 onTabChange={onTabChange}
               />
             )}
