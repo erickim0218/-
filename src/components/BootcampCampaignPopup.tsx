@@ -225,31 +225,25 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
               ))}
             </div>
           </div>
-          <div className="mt-5 rounded-lg bg-[#111114] p-4 text-white sm:p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-[10px] font-black tracking-[0.12em] text-zinc-400">
-                  {isClosed ? '리포지셔닝 부트캠프 9기' : '10월 23일 오후 9시 마감'}
-                </p>
-                <p className="mt-1.5 font-mono text-lg font-black tracking-tight text-[#FFD600] sm:text-xl">
-                  {isExpired
-                    ? '모집이 마감되었습니다'
-                    : isFull
-                      ? '선착순 모집이 마감되었습니다'
-                      : `${timeLeft.days}일 ${String(timeLeft.hours).padStart(2, '0')}:${String(timeLeft.minutes).padStart(2, '0')}:${String(timeLeft.seconds).padStart(2, '0')}`}
-                </p>
+          <div className="mt-4 flex justify-end">
+            <div className="w-full max-w-[310px] text-right">
+              <p className="text-[10px] font-bold text-zinc-500">
+                {isClosed ? '리포지셔닝 부트캠프 9기' : '10월 23일 오후 9시 마감 · 선착순 5명'}
+              </p>
+              <p className="mt-1 font-mono text-sm font-black tracking-tight text-black">
+                {isExpired
+                  ? '모집이 마감되었습니다'
+                  : isFull
+                    ? '선착순 모집이 마감되었습니다'
+                    : `마감까지 ${timeLeft.days}일 ${String(timeLeft.hours).padStart(2, '0')}:${String(timeLeft.minutes).padStart(2, '0')}:${String(timeLeft.seconds).padStart(2, '0')}`}
+              </p>
+              <div className="mt-2 h-1 overflow-hidden rounded-full bg-zinc-200">
+                <div className="h-full rounded-full bg-[#FFD600] transition-[width] duration-500" style={{ width: `${progressPercent}%` }} />
               </div>
-              <div className="shrink-0 text-right">
-                <p className="text-[10px] font-bold text-zinc-500">선착순 {BOOTCAMP_CAPACITY}명</p>
-                <p className="mt-1 text-sm font-black text-white">{displayCount}/{BOOTCAMP_CAPACITY}명</p>
-              </div>
+              <p className="mt-1.5 text-[10px] font-bold text-zinc-600">
+                {isClosed ? '9기 모집 종료' : `현재 ${displayCount}/${BOOTCAMP_CAPACITY}명 · 잔여 ${remainingSlots}명`}
+              </p>
             </div>
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-              <div className="h-full rounded-full bg-[#FFD600] transition-[width] duration-500" style={{ width: `${progressPercent}%` }} />
-            </div>
-            <p className={`mt-2 text-[11px] font-black ${isClosed ? 'text-zinc-400' : 'text-emerald-400'}`}>
-              {isClosed ? '9기 모집 종료' : `현재 ${displayCount}명 신청 · 잔여 ${remainingSlots}명`}
-            </p>
           </div>
           <span className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FFD600] px-5 py-4 text-sm font-black text-black transition hover:bg-yellow-300">
             {isClosed ? '9기 모집 마감' : variant.cta}
