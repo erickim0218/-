@@ -349,7 +349,7 @@ export const FeaturedCoursesSection: React.FC<{
                   <span className="p-2 rounded-xl bg-[#FFD600]/10 text-[#FFD600]">
                     <FileText className="w-5 h-5" />
                   </span>
-                  <span className="text-xs font-bold text-[#FFD600] tracking-wider uppercase">FREE + PRO LIBRARY</span>
+                  <span className="text-xs font-bold text-[#FFD600] tracking-wider uppercase">ESSENTIAL + PRACTICAL LIBRARY</span>
                 </div>
                 {!isPracticalEnabled && (
                   <span className="px-2 py-0.5 text-[10px] font-bold bg-[#18181B] text-amber-200/90 border border-amber-500/30 rounded">
@@ -368,15 +368,15 @@ export const FeaturedCoursesSection: React.FC<{
               <div className="space-y-2 pt-2 border-t border-[#1F1F24]">
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>이직자를 위한 무료 실전자료</span>
+                  <span>방향을 잡아주는 필수자료 무료배포</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>PRO 전용 심화 자료</span>
+                  <span>지원서에 바로 쓰는 실전자료 무료배포</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>기존 Building Up Book</span>
+                  <span>예시·프롬프트·Building Up Book은 클래스 제공</span>
                 </div>
               </div>
             </div>
