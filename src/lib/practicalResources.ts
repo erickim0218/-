@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 
 export type PracticalResourceAccess = 'free' | 'pro';
+export type PracticalResourceGroup = 'essential' | 'practical';
 export type PracticalResourceCategory =
   | 'career'
   | 'resume'
@@ -28,6 +29,18 @@ export interface PracticalResource {
 }
 
 export const PRACTICAL_RESOURCE_BUCKET = 'practical-resources';
+
+export function getPracticalResourceGroup(resource: Pick<PracticalResource, 'file_name' | 'file_path'>): PracticalResourceGroup {
+  const source = `${resource.file_name || ''} ${resource.file_path || ''}`.normalize('NFC').toLowerCase();
+  return source.includes('[프로자료]')
+    || source.includes('[실전자료]')
+    || source.startsWith('pro/')
+    || source.includes(' pro/')
+    || source.startsWith('practical/')
+    || source.includes(' practical/')
+    ? 'practical'
+    : 'essential';
+}
 
 export const PRACTICAL_CATEGORY_LABELS: Record<PracticalResourceCategory, string> = {
   career: '커리어 방향',
@@ -122,6 +135,7 @@ export interface PracticalResourceInput {
   description: string;
   category: PracticalResourceCategory;
   accessLevel: PracticalResourceAccess;
+  resourceGroup: PracticalResourceGroup;
   sortOrder: number;
   file?: File | null;
   externalUrl?: string;
@@ -148,7 +162,7 @@ export async function createPracticalResource(input: PracticalResourceInput) {
     fileName = input.file.name;
     fileSize = input.file.size;
     mimeType = input.file.type || 'application/octet-stream';
-    filePath = `${input.accessLevel}/${Date.now()}-${sanitizeFileName(input.file.name)}`;
+    filePath = `${input.resourceGroup}/${Date.now()}-${sanitizeFileName(input.file.name)}`;
 
     const { error: uploadError } = await supabase.storage
       .from(PRACTICAL_RESOURCE_BUCKET)
