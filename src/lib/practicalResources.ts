@@ -84,9 +84,16 @@ export async function getPracticalResourceUrl(resource: PracticalResource) {
 export function getPracticalResourceDownloadName(resource: PracticalResource) {
   const fallbackExtension = resource.file_path?.match(/\.[a-zA-Z0-9]+$/)?.[0] || '';
   const fallbackName = `${resource.title}${fallbackExtension}`;
-  return (resource.file_name || fallbackName)
+  return getPracticalResourceDisplayName(resource.file_name || fallbackName)
     .normalize('NFC')
     .replace(/[\\/:*?"<>|\u0000-\u001F]/g, '-')
+    .trim();
+}
+
+export function getPracticalResourceDisplayName(fileName: string) {
+  return fileName
+    .normalize('NFC')
+    .replace(/^\\[(무료자료|프로자료|필수자료|실전자료)\\]\\s*/u, '')
     .trim();
 }
 
