@@ -9,7 +9,6 @@ import {
   Rocket,
   Award,
   ArrowRight,
-  Sparkles,
   MessageSquare,
   ExternalLink,
   Flame,
@@ -203,42 +202,27 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
       <section className="pt-2 sm:pt-4 pb-10 px-4 max-w-4xl mx-auto">
         <div className="bg-[#121216] border border-zinc-800/90 rounded-3xl p-6 sm:p-10 space-y-6 shadow-2xl relative overflow-hidden">
           
-          {/* 상단 배지 및 헤더 순서 */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-zinc-800/80 pb-4">
-            <div className="order-1 flex items-center gap-2">
+          {/* 상단 프로그램 배지 */}
+          <div className="flex items-center gap-2">
               {isClosed ? (
                 <span className="px-2.5 py-1 text-xs font-black rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30">
-                  9기 모집 마감
+                  REPOSITIONING BOOTCAMP 9기 · 모집 마감
                 </span>
               ) : (
                 <span className="px-2.5 py-1 text-xs font-black rounded-lg bg-[#FFD600]/20 text-[#FFD600] border border-[#FFD600]/40">
-                  9기 모집 중
+                  REPOSITIONING BOOTCAMP 9기 · 모집 중
                 </span>
               )}
-            </div>
-            <div className="order-2 flex items-center gap-2 text-[#FFD600] font-bold text-xs sm:text-sm">
-              <Sparkles className="w-3.5 h-3.5 fill-current shrink-0" />
-              <span>취업 이직 시장에 당장 뛰어들 수 있는 무기를 만들어드립니다.</span>
-            </div>
           </div>
 
-          <div className="space-y-4">
+          <div>
             <div>
               <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
-                기획자J의 <span className="text-[#FFD600]">리포지셔닝 부트캠프</span>
+                <span className="block">기획자J의</span>
+                <span className="block text-[#FFD600]">리포지셔닝 부트캠프</span>
               </h1>
-              <p className="mt-3 text-base sm:text-xl font-black text-[#FFD600] tracking-tight leading-snug">
+              <p className="mt-5 max-w-3xl text-base sm:text-xl font-black text-zinc-200 tracking-tight leading-snug">
                 단 3주, 당신을 취업·이직 최정예 리포지셔너로 만들어드립니다.
-              </p>
-            </div>
-
-            <div className="py-2">
-              <p className="text-sm text-zinc-300 font-medium leading-relaxed sm:text-base sm:leading-7">
-                <strong className="block font-black text-white">특강·과제·1:1 밀착 컨설팅 및 피드백으로</strong>
-                <span className="block">
-                  당신의 스펙이 <strong className="font-black text-[#FFD600]">기업의 니즈에 부합한 최적의 스펙으로 인식되도록</strong>
-                </span>
-                <strong className="block font-black text-white">경험을 브랜딩 전략으로 바꾸는 방법을 함께 완성합니다.</strong>
               </p>
             </div>
           </div>
