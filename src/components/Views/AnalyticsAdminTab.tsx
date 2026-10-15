@@ -172,6 +172,34 @@ export const AnalyticsAdminTab: React.FC = () => {
     pageCounts[p] = (pageCounts[p] || 0) + 1;
   });
 
+  const popupVariantLabels: Record<string, string> = {
+    bootcamp_popup_1: '1안 · 단 3주 최정예 리포지셔너',
+    bootcamp_popup_2: '2안 · 아직도 혼자 준비하세요?',
+    bootcamp_popup_3: '3안 · 자소서만 고치세요?',
+    bootcamp_popup_4: '4안 · 수많은 후기가 증명한 3주'
+  };
+  const popupStats = Object.entries(popupVariantLabels).map(([key, label]) => {
+    const variantEvents = events.filter((event) => event.button_location === key);
+    const views = variantEvents.filter((event) => event.event_name === 'bootcamp_popup_view').length;
+    const clicks = variantEvents.filter((event) => event.event_name === 'bootcamp_popup_click').length;
+    const closes = variantEvents.filter((event) => event.event_name === 'bootcamp_popup_close').length;
+    const snoozes = variantEvents.filter((event) => event.event_name === 'bootcamp_popup_snooze').length;
+    return {
+      key,
+      label,
+      views,
+      clicks,
+      closes,
+      snoozes,
+      conversionRate: views > 0 ? ((clicks / views) * 100).toFixed(1) : '0.0'
+    };
+  });
+  const totalPopupViews = popupStats.reduce((sum, item) => sum + item.views, 0);
+  const totalPopupClicks = popupStats.reduce((sum, item) => sum + item.clicks, 0);
+  const totalPopupConversionRate = totalPopupViews > 0
+    ? ((totalPopupClicks / totalPopupViews) * 100).toFixed(1)
+    : '0.0';
+
   return (
     <div className="space-y-8 font-sans">
       
@@ -352,6 +380,52 @@ export const AnalyticsAdminTab: React.FC = () => {
             </span>
           </div>
           <span className="text-[11px] text-zinc-400">※ '문의 클릭'은 상담/신청 완료가 아닌 외부 링크(카카오톡 등) 이동 직전 클릭 기준입니다.</span>
+        </div>
+      </div>
+
+      {/* Bootcamp Popup Ad Performance */}
+      <div className="bg-[#121216] border border-[#FFD600]/25 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="flex flex-col gap-3 border-b border-zinc-800 pb-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h3 className="text-lg font-black text-white flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-[#FFD600]" />
+              <span>부트캠프 팝업광고 성과</span>
+            </h3>
+            <p className="mt-2 text-xs text-zinc-500">광고 본문 또는 버튼 클릭으로 부트캠프 상세페이지에 이동한 비율입니다.</p>
+          </div>
+          <div className="rounded-xl border border-[#FFD600]/25 bg-[#FFD600]/5 px-4 py-3 text-right">
+            <div className="text-[10px] font-bold text-zinc-500">전체 상세페이지 전환율</div>
+            <div className="mt-1 text-xl font-black text-[#FFD600]">{totalPopupConversionRate}%</div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          {popupStats.map((item) => (
+            <div key={item.key} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 sm:p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <span className="text-[10px] font-black text-[#FFD600]">{item.key.replace('bootcamp_popup_', '')}번 광고</span>
+                  <h4 className="mt-1 text-sm font-black text-white">{item.label}</h4>
+                </div>
+                <span className="shrink-0 rounded-lg bg-[#FFD600]/10 px-2.5 py-1.5 text-xs font-black text-[#FFD600]">
+                  전환 {item.conversionRate}%
+                </span>
+              </div>
+              <div className="mt-4 grid grid-cols-4 gap-2 text-center">
+                {[
+                  ['노출', item.views],
+                  ['상세 이동', item.clicks],
+                  ['닫기', item.closes],
+                  ['6시간 숨김', item.snoozes]
+                ].map(([label, value]) => (
+                  <div key={String(label)} className="rounded-xl bg-zinc-950 px-2 py-3">
+                    <div className="text-[10px] text-zinc-500">{label}</div>
+                    <div className="mt-1 text-sm font-black text-white">{value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
