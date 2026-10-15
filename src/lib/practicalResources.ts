@@ -93,7 +93,7 @@ export function getPracticalResourceDownloadName(resource: PracticalResource) {
 export function getPracticalResourceDisplayName(fileName: string) {
   return fileName
     .normalize('NFC')
-    .replace(/^\\[(무료자료|프로자료|필수자료|실전자료)\\]\\s*/u, '')
+    .replace(/^\[(무료자료|프로자료|필수자료|실전자료)\]\s*/u, '')
     .trim();
 }
 
@@ -121,6 +121,14 @@ export async function recordPracticalResourceDownload(resourceId: string) {
     if (notificationError) console.warn('Failed to send download notification:', notificationError);
   }
   return data as string | null;
+}
+
+export async function fetchMyPracticalResourceClaims() {
+  const { data, error } = await supabase
+    .from('practical_resource_claims')
+    .select('resource_id');
+  if (error) throw error;
+  return (data || []).map((claim) => claim.resource_id as string);
 }
 
 export async function getMyMarketingConsent() {
