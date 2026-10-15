@@ -35,6 +35,7 @@ import {
   setMyMarketingConsent
 } from '../../lib/practicalResources';
 import { SelfPersuasionBook } from '../SelfPersuasionBook';
+import { supabase } from '../../lib/supabase';
 
 GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
@@ -98,8 +99,11 @@ const ResourceCard: React.FC<{
   onUpgrade: () => void;
   onPreview: (resource: PracticalResource) => void;
 }> = ({ resource, canUsePro, isDownloading, onDownload, onUpgrade, onPreview }) => {
+  const downloadLimit = 100;
   const isClassOnly = isClassOnlyResource(resource);
   const isLocked = isClassOnly && !canUsePro;
+  const downloadCount = Math.min(resource.download_count || 0, downloadLimit);
+  const isDistributionClosed = downloadCount >= downloadLimit;
   const resourceGroup = getPracticalResourceGroup(resource);
   const normalizedTitle = resource.title.toLowerCase();
   const isPdf = resource.mime_type === 'application/pdf' || resource.file_name?.toLowerCase().endsWith('.pdf');
@@ -130,6 +134,23 @@ const ResourceCard: React.FC<{
             {canPreview ? <span className="rounded-full border border-white/10 px-3 py-1.5">10페이지 미리보기</span> : null}
             {resource.file_size ? <span className="rounded-full border border-white/10 px-3 py-1.5">{formatResourceSize(resource.file_size)}</span> : null}
           </div>
+          <div className="mt-5 max-w-md rounded-xl border border-white/10 bg-black/20 p-3.5">
+            <div className="flex items-center justify-between gap-3 text-xs font-black">
+              <span className={isDistributionClosed ? 'text-rose-300' : 'text-[#FFD600]'}>
+                {isDistributionClosed ? '선착순 배포 마감' : isClassOnly ? '클래스 수강자 100명 한정' : '선착순 100명 무료배포'}
+              </span>
+              <span className="shrink-0 text-zinc-300">{downloadCount} / {downloadLimit}명</span>
+            </div>
+            <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div
+                className={`h-full rounded-full transition-all ${isDistributionClosed ? 'bg-rose-400' : 'bg-[#FFD600]'}`}
+                style={{ width: `${downloadCount}%` }}
+              />
+            </div>
+            {!isDistributionClosed ? (
+              <p className="mt-2 text-[11px] font-bold text-zinc-500">남은 수량 {downloadLimit - downloadCount}명</p>
+            ) : null}
+          </div>
         </div>
 
         <div className="flex w-full min-w-0 flex-col items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-black/25 p-4 text-center sm:p-6">
@@ -143,9 +164,9 @@ const ResourceCard: React.FC<{
               {isLocked ? '클래스에서 미리보기' : '첫 10페이지 미리보기'}
             </button>
           ) : null}
-          <button type="button" onClick={() => (isLocked ? onUpgrade() : onDownload(resource))} disabled={isDownloading} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:opacity-60 ${isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resourceGroup === 'practical' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'}`}>
-            {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : isLocked ? <Lock className="h-4 w-4" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
-            {isDownloading ? '준비 중...' : isLocked ? '클래스에서 이용하기' : resource.external_url ? '자료 열기' : '무료 다운로드'}
+          <button type="button" onClick={() => (isLocked ? onUpgrade() : onDownload(resource))} disabled={isDownloading || isDistributionClosed} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:cursor-not-allowed disabled:opacity-60 ${isDistributionClosed ? 'border border-rose-400/25 bg-rose-400/5 text-rose-300' : isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resourceGroup === 'practical' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'}`}>
+            {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : isDistributionClosed || isLocked ? <Lock className="h-4 w-4" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
+            {isDownloading ? '준비 중...' : isDistributionClosed ? '선착순 배포 마감' : isLocked ? '클래스에서 이용하기' : resource.external_url ? '자료 열기' : '무료 다운로드'}
           </button>
         </div>
       </div>
@@ -266,6 +287,29 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
   }, [loadResources, currentTier]);
 
   useEffect(() => {
+    const channel = supabase
+      .channel('practical-resource-download-counts')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'practical_resources' },
+        (payload) => {
+          const updated = payload.new as Partial<PracticalResource>;
+          if (!updated.id || typeof updated.download_count !== 'number') return;
+          setResources((current) => current.map((resource) => (
+            resource.id === updated.id
+              ? { ...resource, download_count: updated.download_count as number }
+              : resource
+          )));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, []);
+
+  useEffect(() => {
     if (currentTier === 'NON_MEMBER') return;
     getMyMarketingConsent()
       .then(setMarketingConsent)
@@ -276,7 +320,14 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
     setDownloadingId(resource.id);
     try {
       const url = await getPracticalResourceUrl(resource);
-      await recordPracticalResourceDownload(resource.id);
+      const downloadId = await recordPracticalResourceDownload(resource.id);
+      if (downloadId) {
+        setResources((current) => current.map((item) => (
+          item.id === resource.id
+            ? { ...item, download_count: Math.min((item.download_count || 0) + 1, 100) }
+            : item
+        )));
+      }
 
       if (resource.external_url) {
         window.open(url, '_blank', 'noopener,noreferrer');
@@ -298,7 +349,13 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
       window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
     } catch (error) {
       console.error('Failed to open practical resource:', error);
-      window.alert('자료를 열지 못했습니다. 잠시 후 다시 시도해 주세요.');
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes('DOWNLOAD_LIMIT_REACHED')) {
+        window.alert('이 자료는 선착순 100명 배포가 마감되었습니다.');
+        void loadResources();
+      } else {
+        window.alert('자료를 열지 못했습니다. 잠시 후 다시 시도해 주세요.');
+      }
     } finally {
       setDownloadingId('');
     }
