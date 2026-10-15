@@ -22,6 +22,7 @@ import { supabase, supabaseApi } from './lib/supabase';
 import { checkIsPro } from './lib/userAccess';
 import { fetchSiteFeatures } from './lib/siteFeatures';
 import { trackAnalyticsEvent } from './lib/analytics';
+import { BootcampCampaignPopup } from './components/BootcampCampaignPopup';
 
 const STORAGE_USERS_KEY = 'reposition_db_managed_users';
 const STORAGE_PAYMENTS_KEY = 'reposition_db_payments';
@@ -646,6 +647,12 @@ export default function App() {
       <Footer
         onTabChange={handleTabChange}
         siteFeatures={siteFeatures}
+      />
+
+      <BootcampCampaignPopup
+        currentTab={currentTab}
+        enabled={siteFeatures.bootcamp !== false}
+        onTabChange={handleTabChange}
       />
     </div>
   );
