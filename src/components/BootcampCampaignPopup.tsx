@@ -53,7 +53,7 @@ const variants = [
     title: <>수많은 후기가 증명한<br /><span className="text-[#B38F00]">3주의 리포지셔닝</span></>,
     metric: '쓰레드 팔로워 1만 · 부트캠프 만족도 98.6%',
     body: <>혼자서는 보이지 않던 강점을 찾고,<br />서류와 면접에서 통하는 전략으로 바꿉니다.</>,
-    cta: '후기와 9기 모집 확인하기'
+    cta: '부트캠프 후기 및 상세내용 확인하기'
   }
 ] as const;
 
@@ -198,28 +198,27 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
         <button
           type="button"
           onClick={closePopup}
-          className="absolute right-4 top-4 z-20 rounded-full border border-black/10 bg-zinc-100 p-2 text-zinc-600 transition hover:border-black/25 hover:bg-zinc-200 hover:text-black"
+          className="absolute right-3 top-3 z-20 rounded-full border border-black/10 bg-white/90 p-2 text-zinc-500 shadow-sm transition hover:border-black/25 hover:bg-zinc-100 hover:text-black sm:right-4 sm:top-4"
           aria-label="팝업 닫기"
         >
           <X className="h-5 w-5" />
         </button>
 
         <button type="button" onClick={openBootcamp} className="relative block w-full px-6 pb-5 pt-7 text-left sm:px-9 sm:pb-7 sm:pt-9">
-          <div className="flex items-start justify-between gap-4 pr-11">
+          <div className="pr-11">
             <span className="inline-flex shrink-0 rounded-full border border-[#E5BD00]/35 bg-[#FFD600]/20 px-3 py-1.5 text-[11px] font-black text-[#7A6500]">
               {variant.badge}
             </span>
-            <div className="hidden text-right sm:block">
-              <p className="text-[9px] font-bold text-zinc-500">10월 23일 오후 9시 마감</p>
-              <p className="mt-0.5 font-mono text-xs font-black text-black">{countdownText}</p>
-              <p className="mt-0.5 text-[9px] font-bold text-zinc-500">
-                현재 {displayCount}/{BOOTCAMP_CAPACITY}명 · 잔여 {remainingSlots}명
-              </p>
-            </div>
           </div>
-          <div className="mt-3 flex items-center justify-between gap-3 border-b border-black/10 pb-3 text-[10px] font-bold sm:hidden">
-            <span className="font-mono font-black text-black">{countdownText}</span>
-            <span className="text-zinc-500">현재 {displayCount}/{BOOTCAMP_CAPACITY}명 · 잔여 {remainingSlots}명</span>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 rounded-xl border border-black/10 bg-zinc-50 px-3.5 py-3 sm:px-4">
+            <div className="flex items-center gap-2">
+              <Clock3 className="h-3.5 w-3.5 text-[#B38F00]" />
+              <span className="text-[10px] font-bold text-zinc-500 sm:text-[11px]">10월 23일 오후 9시 마감</span>
+            </div>
+            <span className="font-mono text-[11px] font-black text-black sm:text-xs">{countdownText}</span>
+            <span className="w-full border-t border-black/5 pt-2 text-[10px] font-bold text-zinc-500 sm:w-auto sm:border-0 sm:pt-0 sm:text-[11px]">
+              현재 {displayCount}/{BOOTCAMP_CAPACITY}명 · 잔여 {remainingSlots}명
+            </span>
           </div>
           <h2 className="mt-5 pr-5 text-[28px] font-black leading-[1.2] tracking-[-0.04em] text-[#111114] sm:text-[38px]">
             {variant.title}
