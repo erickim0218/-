@@ -21,6 +21,31 @@ const statusLabel: Record<Campaign['status'], string> = {
   failed: '발송 실패'
 };
 
+const getKstHour = () => Number(new Intl.DateTimeFormat('en-US', {
+  timeZone: 'Asia/Seoul',
+  hour: '2-digit',
+  hour12: false
+}).format(new Date()));
+
+async function getFunctionErrorMessage(error: unknown) {
+  if (!error || typeof error !== 'object') return String(error || '이메일 발송에 실패했습니다.');
+  const context = 'context' in error ? (error as { context?: Response }).context : undefined;
+  if (context) {
+    try {
+      const payload = await context.clone().json() as { error?: string };
+      if (payload?.error) return payload.error;
+    } catch {
+      try {
+        const text = await context.clone().text();
+        if (text) return text;
+      } catch {}
+    }
+  }
+  return 'message' in error
+    ? String((error as { message?: unknown }).message || '이메일 발송에 실패했습니다.')
+    : '이메일 발송에 실패했습니다.';
+}
+
 export const EmailCampaignAdmin: React.FC = () => {
   const [subject, setSubject] = useState('');
   const [content, setContent] = useState('');
@@ -29,6 +54,7 @@ export const EmailCampaignAdmin: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const isSendWindowOpen = getKstHour() >= 8 && getKstHour() < 21;
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
@@ -51,6 +77,10 @@ export const EmailCampaignAdmin: React.FC = () => {
   useEffect(() => { void loadData(); }, [loadData]);
 
   const sendCampaign = async () => {
+    if (!isSendWindowOpen) {
+      setMessage({ type: 'error', text: '광고성 이메일은 오전 8시부터 오후 9시 전까지만 발송할 수 있습니다. 내일 오전 8시 이후 다시 발송해 주세요.' });
+      return;
+    }
     if (!subject.trim() || !content.trim()) {
       setMessage({ type: 'error', text: '제목과 이메일 내용을 모두 입력해 주세요.' });
       return;
@@ -73,7 +103,8 @@ export const EmailCampaignAdmin: React.FC = () => {
     setIsSending(false);
 
     if (error || data?.error) {
-      setMessage({ type: 'error', text: data?.error || error?.message || '이메일 발송에 실패했습니다.' });
+      const errorMessage = data?.error || await getFunctionErrorMessage(error);
+      setMessage({ type: 'error', text: errorMessage });
       return;
     }
 
@@ -115,6 +146,13 @@ export const EmailCampaignAdmin: React.FC = () => {
         </div>
       ) : null}
 
+      {!isSendWindowOpen ? (
+        <div className="flex items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm font-bold text-amber-200">
+          <AlertCircle className="h-5 w-5 shrink-0" />
+          현재는 광고성 이메일 발송 제한 시간입니다. 내일 오전 8시부터 발송할 수 있습니다.
+        </div>
+      ) : null}
+
       <section className="rounded-3xl border border-zinc-800 bg-[#121216] p-6 sm:p-8">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -151,11 +189,11 @@ export const EmailCampaignAdmin: React.FC = () => {
           <button
             type="button"
             onClick={() => void sendCampaign()}
-            disabled={isSending || consentedCount === 0}
+            disabled={isSending || consentedCount === 0 || !isSendWindowOpen}
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFD600] px-5 py-4 text-sm font-black text-black hover:bg-yellow-300 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            {isSending ? '발송 중...' : `${consentedCount.toLocaleString()}명에게 발송 확인`}
+            {isSending ? '발송 중...' : !isSendWindowOpen ? '오전 8시부터 발송 가능' : `${consentedCount.toLocaleString()}명에게 발송 확인`}
           </button>
         </div>
       </section>
