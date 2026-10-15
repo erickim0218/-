@@ -659,7 +659,7 @@ export const BootcampCurriculumPreview: React.FC<{
             기획자 J의 리포지셔닝 부트캠프 3주 과정
           </h2>
           <p className="text-xs sm:text-sm text-zinc-400 max-w-lg mx-auto">
-            완판 릴레이 1기~6기 입증! 전략적 이직/취업을 위한 주차별 1:1 밀착 전수 과정
+            3주 동안 배우고 적용하고 점검하며, 스스로 합격 전략을 설계하는 리포지셔너로 성장하는 1:1 밀착 과정
           </p>
         </div>
 
