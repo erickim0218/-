@@ -127,8 +127,7 @@ export const Footer: React.FC<FooterProps> = ({ onTabChange, siteFeatures }) => 
                 </div>
               ) : (
                 <button onClick={() => onTabChange('practical')} className="text-left text-zinc-400 hover:text-white transition flex items-center gap-1.5">
-                  <span>리포지셔닝 실전활용</span>
-                  <span className="text-[10px] text-[#FFD600] font-bold">[PRO]</span>
+                  <span>실전활용(자료실)</span>
                 </button>
               )}
 
