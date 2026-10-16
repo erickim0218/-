@@ -386,13 +386,13 @@ export const Header: React.FC<HeaderProps> = ({
                         <div className="py-1">
                           <button
                             onClick={() => {
-                              onTabChange('classes');
+                              onTabChange('mylms');
                               setIsProfileMenuOpen(false);
                             }}
                             className="w-full text-left px-4 py-2.5 text-zinc-300 hover:text-white hover:bg-zinc-800/60 transition flex items-center gap-2 cursor-pointer"
                           >
                             <BookOpen className="w-4 h-4 text-[#FFD600]" />
-                            <span>내 강의실</span>
+                            <span>내 콘텐츠</span>
                           </button>
 
                           <button
