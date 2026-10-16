@@ -28,6 +28,11 @@ export interface PracticalResource {
   updated_at: string;
 }
 
+export interface ClaimedPracticalResource {
+  resource: PracticalResource;
+  claimedAt: string;
+}
+
 export const PRACTICAL_RESOURCE_BUCKET = 'practical-resources';
 
 export function getPracticalResourceGroup(resource: Pick<PracticalResource, 'file_name' | 'file_path'>): PracticalResourceGroup {
@@ -129,6 +134,60 @@ export async function fetchMyPracticalResourceClaims() {
     .select('resource_id');
   if (error) throw error;
   return (data || []).map((claim) => claim.resource_id as string);
+}
+
+export async function fetchMyClaimedPracticalResources(): Promise<ClaimedPracticalResource[]> {
+  const { data: claims, error: claimError } = await supabase
+    .from('practical_resource_claims')
+    .select('resource_id, claimed_at')
+    .order('claimed_at', { ascending: false });
+
+  if (claimError) throw claimError;
+  if (!claims?.length) return [];
+
+  const resourceIds = claims.map((claim) => claim.resource_id as string);
+  const { data: resources, error: resourceError } = await supabase
+    .from('practical_resources')
+    .select('*')
+    .in('id', resourceIds);
+
+  if (resourceError) throw resourceError;
+  const resourcesById = new Map(
+    ((resources || []) as PracticalResource[]).map((resource) => [resource.id, resource])
+  );
+
+  return claims.flatMap((claim) => {
+    const resource = resourcesById.get(claim.resource_id as string);
+    return resource
+      ? [{ resource, claimedAt: claim.claimed_at as string }]
+      : [];
+  });
+}
+
+export async function redownloadPracticalResource(resource: PracticalResource) {
+  if (resource.external_url) {
+    window.open(resource.external_url, '_blank', 'noopener,noreferrer');
+    return;
+  }
+  if (!resource.file_path) throw new Error('RESOURCE_FILE_NOT_CONNECTED');
+
+  const { data: blob, error } = await supabase.storage
+    .from(PRACTICAL_RESOURCE_BUCKET)
+    .download(resource.file_path);
+
+  if (error || !blob) {
+    throw new Error(`STORAGE_DOWNLOAD_FAILED:${error?.message || 'EMPTY_FILE'}`);
+  }
+
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = objectUrl;
+  link.download = getPracticalResourceDownloadName(resource);
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
 }
 
 export async function getMyMarketingConsent() {
