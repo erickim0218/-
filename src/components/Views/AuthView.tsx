@@ -285,7 +285,7 @@ export const AuthView: React.FC<AuthViewProps> = ({
             {mode === 'reset-password' && '비밀번호 재설정'}
           </h1>
           <p className="text-xs sm:text-sm text-zinc-400">
-            {mode === 'login' && '수강 중인 강의, 실전 템플릿, 내 강의실을 지금 바로 이용하세요.'}
+            {mode === 'login' && '수강 중인 강의, 실전 템플릿, 내 콘텐츠를 지금 바로 이용하세요.'}
             {mode === 'signup' && '가입 즉시 입문 특강 무료 수강 및 3분 포지셔닝 진단 분석이 제공됩니다.'}
             {mode === 'reset-password' && '가입된 이메일로 발송된 인증번호를 통해 비밀번호를 안전하게 변경하세요.'}
           </p>
