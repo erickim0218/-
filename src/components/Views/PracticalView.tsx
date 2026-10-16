@@ -6,7 +6,6 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
-  CheckCircle2,
   Compass,
   Download,
   ExternalLink,
@@ -100,8 +99,9 @@ const ResourceCard: React.FC<{
   isDownloading: boolean;
   onDownload: (resource: PracticalResource) => void;
   onUpgrade: () => void;
+  onOpenLibrary: () => void;
   onPreview: (resource: PracticalResource) => void;
-}> = ({ resource, canUsePro, isClaimed, isDownloading, onDownload, onUpgrade, onPreview }) => {
+}> = ({ resource, canUsePro, isClaimed, isDownloading, onDownload, onUpgrade, onOpenLibrary, onPreview }) => {
   const downloadLimit = 100;
   const isClassOnly = isClassOnlyResource(resource);
   const isLocked = isClassOnly && !canUsePro;
@@ -167,9 +167,9 @@ const ResourceCard: React.FC<{
               {isLocked ? '클래스에서 미리보기' : '첫 10페이지 미리보기'}
             </button>
           ) : null}
-          <button type="button" onClick={() => (isLocked ? onUpgrade() : onDownload(resource))} disabled={isDownloading || isDistributionClosed || isClaimed} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:cursor-not-allowed ${isClaimed ? 'border border-emerald-400/25 bg-emerald-400/10 text-emerald-300' : isDistributionClosed ? 'border border-rose-400/25 bg-rose-400/5 text-rose-300' : isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resourceGroup === 'practical' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'} ${isDownloading ? 'opacity-60' : ''}`}>
-            {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : isClaimed ? <CheckCircle2 className="h-4 w-4" /> : isDistributionClosed || isLocked ? <Lock className="h-4 w-4" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
-            {isDownloading ? '준비 중...' : isClaimed ? '다운로드 완료' : isDistributionClosed ? '선착순 배포 마감' : isLocked ? '클래스에서 이용하기' : resource.external_url ? '자료 열기' : '무료 다운로드'}
+          <button type="button" onClick={() => (isLocked ? onUpgrade() : isClaimed ? onOpenLibrary() : onDownload(resource))} disabled={isDownloading || (isDistributionClosed && !isClaimed)} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:cursor-not-allowed ${isClaimed ? 'border border-emerald-400/25 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/15' : isDistributionClosed ? 'border border-rose-400/25 bg-rose-400/5 text-rose-300' : isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resourceGroup === 'practical' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'} ${isDownloading ? 'opacity-60' : ''}`}>
+            {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : isClaimed ? <Download className="h-4 w-4" /> : isDistributionClosed || isLocked ? <Lock className="h-4 w-4" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
+            {isDownloading ? '준비 중...' : isClaimed ? '내 콘텐츠에서 다시 받기' : isDistributionClosed ? '선착순 배포 마감' : isLocked ? '클래스에서 이용하기' : resource.external_url ? '자료 열기' : '무료 다운로드'}
           </button>
         </div>
       </div>
@@ -583,6 +583,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                         isDownloading={downloadingId === resource.id}
                         onDownload={requestDownload}
                         onUpgrade={() => onTabChange('pro-payment')}
+                        onOpenLibrary={() => onTabChange('mylms')}
                         onPreview={openPreview}
                       />
                     ))}
