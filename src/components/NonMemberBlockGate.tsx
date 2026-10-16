@@ -137,7 +137,7 @@ export const NonMemberBlockGate: React.FC<NonMemberBlockGateProps> = ({
                   <span className="text-red-400">✕</span> 실전 이력서·자기설득서 템플릿
                 </li>
                 <li className="flex items-center gap-2 line-through text-zinc-500">
-                  <span className="text-red-400">✕</span> 내 강의실 학습 진도 관리
+                  <span className="text-red-400">✕</span> 내 콘텐츠 학습 진도 관리
                 </li>
               </ul>
             </div>
@@ -168,7 +168,7 @@ export const NonMemberBlockGate: React.FC<NonMemberBlockGateProps> = ({
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>내 강의실 학습 기록 저장</span>
+                  <span>내 콘텐츠 학습 기록 저장</span>
                 </li>
               </ul>
             </div>
