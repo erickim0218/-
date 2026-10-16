@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
-import { User, Sparkles, BookOpen, Download, Plus } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { User, Sparkles, BookOpen, Download, Plus, Loader2, FileText, ExternalLink } from 'lucide-react';
 import { UserProfile, PositioningVersion, MemberTier } from '../../types';
 import { COURSES } from '../../data/mockData';
+import {
+  ClaimedPracticalResource,
+  fetchMyClaimedPracticalResources,
+  getPracticalResourceDisplayName,
+  redownloadPracticalResource
+} from '../../lib/practicalResources';
 
 interface MyLmsViewProps {
   user: UserProfile;
@@ -19,6 +25,45 @@ export const MyLmsView: React.FC<MyLmsViewProps> = ({
   const [newSentence, setNewSentence] = useState('');
   const [selectedCompany, setSelectedCompany] = useState('');
   const [isAddingVersion, setIsAddingVersion] = useState(false);
+  const [claimedResources, setClaimedResources] = useState<ClaimedPracticalResource[]>([]);
+  const [isLoadingResources, setIsLoadingResources] = useState(false);
+  const [resourceLoadError, setResourceLoadError] = useState('');
+  const [downloadingResourceId, setDownloadingResourceId] = useState('');
+
+  const loadClaimedResources = async () => {
+    setIsLoadingResources(true);
+    setResourceLoadError('');
+    try {
+      setClaimedResources(await fetchMyClaimedPracticalResources());
+    } catch (error) {
+      console.error('Failed to load claimed resources:', error);
+      setResourceLoadError('받은 자료를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    } finally {
+      setIsLoadingResources(false);
+    }
+  };
+
+  useEffect(() => {
+    if (currentTier === 'NON_MEMBER') return;
+    void loadClaimedResources();
+  }, [currentTier]);
+
+  const handleRedownload = async ({ resource }: ClaimedPracticalResource) => {
+    setDownloadingResourceId(resource.id);
+    try {
+      await redownloadPracticalResource(resource);
+    } catch (error) {
+      console.error('Failed to redownload practical resource:', error);
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes('RESOURCE_FILE_NOT_CONNECTED')) {
+        window.alert('이 자료에 연결된 파일이 없습니다. 관리자에게 문의해 주세요.');
+      } else {
+        window.alert('자료를 다시 내려받지 못했습니다. 잠시 후 다시 시도해 주세요.');
+      }
+    } finally {
+      setDownloadingResourceId('');
+    }
+  };
 
   const tierBadgeColor: Record<MemberTier, string> = {
     NON_MEMBER: 'bg-zinc-800 text-zinc-400 border border-zinc-700',
@@ -59,9 +104,9 @@ export const MyLmsView: React.FC<MyLmsViewProps> = ({
             <Sparkles className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-xl sm:text-2xl font-black text-white">내 강의실은 회원 전용입니다</h2>
+            <h2 className="text-xl sm:text-2xl font-black text-white">내 콘텐츠는 회원 전용입니다</h2>
             <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-              30초 무료 회원가입 후 나만의 포지셔닝 문장 아카이빙, 수강 진도율, 워크북 다운로드 기록을 보관해보세요.
+              30초 무료 회원가입 후 수강 콘텐츠와 받은 자료, 포지셔닝 기록을 한곳에서 관리해보세요.
             </p>
           </div>
           <div className="space-y-3 pt-2">
@@ -86,6 +131,13 @@ export const MyLmsView: React.FC<MyLmsViewProps> = ({
   return (
     <div className="py-12 bg-[#09090B] text-white min-h-screen space-y-10 animate-fade-in">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="text-center">
+          <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">MY CONTENT</span>
+          <h1 className="mt-3 text-3xl font-black text-white sm:text-4xl">내 콘텐츠</h1>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-zinc-400">
+            수강 중인 콘텐츠와 내려받은 자료를 한곳에서 확인하세요.
+          </p>
+        </div>
         
         {/* User Profile Header Card */}
         <div className="p-6 md:p-8 bg-[#121216] border border-[#27272A] rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
@@ -134,6 +186,79 @@ export const MyLmsView: React.FC<MyLmsViewProps> = ({
             </button>
           </div>
         </div>
+
+        {/* Claimed practical resources */}
+        <section className="rounded-3xl border border-[#FFD600]/25 bg-[#121216] p-6 shadow-xl md:p-8">
+          <div className="flex flex-col gap-3 border-b border-[#27272A] pb-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <span className="text-xs font-black tracking-[0.16em] text-[#FFD600]">MY DOWNLOADS</span>
+              <h2 className="mt-2 flex items-center gap-2 text-xl font-black text-white">
+                <Download className="h-5 w-5 text-[#FFD600]" /> 받은 자료
+              </h2>
+              <p className="mt-2 text-xs leading-relaxed text-zinc-400">
+                한 번 신청한 자료는 이곳에서 다시 내려받을 수 있습니다. 재다운로드는 선착순 수량에 중복 집계되지 않습니다.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onTabChange('practical')}
+              className="shrink-0 rounded-xl border border-[#FFD600]/30 px-4 py-2.5 text-xs font-black text-[#FFD600] transition hover:bg-[#FFD600]/10"
+            >
+              자료실 보기
+            </button>
+          </div>
+
+          {isLoadingResources ? (
+            <div className="flex items-center justify-center gap-2 py-12 text-sm text-zinc-500">
+              <Loader2 className="h-5 w-5 animate-spin" /> 받은 자료를 불러오고 있습니다.
+            </div>
+          ) : resourceLoadError ? (
+            <div className="py-10 text-center">
+              <p className="text-sm text-zinc-400">{resourceLoadError}</p>
+              <button type="button" onClick={() => void loadClaimedResources()} className="mt-4 text-xs font-black text-[#FFD600]">
+                다시 불러오기
+              </button>
+            </div>
+          ) : claimedResources.length === 0 ? (
+            <div className="py-12 text-center">
+              <FileText className="mx-auto h-8 w-8 text-zinc-600" />
+              <p className="mt-4 text-sm font-bold text-zinc-300">아직 받은 자료가 없습니다.</p>
+              <p className="mt-2 text-xs text-zinc-500">자료실에서 필요한 자료를 받아보세요.</p>
+            </div>
+          ) : (
+            <div className="mt-5 space-y-3">
+              {claimedResources.map((claim) => {
+                const { resource } = claim;
+                const isDownloading = downloadingResourceId === resource.id;
+                return (
+                  <article key={resource.id} className="flex flex-col gap-4 rounded-2xl border border-[#27272A] bg-[#18181C] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 text-[10px] font-black text-emerald-300">
+                        <span className="rounded-md bg-emerald-400/10 px-2 py-1">신청 완료</span>
+                        <span className="text-zinc-500">
+                          {new Date(claim.claimedAt).toLocaleDateString('ko-KR')} 받음
+                        </span>
+                      </div>
+                      <h3 className="mt-3 break-words text-sm font-black text-white sm:text-base">{resource.title}</h3>
+                      <p className="mt-1 truncate text-xs text-zinc-500">
+                        {resource.file_name ? getPracticalResourceDisplayName(resource.file_name) : '온라인 자료'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => void handleRedownload(claim)}
+                      disabled={isDownloading}
+                      className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#FFD600] px-5 text-xs font-black text-black transition hover:bg-yellow-300 disabled:cursor-wait disabled:opacity-60"
+                    >
+                      {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
+                      {isDownloading ? '준비 중...' : resource.external_url ? '자료 다시 열기' : '다시 다운로드'}
+                    </button>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </section>
 
         {/* Core Feature: My Positioning Statement Manager with Version History */}
         <div className="p-6 md:p-8 bg-[#121216] border border-[#27272A] rounded-3xl space-y-6">
@@ -256,7 +381,7 @@ export const MyLmsView: React.FC<MyLmsViewProps> = ({
           {/* Downloadable Workbooks & Bootcamp Status */}
           <div className="md:col-span-5 bg-[#121216] border border-[#27272A] rounded-3xl p-6 space-y-4">
             <h3 className="text-sm font-black text-white flex items-center gap-2">
-              <Download className="w-4 h-4 text-[#FFD600]" /> 보관함 & 부트캠프 현황
+              <Download className="w-4 h-4 text-[#FFD600]" /> 부트캠프 현황
             </h3>
 
             <div className="p-4 bg-[#18181C] rounded-2xl border border-[#27272A] space-y-2 text-xs">
