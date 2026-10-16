@@ -317,7 +317,7 @@ export const DiagnosisModal: React.FC<DiagnosisModalProps> = ({
                   </label>
                   {isSaved && (
                     <span className="text-xs text-[#FFD600] font-bold flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> 내 강의실에 저장됨
+                      <CheckCircle2 className="w-3.5 h-3.5" /> 내 콘텐츠에 저장됨
                     </span>
                   )}
                 </div>
@@ -332,7 +332,7 @@ export const DiagnosisModal: React.FC<DiagnosisModalProps> = ({
                   onClick={handleSaveSentence}
                   className="w-full py-2.5 bg-[#FFD600] text-[#171717] font-bold text-xs uppercase tracking-wider rounded-lg hover:bg-[#ffe033] transition"
                 >
-                  {isSaved ? '포지셔닝 문장 업데이트 완료' : '내 강의실 포지션 노트에 저장하기'}
+                  {isSaved ? '포지셔닝 문장 업데이트 완료' : '내 콘텐츠 포지션 노트에 저장하기'}
                 </button>
               </div>
 
