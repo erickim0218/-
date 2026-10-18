@@ -17,39 +17,33 @@ export const DEFAULT_SITE_FEATURES: Record<string, boolean> = {
 
 // Get all site features from Supabase or Local Storage fallback
 export async function fetchSiteFeatures(): Promise<Record<string, boolean>> {
-  const result: Record<string, boolean> = {
-    bootcamp: true,
-    repositioning_class: false,
-    practical_tools: true
-  };
+  const result: Record<string, boolean> = { ...DEFAULT_SITE_FEATURES };
 
-  // 1. Try local storage cache first if available
-  try {
-    const cached = localStorage.getItem(STORAGE_KEY);
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      result.bootcamp = typeof parsed.bootcamp === 'boolean' ? parsed.bootcamp : true;
-      result.repositioning_class = parsed.repositioning_class === true;
-      result.practical_tools = typeof parsed.practical_tools === 'boolean' ? parsed.practical_tools : true;
-    }
-  } catch (e) {
-    console.warn('Failed to read site_features cache:', e);
-  }
-
-  // 2. Fetch directly from Supabase
+  // Supabase is the source of truth. Protected features must fail closed instead
+  // of being reopened by an old browser cache value.
   try {
     const { data, error } = await supabase.from('site_features').select('feature_key, is_enabled');
-    if (!error && data && Array.isArray(data)) {
-      data.forEach((item: any) => {
-        if (item.feature_key) {
-          result[item.feature_key] = item.is_enabled === true;
-        }
-      });
-      // Update cache
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
-    }
+    if (error) throw error;
+    if (!data || !Array.isArray(data)) throw new Error('site_features 응답이 올바르지 않습니다.');
+    data.forEach((item: any) => {
+      if (item.feature_key) result[item.feature_key] = item.is_enabled === true;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
   } catch (e) {
     console.warn('Failed to fetch site_features from Supabase:', e);
+    // Keep the class closed on any fetch failure. Non-gated operational values
+    // may use the last cache so a temporary outage does not hide the whole site.
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        result.bootcamp = typeof parsed.bootcamp === 'boolean' ? parsed.bootcamp : result.bootcamp;
+        result.practical_tools = typeof parsed.practical_tools === 'boolean' ? parsed.practical_tools : result.practical_tools;
+      }
+    } catch (cacheError) {
+      console.warn('Failed to read site_features cache:', cacheError);
+    }
+    result.repositioning_class = false;
   }
 
   return result;
@@ -57,27 +51,10 @@ export async function fetchSiteFeatures(): Promise<Record<string, boolean>> {
 
 // Update site feature state
 export async function updateSiteFeature(featureKey: string, isEnabled: boolean): Promise<boolean> {
-  // Update local cache first
-  let cachedObj: Record<string, boolean> = { ...DEFAULT_SITE_FEATURES };
+  // Persist first. A failed database write must never look successful locally.
   try {
-    const cached = localStorage.getItem(STORAGE_KEY);
-    if (cached) {
-      cachedObj = JSON.parse(cached);
-    }
-  } catch (e) {
-    console.warn(e);
-  }
-
-  cachedObj[featureKey] = isEnabled;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cachedObj));
-
-  // Dispatch custom event for real-time app update
-  window.dispatchEvent(new CustomEvent('site_features_updated', { detail: { featureKey, isEnabled } }));
-
-  // Try updating Supabase
-  try {
-    // Check if row exists
-    const { data } = await supabase.from('site_features').select('feature_key').eq('feature_key', featureKey);
+    const { data, error: lookupError } = await supabase.from('site_features').select('feature_key').eq('feature_key', featureKey);
+    if (lookupError) throw lookupError;
     
     if (data && data.length > 0) {
       const { error } = await supabase
@@ -86,7 +63,7 @@ export async function updateSiteFeature(featureKey: string, isEnabled: boolean):
         .eq('feature_key', featureKey);
 
       if (error) {
-        console.warn('Failed to update site_features on Supabase:', error);
+        throw error;
       }
     } else {
       const { error } = await supabase
@@ -99,12 +76,23 @@ export async function updateSiteFeature(featureKey: string, isEnabled: boolean):
         }]);
 
       if (error) {
-        console.warn('Failed to insert site_features on Supabase:', error);
+        throw error;
       }
     }
+
+    let cachedObj: Record<string, boolean> = { ...DEFAULT_SITE_FEATURES };
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY);
+      if (cached) cachedObj = JSON.parse(cached);
+    } catch (cacheError) {
+      console.warn('Failed to read site_features cache:', cacheError);
+    }
+    cachedObj[featureKey] = isEnabled;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cachedObj));
+    window.dispatchEvent(new CustomEvent('site_features_updated', { detail: { featureKey, isEnabled } }));
+    return true;
   } catch (e) {
     console.warn('Error updating site_features:', e);
+    return false;
   }
-
-  return true;
 }
