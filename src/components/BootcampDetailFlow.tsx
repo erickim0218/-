@@ -21,6 +21,7 @@ import { UserReviewsSection } from './UserReviewsSection';
 import { RocketInfographic } from './RocketInfographic';
 import { BootcampScheduleCalendar } from './BootcampScheduleCalendar';
 import standardRocketImg from '../assets/images/standard_rocket_launch_1788079504479.jpg';
+import bootcampKnightKeyVisual from '../assets/images/bootcamp_knight_keyvisual.webp';
 import { BootcampReview } from '../data/bootcampReviews';
 import { supabase } from '../lib/supabase';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
@@ -270,6 +271,19 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
             </div>
           </div>
 
+        </div>
+      </section>
+
+      {/* 부트캠프 9기 키비주얼 */}
+      <section className="px-4 pb-8 sm:pb-12">
+        <div className="mx-auto max-w-[640px] overflow-hidden rounded-3xl border border-zinc-800 bg-[#1B2733] shadow-[0_30px_90px_rgba(0,0,0,0.42)]">
+          <img
+            src={bootcampKnightKeyVisual}
+            alt="기획자 J의 리포지셔닝 부트캠프 9기 — 단 3주, 취업·이직 정예 리포지셔너로 만들어드립니다."
+            className="block h-auto w-full"
+            loading="eager"
+            decoding="async"
+          />
         </div>
       </section>
 

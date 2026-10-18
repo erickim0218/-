@@ -176,7 +176,8 @@ export const AnalyticsAdminTab: React.FC = () => {
     bootcamp_popup_1: '1안 · 단 3주 최정예 리포지셔너',
     bootcamp_popup_2: '2안 · 아직도 혼자 준비하세요?',
     bootcamp_popup_3: '3안 · 자소서만 고치세요?',
-    bootcamp_popup_4: '4안 · 수많은 후기가 증명한 3주'
+    bootcamp_popup_4: '4안 · 수많은 후기가 증명한 3주',
+    bootcamp_popup_5: '5안 · 정예 리포지셔너 키비주얼'
   };
   const popupStats = Object.entries(popupVariantLabels).map(([key, label]) => {
     const variantEvents = events.filter((event) => event.button_location === key);

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ArrowRight, Clock3, X } from 'lucide-react';
 import { trackAnalyticsEvent } from '../lib/analytics';
 import { supabase } from '../lib/supabase';
+import bootcampKnightKeyVisual from '../assets/images/bootcamp_knight_keyvisual.webp';
 
 interface BootcampCampaignPopupProps {
   currentTab: string;
@@ -54,6 +55,15 @@ const variants = [
     metric: '쓰레드 팔로워 1만 · 부트캠프 만족도 98.6%',
     body: <>혼자서는 보이지 않던 강점을 찾고,<br />서류와 면접에서 통하는 전략으로 바꿉니다.</>,
     cta: '부트캠프 후기 및 상세내용 확인하기'
+  },
+  {
+    id: 'bootcamp_popup_5',
+    badge: '리포지셔닝 부트캠프 9기',
+    title: <>단 3주, 취업·이직 정예 리포지셔너로 만들어드립니다.</>,
+    body: <>전략 없이 지원하지 않도록, 기업의 니즈를 읽고 경험을 설득력 있게 보여주는 방법을 완성합니다.</>,
+    cta: '부트캠프 9기 자세히 보기',
+    image: bootcampKnightKeyVisual,
+    imageAlt: '갑옷을 입은 기사와 단 3주 취업·이직 정예 리포지셔너 메시지가 담긴 리포지셔닝 부트캠프 9기 광고'
   }
 ] as const;
 
@@ -221,27 +231,41 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
             <span className="font-mono font-black text-black">{countdownText}</span>
             <span className="text-zinc-500">현재 {displayCount}/{BOOTCAMP_CAPACITY}명 · 잔여 {remainingSlots}명</span>
           </div>
-          <h2 className="mt-5 pr-5 text-[28px] font-black leading-[1.2] tracking-[-0.04em] text-[#111114] sm:text-[38px]">
-            {variant.title}
-          </h2>
-          {'metric' in variant ? (
-            <p className="mt-5 inline-flex rounded-xl border border-black/10 bg-zinc-100 px-4 py-2.5 text-sm font-black text-[#111114]">
-              {variant.metric}
-            </p>
-          ) : null}
-          <p className="mt-5 text-sm font-medium leading-6 text-zinc-600 sm:text-[15px] sm:leading-7">
-            {variant.body}
-          </p>
-          <div className="mt-6 border-y border-black/10 py-4">
-            <p className="text-[10px] font-black tracking-[0.12em] text-zinc-400">3주 후, 이렇게 달라집니다</p>
-            <div className="mt-3 grid grid-cols-3 gap-2">
-              {['지원 방향 확정', '경험을 강점으로', '서류·면접 완성'].map((benefit) => (
-                <span key={benefit} className="flex min-h-12 items-center justify-center rounded-lg bg-zinc-100 px-2 text-center text-[11px] font-black leading-4 text-zinc-800 sm:text-xs">
-                  {benefit}
-                </span>
-              ))}
+          {'image' in variant ? (
+            <div className="mt-5 overflow-hidden rounded-xl bg-[#1B2733] shadow-xl ring-1 ring-black/10">
+              <img
+                src={variant.image}
+                alt={variant.imageAlt}
+                className="mx-auto block max-h-[58dvh] h-auto w-full object-contain"
+                loading="eager"
+                decoding="async"
+              />
             </div>
-          </div>
+          ) : (
+            <>
+              <h2 className="mt-5 pr-5 text-[28px] font-black leading-[1.2] tracking-[-0.04em] text-[#111114] sm:text-[38px]">
+                {variant.title}
+              </h2>
+              {'metric' in variant ? (
+                <p className="mt-5 inline-flex rounded-xl border border-black/10 bg-zinc-100 px-4 py-2.5 text-sm font-black text-[#111114]">
+                  {variant.metric}
+                </p>
+              ) : null}
+              <p className="mt-5 text-sm font-medium leading-6 text-zinc-600 sm:text-[15px] sm:leading-7">
+                {variant.body}
+              </p>
+              <div className="mt-6 border-y border-black/10 py-4">
+                <p className="text-[10px] font-black tracking-[0.12em] text-zinc-400">3주 후, 이렇게 달라집니다</p>
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  {['지원 방향 확정', '경험을 강점으로', '서류·면접 완성'].map((benefit) => (
+                    <span key={benefit} className="flex min-h-12 items-center justify-center rounded-lg bg-zinc-100 px-2 text-center text-[11px] font-black leading-4 text-zinc-800 sm:text-xs">
+                      {benefit}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
           <span className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FFD600] px-5 py-4 text-sm font-black text-black transition hover:bg-yellow-300">
             {isClosed ? '9기 모집 마감' : variant.cta}
             <ArrowRight className="h-4 w-4" />
