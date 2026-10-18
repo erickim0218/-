@@ -228,18 +228,18 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
           </div>
 
           {/* 핵심 지표 */}
-          <div className="grid grid-cols-3 gap-3 bg-[#18181C] p-4 rounded-2xl border border-zinc-800 text-center">
-            <div className="p-1">
-              <span className="text-[11px] text-zinc-400 block mb-0.5">누적 수강인원</span>
-              <span className="text-2xl sm:text-3xl font-black text-[#FFD600]">128명</span>
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-3 bg-[#18181C] p-3 sm:p-4 rounded-2xl border border-zinc-800 text-center">
+            <div className="min-w-0 p-1">
+              <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">누적 수강인원</span>
+              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">128명</span>
             </div>
-            <div className="p-1 border-x border-zinc-800">
-              <span className="text-[11px] text-zinc-400 block mb-0.5">수강 만족도</span>
-              <span className="text-2xl sm:text-3xl font-black text-[#FFD600]">99.8%</span>
+            <div className="min-w-0 p-1 border-x border-zinc-800">
+              <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">수강 만족도</span>
+              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">99.8%</span>
             </div>
-            <div className="p-1">
-              <span className="text-[11px] text-zinc-400 block mb-0.5">서류 합격률 평균</span>
-              <span className="text-2xl sm:text-3xl font-black text-[#FFD600]">78.7%</span>
+            <div className="min-w-0 p-1">
+              <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">서류 합격률 평균</span>
+              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">78.7%</span>
             </div>
           </div>
 
