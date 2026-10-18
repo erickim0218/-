@@ -201,6 +201,52 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
 
   if (!isOpen || !enabled || !isEligiblePage) return null;
 
+  if ('image' in variant && 'imageAlt' in variant) {
+    return (
+      <div
+        className="fixed inset-0 z-[120] flex items-center justify-center bg-black/55 px-3 py-16 backdrop-blur-[2px] sm:px-8 sm:py-20"
+        role="dialog"
+        aria-modal="true"
+        aria-label="리포지셔닝 부트캠프 9기 포스터 광고"
+      >
+        <div className="relative w-full max-w-[1080px]">
+          <button
+            type="button"
+            onClick={closePopup}
+            className="absolute -top-12 right-0 z-20 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-zinc-700 shadow-lg transition hover:bg-white hover:text-black"
+            aria-label="팝업 닫기"
+          >
+            <X className="h-5 w-5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={openBootcamp}
+            className="block w-full overflow-hidden bg-[#101923] text-left shadow-[0_30px_100px_rgba(0,0,0,0.62)] ring-1 ring-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD600]"
+            aria-label="리포지셔닝 부트캠프 9기 자세히 보기"
+          >
+            <img
+              src={variant.image}
+              alt={variant.imageAlt}
+              className="block h-auto max-h-[calc(100dvh-9rem)] w-full object-contain"
+              loading="eager"
+              decoding="async"
+            />
+          </button>
+
+          <button
+            type="button"
+            onClick={hideForSixHours}
+            className="absolute -bottom-10 right-0 inline-flex items-center gap-1.5 text-xs font-bold text-white/75 transition hover:text-white"
+          >
+            <Clock3 className="h-3.5 w-3.5" />
+            6시간 동안 보지 않기
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 z-[120] flex items-end justify-center bg-black/35 px-3 pb-3 pt-20 sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-label="리포지셔닝 부트캠프 9기 안내">
       <div className="relative max-h-[calc(100dvh-1.5rem)] w-full max-w-[560px] overflow-y-auto rounded-2xl border border-black/10 bg-white shadow-[0_30px_100px_rgba(0,0,0,0.48)] ring-1 ring-white/70">
@@ -231,41 +277,27 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
             <span className="font-mono font-black text-black">{countdownText}</span>
             <span className="text-zinc-500">현재 {displayCount}/{BOOTCAMP_CAPACITY}명 · 잔여 {remainingSlots}명</span>
           </div>
-          {'image' in variant ? (
-            <div className="mt-5 overflow-hidden rounded-xl bg-[#1B2733] shadow-xl ring-1 ring-black/10">
-              <img
-                src={variant.image}
-                alt={variant.imageAlt}
-                className="mx-auto block max-h-[58dvh] h-auto w-full object-contain"
-                loading="eager"
-                decoding="async"
-              />
+          <h2 className="mt-5 pr-5 text-[28px] font-black leading-[1.2] tracking-[-0.04em] text-[#111114] sm:text-[38px]">
+            {variant.title}
+          </h2>
+          {'metric' in variant ? (
+            <p className="mt-5 inline-flex rounded-xl border border-black/10 bg-zinc-100 px-4 py-2.5 text-sm font-black text-[#111114]">
+              {variant.metric}
+            </p>
+          ) : null}
+          <p className="mt-5 text-sm font-medium leading-6 text-zinc-600 sm:text-[15px] sm:leading-7">
+            {variant.body}
+          </p>
+          <div className="mt-6 border-y border-black/10 py-4">
+            <p className="text-[10px] font-black tracking-[0.12em] text-zinc-400">3주 후, 이렇게 달라집니다</p>
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              {['지원 방향 확정', '경험을 강점으로', '서류·면접 완성'].map((benefit) => (
+                <span key={benefit} className="flex min-h-12 items-center justify-center rounded-lg bg-zinc-100 px-2 text-center text-[11px] font-black leading-4 text-zinc-800 sm:text-xs">
+                  {benefit}
+                </span>
+              ))}
             </div>
-          ) : (
-            <>
-              <h2 className="mt-5 pr-5 text-[28px] font-black leading-[1.2] tracking-[-0.04em] text-[#111114] sm:text-[38px]">
-                {variant.title}
-              </h2>
-              {'metric' in variant ? (
-                <p className="mt-5 inline-flex rounded-xl border border-black/10 bg-zinc-100 px-4 py-2.5 text-sm font-black text-[#111114]">
-                  {variant.metric}
-                </p>
-              ) : null}
-              <p className="mt-5 text-sm font-medium leading-6 text-zinc-600 sm:text-[15px] sm:leading-7">
-                {variant.body}
-              </p>
-              <div className="mt-6 border-y border-black/10 py-4">
-                <p className="text-[10px] font-black tracking-[0.12em] text-zinc-400">3주 후, 이렇게 달라집니다</p>
-                <div className="mt-3 grid grid-cols-3 gap-2">
-                  {['지원 방향 확정', '경험을 강점으로', '서류·면접 완성'].map((benefit) => (
-                    <span key={benefit} className="flex min-h-12 items-center justify-center rounded-lg bg-zinc-100 px-2 text-center text-[11px] font-black leading-4 text-zinc-800 sm:text-xs">
-                      {benefit}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
+          </div>
           <span className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FFD600] px-5 py-4 text-sm font-black text-black transition hover:bg-yellow-300">
             {isClosed ? '9기 모집 마감' : variant.cta}
             <ArrowRight className="h-4 w-4" />
