@@ -113,8 +113,15 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
     // Optimistic UI update
     setSiteFeatures((prev) => ({ ...prev, [key]: nextVal }));
 
-    await updateSiteFeature(key, nextVal);
+    const updated = await updateSiteFeature(key, nextVal);
     setIsUpdatingFeature(false);
+
+    if (!updated) {
+      setSiteFeatures((prev) => ({ ...prev, [key]: currentVal }));
+      setUpdateSuccessMsg('상태 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+      setTimeout(() => setUpdateSuccessMsg(''), 4000);
+      return;
+    }
 
     const displayNameMap: Record<string, string> = {
       bootcamp: '부트캠프 모집 상태',
@@ -123,7 +130,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
     };
     
     const label = displayNameMap[key] || key;
-    const statusText = nextVal ? '현재 모집 중 (켜짐)' : '모집 마감 (꺼짐)';
+    const statusText = key === 'bootcamp'
+      ? (nextVal ? '현재 모집 중 (켜짐)' : '모집 마감 (꺼짐)')
+      : (nextVal ? '공개 중 (켜짐)' : '비공개 (꺼짐)');
     setUpdateSuccessMsg(`[${label}] 상태가 '${statusText}'(으)로 변경되었습니다.`);
     setTimeout(() => setUpdateSuccessMsg(''), 4000);
   };
