@@ -18,7 +18,11 @@ const getYouTubeEmbedUrl = (url?: string) => {
 
 export const ClassesView: React.FC<ClassesViewProps> = ({ currentTier, onTabChange, courses: externalCourses }) => {
   const allCourses = externalCourses || COURSES;
-  const [activeCourse, setActiveCourse] = useState<Course>(allCourses[0]);
+  const [activeCourse, setActiveCourse] = useState<Course>(() => (
+    currentTier === 'PRO' || currentTier === 'BOOTCAMP'
+      ? allCourses[0]
+      : allCourses.find((course) => course.requiredTier === 'FREE') || allCourses[0]
+  ));
   const [activeLesson, setActiveLesson] = useState<CourseLesson | null>(null);
 
   const isPaidUser = (tier: MemberTier) =>
@@ -160,7 +164,7 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ currentTier, onTabChan
                   PRO 실전 특강 ({allCourses.filter(c => c.requiredTier === 'PRO').length})
                 </h3>
                 <span className="text-[10px] px-2 py-0.5 bg-[#2B210A] text-[#FFD600] border border-amber-500/50 rounded font-black flex items-center gap-1">
-                  <Lock className="w-2.5 h-2.5" /> PRO 전용
+                  <Lock className="w-2.5 h-2.5" /> PRO · 부트캠프
                 </span>
               </div>
 
