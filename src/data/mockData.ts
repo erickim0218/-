@@ -213,13 +213,13 @@ export const COURSES: Course[] = [
     targetAudience: '경쟁자와 비슷한 스펙 속에서 나만의 독보적인 기획자적 포지션을 선점하고 싶은 모든 취준생',
     durationTotal: '40분 (총 2강)',
     lessonCount: 2,
-    requiredTier: 'FREE',
-    priceText: '오픈 특강',
-    priceValue: 0,
+    requiredTier: 'PRO',
+    priceText: 'PRO 전용',
+    priceValue: 100000,
     youtubeUrl: 'https://www.youtube.com/watch?v=bWPpI9n0sZo',
     lessons: [
-      { id: 'l1-1', number: 1, title: '1강. 취업시장 특강, 리포지셔닝이란?', duration: '18:30', isFreePreview: true, isPro: false, videoUrl: 'https://www.youtube.com/watch?v=bWPpI9n0sZo', summary: '스펙 경쟁과 인식 경쟁의 차이, 기업이 지원자를 평가하는 선점의 기술', keyTakeaway: '기업은 스펙의 양을 보는 것이 아니라 당신이 스스로 정의한 독보적 포지션을 평가한다.' },
-      { id: 'l1-2', number: 2, title: '2강. 인식의 리포지셔닝', duration: '21:15', isFreePreview: true, isPro: false, videoUrl: 'https://www.youtube.com/watch?v=bWPpI9n0sZo', summary: '다수의 경쟁자 속에서 단일의 개별 경쟁자로 인정받는 인식 프레임 전환 원리', keyTakeaway: '남들과 똑같은 단어로 경험을 말하지 마라. 기업의 시각으로 경험의 가치를 재정의하라.' }
+      { id: 'l1-1', number: 1, title: '1강. 취업시장 특강, 리포지셔닝이란?', duration: '18:30', isFreePreview: false, isPro: true, videoUrl: 'https://www.youtube.com/watch?v=bWPpI9n0sZo', summary: '스펙 경쟁과 인식 경쟁의 차이, 기업이 지원자를 평가하는 선점의 기술', keyTakeaway: '기업은 스펙의 양을 보는 것이 아니라 당신이 스스로 정의한 독보적 포지션을 평가한다.' },
+      { id: 'l1-2', number: 2, title: '2강. 인식의 리포지셔닝', duration: '21:15', isFreePreview: false, isPro: true, videoUrl: 'https://www.youtube.com/watch?v=bWPpI9n0sZo', summary: '다수의 경쟁자 속에서 단일의 개별 경쟁자로 인정받는 인식 프레임 전환 원리', keyTakeaway: '남들과 똑같은 단어로 경험을 말하지 마라. 기업의 시각으로 경험의 가치를 재정의하라.' }
     ],
     workbookTitle: '[가이드북] 인식의 리포지셔닝 프레임워크.pdf',
     workbookUrl: '#'
