@@ -653,6 +653,7 @@ export default function App() {
 
       <BootcampCampaignPopup
         currentTab={currentTab}
+        currentTier={currentTier}
         enabled={siteFeatures.bootcamp !== false}
         onTabChange={handleTabChange}
       />
