@@ -543,6 +543,7 @@ export default function App() {
         return (
           <ClassesView
             currentTier={currentTier}
+            isAdmin={Boolean(userProfile.isAdmin)}
             onTabChange={handleTabChange}
             courses={courses}
           />
@@ -591,6 +592,7 @@ export default function App() {
         return (
           <PracticalView
             currentTier={currentTier}
+            isAdmin={Boolean(userProfile.isAdmin)}
             activeSubTab={practicalSubTab}
             onSubTabChange={(sub) => setPracticalSubTab(sub)}
             onTabChange={handleTabChange}
