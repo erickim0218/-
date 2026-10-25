@@ -44,6 +44,7 @@ export type PracticalSubTab = 'resources' | 'persuasion' | 'interview';
 
 interface PracticalViewProps {
   currentTier: MemberTier;
+  isAdmin?: boolean;
   activeSubTab?: PracticalSubTab;
   onSubTabChange?: (subTab: PracticalSubTab) => void;
   onTabChange: (tab: string) => void;
@@ -203,6 +204,7 @@ const InterviewBuildingBook: React.FC = () => (
 
 export const PracticalView: React.FC<PracticalViewProps> = ({
   currentTier,
+  isAdmin = false,
   activeSubTab = 'resources',
   onSubTabChange,
   onTabChange
@@ -230,7 +232,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
   const [previewViewportWidth, setPreviewViewportWidth] = useState(0);
 
   const currentSub = onSubTabChange ? activeSubTab : localSubTab;
-  const isPaidMember = currentTier === 'PRO' || currentTier === 'BOOTCAMP';
+  const isPaidMember = isAdmin || currentTier === 'PRO' || currentTier === 'BOOTCAMP';
   const sortedResources = useMemo(() => {
     const rank = (resource: PracticalResource) => {
       if (isClassOnlyResource(resource)) return 2;
