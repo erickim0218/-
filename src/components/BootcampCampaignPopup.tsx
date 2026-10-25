@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { ArrowRight, Clock3, X } from 'lucide-react';
 import { trackAnalyticsEvent } from '../lib/analytics';
 import { supabase } from '../lib/supabase';
+import { MemberTier } from '../types';
 import bootcampKnightKeyVisual from '../assets/images/bootcamp_knight_keyvisual.webp';
 
 interface BootcampCampaignPopupProps {
   currentTab: string;
+  currentTier: MemberTier;
   enabled: boolean;
   onTabChange: (tab: string) => void;
 }
@@ -13,6 +15,7 @@ interface BootcampCampaignPopupProps {
 const HIDE_UNTIL_KEY = 'reposition_bootcamp_popup_hide_until';
 const VARIANT_INDEX_KEY = 'reposition_bootcamp_popup_variant_index';
 const SIX_HOURS = 6 * 60 * 60 * 1000;
+const BOOTCAMP_RECRUITMENT_START = new Date('2026-10-08T00:00:00+09:00').getTime();
 const BOOTCAMP_DEADLINE = new Date('2026-10-23T21:00:00+09:00').getTime();
 const BOOTCAMP_CAPACITY = 5;
 
@@ -69,6 +72,7 @@ const variants = [
 
 export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
   currentTab,
+  currentTier,
   enabled,
   onTabChange
 }) => {
@@ -76,6 +80,7 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
   const [variantIndex, setVariantIndex] = useState(0);
   const [confirmedCount, setConfirmedCount] = useState(0);
   const [now, setNow] = useState(() => Date.now());
+  const [viewerIsBootcampMember, setViewerIsBootcampMember] = useState<boolean | null>(null);
   const isEligiblePage = ['home', 'repositioning', 'classes', 'consulting', 'practical'].includes(currentTab);
   const variant = variants[variantIndex];
   const timeLeft = getRemainingTime(now);
@@ -84,6 +89,8 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
   const isExpired = now >= BOOTCAMP_DEADLINE;
   const isFull = displayCount >= BOOTCAMP_CAPACITY;
   const isClosed = isExpired || isFull;
+  const isRecruitmentPeriod = now >= BOOTCAMP_RECRUITMENT_START && now < BOOTCAMP_DEADLINE;
+  const canShowCampaign = isRecruitmentPeriod && !isFull && viewerIsBootcampMember === false;
   const countdownText = isExpired
     ? '모집 마감'
     : isFull
@@ -96,7 +103,47 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!enabled || !isEligiblePage) return;
+    let active = true;
+
+    const checkBootcampMembership = async () => {
+      if (currentTier === 'BOOTCAMP') {
+        if (active) setViewerIsBootcampMember(true);
+        return;
+      }
+
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          if (active) setViewerIsBootcampMember(false);
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from('user_access')
+          .select('membership_tier')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (active) {
+          setViewerIsBootcampMember(
+            !error && String(data?.membership_tier || '').toLowerCase() === 'bootcamp'
+          );
+        }
+      } catch {
+        if (active) setViewerIsBootcampMember(false);
+      }
+    };
+
+    setViewerIsBootcampMember(null);
+    void checkBootcampMembership();
+
+    return () => {
+      active = false;
+    };
+  }, [currentTier]);
+
+  useEffect(() => {
+    if (!enabled || !isEligiblePage || !isRecruitmentPeriod || viewerIsBootcampMember !== false) return;
 
     const fetchConfirmedCount = async () => {
       try {
@@ -125,12 +172,12 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
       window.removeEventListener('focus', refreshStats);
       window.removeEventListener('bootcamp_stats_updated', refreshStats);
     };
-  }, [currentTab, enabled, isEligiblePage]);
+  }, [currentTab, enabled, isEligiblePage, isRecruitmentPeriod, viewerIsBootcampMember]);
 
   useEffect(() => {
     setIsOpen(false);
 
-    if (!enabled || !isEligiblePage) {
+    if (!enabled || !isEligiblePage || !canShowCampaign) {
       return;
     }
 
@@ -149,7 +196,7 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
       const timer = window.setTimeout(() => setIsOpen(true), 700);
       return () => window.clearTimeout(timer);
     }
-  }, [currentTab, enabled, isEligiblePage]);
+  }, [currentTab, enabled, isEligiblePage, canShowCampaign]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -199,7 +246,7 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
     onTabChange('bootcamp');
   };
 
-  if (!isOpen || !enabled || !isEligiblePage) return null;
+  if (!isOpen || !enabled || !isEligiblePage || !canShowCampaign) return null;
 
   if ('image' in variant && 'imageAlt' in variant) {
     return (
