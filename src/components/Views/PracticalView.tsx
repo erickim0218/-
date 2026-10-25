@@ -86,7 +86,7 @@ const PaidContentLock: React.FC<{
       onClick={() => onTabChange('pro-payment')}
       className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFD600] px-7 py-4 text-sm font-black text-black transition hover:bg-yellow-300 sm:w-auto"
     >
-      리포지셔닝 클래스 수강하기
+      프로 멤버십 시작하기
       <ArrowRight className="h-4 w-4" />
     </button>
   </div>
@@ -102,11 +102,8 @@ const ResourceCard: React.FC<{
   onOpenLibrary: () => void;
   onPreview: (resource: PracticalResource) => void;
 }> = ({ resource, canUsePro, isClaimed, isDownloading, onDownload, onUpgrade, onOpenLibrary, onPreview }) => {
-  const downloadLimit = 100;
   const isClassOnly = isClassOnlyResource(resource);
   const isLocked = isClassOnly && !canUsePro;
-  const downloadCount = Math.min(resource.download_count || 0, downloadLimit);
-  const isDistributionClosed = downloadCount >= downloadLimit;
   const resourceGroup = getPracticalResourceGroup(resource);
   const normalizedTitle = resource.title.toLowerCase();
   const isPdf = resource.mime_type === 'application/pdf' || resource.file_name?.toLowerCase().endsWith('.pdf');
@@ -126,7 +123,7 @@ const ResourceCard: React.FC<{
               {resourceGroup === 'practical' ? '실전자료' : '필수자료'}
             </span>
             <span className={`rounded-md px-3 py-1.5 text-[10px] font-black ${isClassOnly ? 'border border-[#FFD600]/30 bg-[#FFD600]/10 text-[#FFD600]' : 'bg-emerald-500/10 text-emerald-300'}`}>
-              {isClassOnly ? '클래스 수강자 전용' : '무료배포'}
+              {isClassOnly ? '프로·부트캠프 전용' : '무료 공개'}
             </span>
             <span className="rounded-md bg-white/10 px-3 py-1.5 text-[10px] font-bold text-zinc-300">{PRACTICAL_CATEGORY_LABELS[resource.category]}</span>
           </div>
@@ -136,23 +133,6 @@ const ResourceCard: React.FC<{
             <span className="rounded-full border border-white/10 px-3 py-1.5">PDF 실전자료</span>
             {canPreview ? <span className="rounded-full border border-white/10 px-3 py-1.5">10페이지 미리보기</span> : null}
             {resource.file_size ? <span className="rounded-full border border-white/10 px-3 py-1.5">{formatResourceSize(resource.file_size)}</span> : null}
-          </div>
-          <div className="mt-5 max-w-md rounded-xl border border-white/10 bg-black/20 p-3.5">
-            <div className="flex items-center justify-between gap-3 text-xs font-black">
-              <span className={isDistributionClosed ? 'text-rose-300' : 'text-[#FFD600]'}>
-                {isDistributionClosed ? '선착순 배포 마감' : isClassOnly ? '클래스 수강자 100명 한정' : '선착순 100명 무료배포'}
-              </span>
-              <span className="shrink-0 text-zinc-300">{downloadCount} / {downloadLimit}명</span>
-            </div>
-            <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/10">
-              <div
-                className={`h-full rounded-full transition-all ${isDistributionClosed ? 'bg-rose-400' : 'bg-[#FFD600]'}`}
-                style={{ width: `${downloadCount}%` }}
-              />
-            </div>
-            {!isDistributionClosed ? (
-              <p className="mt-2 text-[11px] font-bold text-zinc-500">남은 수량 {downloadLimit - downloadCount}명</p>
-            ) : null}
           </div>
         </div>
 
@@ -167,9 +147,9 @@ const ResourceCard: React.FC<{
               {isLocked ? '클래스에서 미리보기' : '첫 10페이지 미리보기'}
             </button>
           ) : null}
-          <button type="button" onClick={() => (isLocked ? onUpgrade() : isClaimed ? onOpenLibrary() : onDownload(resource))} disabled={isDownloading || (isDistributionClosed && !isClaimed)} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:cursor-not-allowed ${isClaimed ? 'border border-emerald-400/25 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/15' : isDistributionClosed ? 'border border-rose-400/25 bg-rose-400/5 text-rose-300' : isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resourceGroup === 'practical' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'} ${isDownloading ? 'opacity-60' : ''}`}>
-            {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : isClaimed ? <Download className="h-4 w-4" /> : isDistributionClosed || isLocked ? <Lock className="h-4 w-4" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
-            {isDownloading ? '준비 중...' : isClaimed ? '내 콘텐츠에서 다시 받기' : isDistributionClosed ? '선착순 배포 마감' : isLocked ? '클래스에서 이용하기' : resource.external_url ? '자료 열기' : '무료 다운로드'}
+          <button type="button" onClick={() => (isLocked ? onUpgrade() : isClaimed ? onOpenLibrary() : onDownload(resource))} disabled={isDownloading} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:cursor-not-allowed ${isClaimed ? 'border border-emerald-400/25 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/15' : isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resourceGroup === 'practical' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'} ${isDownloading ? 'opacity-60' : ''}`}>
+            {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : isClaimed ? <Download className="h-4 w-4" /> : isLocked ? <Lock className="h-4 w-4" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
+            {isDownloading ? '준비 중...' : isClaimed ? '내 콘텐츠에서 다시 받기' : isLocked ? '프로 멤버십으로 이용하기' : resource.external_url ? '자료 열기' : '무료 다운로드'}
           </button>
         </div>
       </div>
@@ -345,7 +325,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
         setClaimedResourceIds((current) => new Set(current).add(resource.id));
         setResources((current) => current.map((item) => (
           item.id === resource.id
-            ? { ...item, download_count: Math.min((item.download_count || 0) + 1, 100) }
+            ? { ...item, download_count: (item.download_count || 0) + 1 }
             : item
         )));
         window.open(resource.external_url, '_blank', 'noopener,noreferrer');
@@ -364,7 +344,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
       setClaimedResourceIds((current) => new Set(current).add(resource.id));
       setResources((current) => current.map((item) => (
         item.id === resource.id
-          ? { ...item, download_count: Math.min((item.download_count || 0) + 1, 100) }
+          ? { ...item, download_count: (item.download_count || 0) + 1 }
           : item
       )));
       const objectUrl = URL.createObjectURL(blob);
@@ -384,10 +364,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
         : error && typeof error === 'object' && 'message' in error
           ? String((error as { message?: unknown }).message || '알 수 없는 오류')
           : String(error);
-      if (message.includes('DOWNLOAD_LIMIT_REACHED')) {
-        window.alert('이 자료는 선착순 100명 배포가 마감되었습니다.');
-        void loadResources();
-      } else if (message.includes('RESOURCE_ALREADY_CLAIMED')) {
+      if (message.includes('RESOURCE_ALREADY_CLAIMED')) {
         setClaimedResourceIds((current) => new Set(current).add(resource.id));
         window.alert('이미 다운로드한 자료입니다. 자료는 회원 1명당 한 번만 받을 수 있습니다.');
       } else if (message.includes('RESOURCE_ACCESS_DENIED') || message.includes('권한이 없습니다')) {
@@ -518,8 +495,8 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
           </span>
           <h1 className="mt-5 text-3xl font-black tracking-tight text-white sm:text-5xl">리포지셔닝 실전활용</h1>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-zinc-400 sm:text-base">
-            취업의 기준을 세우는 필수자료부터 지원서에 바로 적용하는 실전자료까지,
-            회원이라면 대부분의 자료를 무료로 이용할 수 있습니다.
+            자기설득서와 완벽통제면접은 모든 회원에게 무료로 공개합니다.<br className="hidden sm:block" />{' '}
+            나머지 실전자료는 프로 멤버십과 부트캠프 수강생이 이용할 수 있습니다.
           </p>
 
           <div className="mt-9 grid grid-cols-2 gap-2 rounded-2xl border border-zinc-800 bg-[#09090B] p-2 sm:inline-grid sm:min-w-[560px]">
@@ -551,7 +528,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                 <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">RESOURCE LIBRARY</span>
                 <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">리포지셔닝 자료 다운로드</h2>
                 <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-zinc-500">
-                  방향을 잡아주는 필수자료와 지원서에 바로 적용하는 실전자료를 한곳에서 확인하세요.
+                  무료 핵심자료와 프로·부트캠프 전용 실전자료를 한곳에서 확인하세요.
                 </p>
               </div>
 
@@ -633,8 +610,8 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
               <PaidContentLock
                 title={buildingBookTab === 'persuasion' ? '자기설득서 Building Up Book' : '면접통제 Building Up Book'}
                 description={buildingBookTab === 'persuasion'
-                  ? '기업의 질문 의도를 확인하고, 주장·근거·어필의 구조로 나를 채용해야 할 이유를 직접 정리하는 클래스 수강자 전용 워크북입니다.'
-                  : '자기소개부터 약점 질문과 역질문까지, 면접에서 보여줄 핵심 메시지를 한 흐름으로 정리하는 클래스 수강자 전용 워크북입니다.'}
+                  ? '기업의 질문 의도를 확인하고, 주장·근거·어필의 구조로 나를 채용해야 할 이유를 직접 정리하는 프로·부트캠프 전용 워크북입니다.'
+                  : '자기소개부터 약점 질문과 역질문까지, 면접에서 보여줄 핵심 메시지를 한 흐름으로 정리하는 프로·부트캠프 전용 워크북입니다.'}
                 onTabChange={onTabChange}
               />
             )}
