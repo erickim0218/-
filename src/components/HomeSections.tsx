@@ -368,15 +368,15 @@ export const FeaturedCoursesSection: React.FC<{
               <div className="space-y-2 pt-2 border-t border-[#1F1F24]">
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>방향을 잡아주는 필수자료 무료배포</span>
+                  <span>자기설득서·완벽통제면접 무료 공개</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>지원서에 바로 쓰는 실전자료 무료배포</span>
+                  <span>나머지 실전자료는 프로 전용</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>예시·프롬프트·Building Up Book은 클래스 제공</span>
+                  <span>부트캠프 수강생은 모든 자료 이용 가능</span>
                 </div>
               </div>
             </div>
