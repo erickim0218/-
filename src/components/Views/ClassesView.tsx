@@ -5,6 +5,7 @@ import { Course, CourseLesson, MemberTier } from '../../types';
 
 interface ClassesViewProps {
   currentTier: MemberTier;
+  isAdmin?: boolean;
   onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
   courses?: Course[];
 }
@@ -16,10 +17,10 @@ const getYouTubeEmbedUrl = (url?: string) => {
   return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
 };
 
-export const ClassesView: React.FC<ClassesViewProps> = ({ currentTier, onTabChange, courses: externalCourses }) => {
+export const ClassesView: React.FC<ClassesViewProps> = ({ currentTier, isAdmin = false, onTabChange, courses: externalCourses }) => {
   const allCourses = externalCourses || COURSES;
   const [activeCourse, setActiveCourse] = useState<Course>(() => (
-    currentTier === 'PRO' || currentTier === 'BOOTCAMP'
+    isAdmin || currentTier === 'PRO' || currentTier === 'BOOTCAMP'
       ? allCourses[0]
       : allCourses.find((course) => course.requiredTier === 'FREE') || allCourses[0]
   ));
@@ -29,6 +30,7 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ currentTier, onTabChan
     tier === 'PRO' || tier === 'BOOTCAMP';
 
   const canAccessCourse = (course: Course) => {
+    if (isAdmin) return true;
     if (course.requiredTier === 'FREE') return currentTier !== 'NON_MEMBER';
     if (course.requiredTier === 'PRO' && isPaidUser(currentTier)) return true;
     if (course.requiredTier === 'BOOTCAMP' && currentTier === 'BOOTCAMP') return true;
@@ -36,6 +38,7 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ currentTier, onTabChan
   };
 
   const canAccessLesson = (course: Course, lesson: CourseLesson) => {
+    if (isAdmin) return true;
     if (currentTier === 'NON_MEMBER') {
       return false;
     }
