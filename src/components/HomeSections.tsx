@@ -12,6 +12,11 @@ import {
 import { BRAND_INFO, REPOSITIONING_EXAMPLES, CASE_STUDIES, REVIEWS } from '../data/mockData';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
 import { trackAnalyticsEvent } from '../lib/analytics';
+import {
+  BOOTCAMP_ANALYTICS_COHORT,
+  BOOTCAMP_DEADLINE,
+  BOOTCAMP_RECRUITMENT_START
+} from '../config/bootcampCampaign';
 
 interface HomeSectionsProps {
   onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
@@ -20,7 +25,10 @@ interface HomeSectionsProps {
 }
 
 const isBootcampRecruitmentExpired = () =>
-  Date.now() >= new Date('2026-10-23T21:00:00+09:00').getTime();
+  Date.now() >= BOOTCAMP_DEADLINE;
+
+const isBootcampRecruitmentStarted = () =>
+  Date.now() >= BOOTCAMP_RECRUITMENT_START;
 
 /* 1. Hero Section - Ultra Clean & Direct */
 export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeatures }) => {
@@ -41,7 +49,8 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
     }
   }, [siteFeatures]);
 
-  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentExpired();
+  const isBootcampOpen = isBootcampEnabled && isBootcampRecruitmentStarted() && !isBootcampRecruitmentExpired();
+  const isBootcampBeforeOpen = !isBootcampRecruitmentStarted();
 
   return (
     <section className="relative bg-[#09090B] text-white pt-16 pb-20 md:py-24 border-b border-[#1A1A1E] overflow-hidden">
@@ -125,14 +134,14 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
               trackAnalyticsEvent({
                 eventName: 'bootcamp_click',
                 buttonLocation: 'home_bootcamp_cta',
-                bootcampCohort: 9
+                bootcampCohort: BOOTCAMP_ANALYTICS_COHORT
               });
               onTabChange('bootcamp');
             }}
             className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-sm sm:text-base rounded-xl transition flex items-center justify-center gap-2 shadow-lg cursor-pointer"
           >
             <Sparkles className="w-4 h-4 text-[#09090B] shrink-0" />
-            <span>{isBootcampOpen ? '부트캠프 9기 신청하기' : '모집 마감 (다음 기수 예약)'}</span>
+            <span>{isBootcampOpen ? '윈터캠프 신청하기' : isBootcampBeforeOpen ? '윈터캠프 11월 13일 모집 시작' : '모집 마감 (다음 모집 예약)'}</span>
             <ArrowRight className="w-4 h-4 text-[#09090B] shrink-0" />
           </button>
         </div>
@@ -199,7 +208,8 @@ export const FeaturedCoursesSection: React.FC<{
     };
   }, []);
 
-  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentExpired();
+  const isBootcampOpen = isBootcampEnabled && isBootcampRecruitmentStarted() && !isBootcampRecruitmentExpired();
+  const isBootcampBeforeOpen = !isBootcampRecruitmentStarted();
 
   return (
     <section className="py-20 bg-[#0C0C0F] text-white border-b border-[#1A1A1E]">
@@ -223,7 +233,7 @@ export const FeaturedCoursesSection: React.FC<{
             <div className={`absolute top-0 right-0 font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-widest ${
               isBootcampOpen ? 'bg-[#FFD600] text-[#09090B]' : 'bg-rose-600 text-white'
             }`}>
-              {isBootcampOpen ? '모집중 (선착순 5명)' : '모집 마감'}
+              {isBootcampOpen ? '모집중 (선착순 5명)' : isBootcampBeforeOpen ? '11월 13일 모집 시작' : '모집 마감'}
             </div>
 
             <div className="space-y-4">
@@ -231,11 +241,11 @@ export const FeaturedCoursesSection: React.FC<{
                 <span className="p-2 rounded-xl bg-[#FFD600]/10 text-[#FFD600]">
                   <Zap className="w-5 h-5" />
                 </span>
-                <span className="text-xs font-bold text-[#FFD600] tracking-wider uppercase">BOOTCAMP 9기</span>
+                <span className="text-xs font-bold text-[#FFD600] tracking-wider uppercase">REPOSITIONING WINTER CAMP</span>
               </div>
 
               <div>
-                <h3 className="text-xl font-black text-white">리포지셔닝 부트캠프</h3>
+                <h3 className="text-xl font-black text-white">리포지셔닝 윈터캠프</h3>
                 <p className="text-xs text-[#FFD600] font-bold pt-1">
                   🔥 1기~8기 연속 전회 완판 릴레이!
                 </p>
@@ -704,7 +714,7 @@ export const BootcampCurriculumPreview: React.FC<{
 
         <div className="p-6 bg-[#18181C] border border-[#FFD600]/30 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="space-y-1">
-            <span className="text-[#FFD600] font-black text-sm block">리포지셔닝 부트캠프 9기 모집 안내 · 10월 23일(금) 오후 9시 마감 · 선착순 5명</span>
+            <span className="text-[#FFD600] font-black text-sm block">리포지셔닝 윈터캠프 · 11월 13일(금) 모집 시작 · 11월 20일(금) 오후 9시 마감 · 선착순 5명</span>
             <p className="text-xs text-zinc-300">1회차 컨설팅 만족 불발 시 24시간 이내 전액 환불 보장</p>
           </div>
           <button
@@ -742,7 +752,8 @@ export const FinalConversionSection: React.FC<{
     }
   }, [siteFeatures]);
 
-  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentExpired();
+  const isBootcampOpen = isBootcampEnabled && isBootcampRecruitmentStarted() && !isBootcampRecruitmentExpired();
+  const isBootcampBeforeOpen = !isBootcampRecruitmentStarted();
 
   return (
     <section className="py-24 bg-[#09090B] text-white text-center border-t border-[#1A1A1E]">
@@ -810,14 +821,14 @@ export const FinalConversionSection: React.FC<{
               trackAnalyticsEvent({
                 eventName: 'bootcamp_click',
                 buttonLocation: 'home_bootcamp_cta',
-                bootcampCohort: 9
+                bootcampCohort: BOOTCAMP_ANALYTICS_COHORT
               });
               onTabChange('bootcamp');
             }}
             className="w-full sm:w-auto px-8 py-4 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-base rounded-xl transition flex items-center justify-center gap-2 shadow-lg cursor-pointer"
           >
             <Sparkles className="w-5 h-5 text-[#09090B] shrink-0" />
-            <span>{isBootcampOpen ? '부트캠프 9기 신청하기' : '모집 마감 (다음 기수 예약)'}</span>
+            <span>{isBootcampOpen ? '윈터캠프 신청하기' : isBootcampBeforeOpen ? '윈터캠프 11월 13일 모집 시작' : '모집 마감 (다음 모집 예약)'}</span>
             <ArrowRight className="w-5 h-5 text-[#09090B] shrink-0" />
           </button>
         </div>
