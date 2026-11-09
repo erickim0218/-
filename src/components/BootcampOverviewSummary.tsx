@@ -55,9 +55,9 @@ export const BootcampOverviewSummary: React.FC<BootcampOverviewSummaryProps> = (
       subtitle: '주차별 명확한 목표로 단단한 합격 무기를 장착합니다',
       badge: '3주 완성 체계적 프로세스',
       stats: [
-        { label: '1주차', value: '직무 재정의', desc: '5Why & 기획자적 관점 재설정' },
-        { label: '2주차', value: '자기설득서', desc: '주장-근거-어필 템플릿 완성' },
-        { label: '3주차', value: '1:1 피드백', desc: '밀착 첨삭 & 면접 연결 전략' },
+        { label: '1주차', value: '취업·자소서 리포지셔닝', desc: '자기설득서의 이해와 적용' },
+        { label: '2주차', value: '면접 리포지셔닝', desc: '완벽통제면접의 이해와 적용' },
+        { label: '3주차', value: '이직 리포지셔닝', desc: '취업 STP·이력서·포트폴리오 특강' },
       ],
       highlights: [
         '주차별 실전 과제 제출 및 기획자 J의 1:1 맞춤 피드백',

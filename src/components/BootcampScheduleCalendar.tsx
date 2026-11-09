@@ -6,20 +6,20 @@ const weeklySchedule = [
   {
     week: '1주차',
     date: '11월 22일 일요일',
-    title: '방향 설정과 REAL NEEDS 분석',
-    detail: '지원 방향을 확정하고 기업이 실제로 원하는 기준을 찾습니다.'
+    title: '취업 및 자소서 리포지셔닝',
+    topics: ['자기설득서의 이해와 적용']
   },
   {
     week: '2주차',
     date: '11월 29일 일요일',
-    title: '경험 리포지셔닝과 서류 완성',
-    detail: '경험을 기업의 언어로 바꾸고 이력서·자기설득서에 적용합니다.'
+    title: '면접 리포지셔닝',
+    topics: ['완벽통제면접의 이해와 적용 특강']
   },
   {
     week: '3주차',
     date: '12월 6일 일요일',
-    title: '면접 전략과 최종 점검',
-    detail: '서류와 면접의 메시지를 하나로 연결하고 실전 대응 전략을 완성합니다.'
+    title: '이직 리포지셔닝',
+    topics: ['취업 STP 전략 특강', 'REAL NEEDS 이력서 특강', '완벽설득포트폴리오 특강']
   }
 ];
 
@@ -154,12 +154,17 @@ export const BootcampScheduleCalendar: React.FC = () => {
                     <CheckCircle2 className="h-4 w-4 shrink-0 text-sky-400" />
                     {item.title}
                   </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-400 sm:text-sm">{item.detail}</p>
-                  {index < weeklySchedule.length - 1 ? (
-                    <p className="mt-3 text-[11px] font-bold text-slate-500">
-                      다음 일요일 전까지 과제 수행 · 1:1 피드백 진행
-                    </p>
-                  ) : null}
+                  <ul className="mt-2 space-y-1 text-xs leading-relaxed text-slate-300 sm:text-sm">
+                    {item.topics.map((topic) => (
+                      <li key={topic} className="flex gap-2">
+                        <span className="text-sky-400">–</span>
+                        <span>{topic}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-3 rounded-lg border border-sky-300/20 bg-sky-300/10 px-3 py-2 text-[11px] font-black text-sky-200 sm:text-xs">
+                    강의 후 1:1 밀착 리포지셔닝 컨설팅
+                  </p>
                 </div>
               </article>
             ))}

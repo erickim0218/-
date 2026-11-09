@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   X,
   Calendar,
-  Rocket,
   Award,
   ArrowRight,
   MessageSquare,
@@ -21,7 +20,6 @@ import { UserReviewsSection } from './UserReviewsSection';
 import { RocketInfographic } from './RocketInfographic';
 import { BootcampScheduleCalendar } from './BootcampScheduleCalendar';
 import { WinterCampIllustration, WinterSnowfall } from './WinterCampDecor';
-import standardRocketImg from '../assets/images/standard_rocket_launch_1788079504479.jpg';
 import { BootcampReview } from '../data/bootcampReviews';
 import { supabase } from '../lib/supabase';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
@@ -469,28 +467,28 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
           </div>
         </section>
 
-        {/* 2. 기존 로켓 프로그램 설명 — 컬러와 장식만 윈터 테마 적용 */}
+        {/* 2. 윈터캠프 시즈널 키비주얼 */}
         <section className="p-6 sm:p-10 border-b border-sky-200 bg-[#EAF7FD]">
           <div className="max-w-4xl mx-auto rounded-[2rem] overflow-hidden border border-sky-200 bg-white shadow-[0_24px_70px_rgba(14,116,144,0.16)] relative">
-            <div className="relative w-full h-[400px] sm:h-[520px] md:h-[620px] bg-[#071C2D] flex items-center justify-center overflow-hidden">
-              <img
-                src={standardRocketImg}
-                alt="리포지셔닝 윈터캠프 로켓"
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-contain sm:object-cover object-center brightness-105 contrast-105 saturate-75 hue-rotate-[145deg] opacity-100"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#071C2D]/90 via-transparent to-sky-950/25 pointer-events-none" />
-              <WinterSnowfall className="opacity-75" />
+            <div className="relative min-h-[470px] sm:min-h-[590px] bg-[linear-gradient(180deg,#FFFFFF_0%,#F1FAFF_58%,#CDEEFF_100%)] flex items-center justify-center overflow-hidden px-6 pt-20 pb-8">
+              <WinterSnowfall />
               <div className="absolute top-6 left-6 right-6 sm:top-8 sm:left-8 z-10">
                 <div className="inline-flex items-center gap-2 bg-sky-100 text-sky-900 px-4 py-1.5 rounded-full font-black text-xs sm:text-sm border border-sky-200 shadow-sm">
-                  <Rocket className="w-4 h-4 fill-current" />
-                  <span>리포지셔닝 윈터캠프란?</span>
+                  <span>❄</span>
+                  <span>2026 REPOSITIONING WINTER CAMP</span>
                 </div>
               </div>
+
+              <h2 className="absolute left-6 right-6 top-[27%] z-20 text-center text-[clamp(2.5rem,10vw,5.5rem)] font-black leading-[0.95] tracking-[-0.06em] text-slate-950 drop-shadow-sm sm:top-[24%]">
+                <span className="block">리포지셔닝</span>
+                <span className="mt-2 block text-sky-700">윈터캠프 오픈</span>
+              </h2>
+
+              <WinterCampIllustration className="w-full max-w-[620px] translate-y-28 drop-shadow-[0_22px_20px_rgba(14,116,144,0.16)] sm:translate-y-32" />
               <div className="absolute bottom-6 left-6 right-6 sm:bottom-8 sm:left-8 sm:right-8 z-10">
-                <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight drop-shadow-xl">
-                  리포지셔닝 윈터캠프는 <span className="text-sky-300">로켓</span>입니다.
-                </h2>
+                <p className="text-lg sm:text-3xl md:text-4xl font-black text-slate-950 tracking-tight leading-tight">
+                  이번 겨울, <span className="text-sky-700">3주 집중 캠프</span>로<br />합격의 방향을 완성합니다.
+                </p>
               </div>
             </div>
 

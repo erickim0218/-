@@ -259,15 +259,15 @@ export const FeaturedCoursesSection: React.FC<{
               <div className="space-y-2 pt-2 border-t border-[#1F1F24]">
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-sky-300" />
-                  <span>1주차: 취업시장 & 자소서 리포지셔닝 특강</span>
+                  <span>1주차: 취업 및 자소서 리포지셔닝</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-sky-300" />
-                  <span>2주차: 우수 과제 리뷰 & 면접통제 특강</span>
+                  <span>2주차: 면접 리포지셔닝</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-sky-300" />
-                  <span>3주차: 이직 STP 전략 특강 & 1:1 3회 컨설팅</span>
+                  <span>3주차: 이직 리포지셔닝</span>
                 </div>
               </div>
             </div>
@@ -680,38 +680,43 @@ export const BootcampCurriculumPreview: React.FC<{
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-6 bg-[#121216] border border-[#27272A] rounded-2xl space-y-3 relative overflow-hidden">
             <span className="px-2.5 py-1 bg-[#FFD600] text-[#09090B] font-black text-xs rounded">
-              1주차 (4시간)
+              1주차
             </span>
             <h3 className="font-extrabold text-base text-white pt-1">
-              취업시장 & 자소서 리포지셔닝
+              취업 및 자소서 리포지셔닝
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              취업시장 특강 + 자소서 리포지셔닝 특강 및 1:1 1차 개별 컨설팅 (자기설득서 과제)
+              자기설득서의 이해와 적용
             </p>
+            <p className="text-xs font-black text-sky-300">강의 후 1:1 밀착 리포지셔닝 컨설팅</p>
           </div>
 
           <div className="p-6 bg-[#121216] border border-[#27272A] rounded-2xl space-y-3 relative overflow-hidden">
             <span className="px-2.5 py-1 bg-[#FFD600] text-[#09090B] font-black text-xs rounded">
-              2주차 (2시간)
+              2주차
             </span>
             <h3 className="font-extrabold text-base text-white pt-1">
-              우수 과제 리뷰 & 면접 리포지셔닝
+              면접 리포지셔닝
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              면접통제 특강 + 1:1 2차 개별 컨설팅 (면접통제 Building-Up Book 과제)
+              완벽통제면접의 이해와 적용 특강
             </p>
+            <p className="text-xs font-black text-sky-300">강의 후 1:1 밀착 리포지셔닝 컨설팅</p>
           </div>
 
           <div className="p-6 bg-[#121216] border border-[#27272A] rounded-2xl space-y-3 relative overflow-hidden">
             <span className="px-2.5 py-1 bg-[#FFD600] text-[#09090B] font-black text-xs rounded">
-              3주차 (1시간 30분)
+              3주차
             </span>
             <h3 className="font-extrabold text-base text-white pt-1">
-              이직 STP 전략 & 합격 케어
+              이직 리포지셔닝
             </h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              이직 STP전략 특강 + 1:1 3차 개별 컨설팅 + 자소서 3회 합격용 첨삭 & 상시 피드백
-            </p>
+            <ul className="space-y-1 text-xs leading-relaxed text-zinc-400">
+              <li>취업 STP 전략 특강</li>
+              <li>REAL NEEDS 이력서 특강</li>
+              <li>완벽설득포트폴리오 특강</li>
+            </ul>
+            <p className="text-xs font-black text-sky-300">강의 후 1:1 밀착 리포지셔닝 컨설팅</p>
           </div>
         </div>
 
