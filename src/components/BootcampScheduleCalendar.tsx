@@ -125,12 +125,14 @@ export const BootcampScheduleCalendar: React.FC = () => {
                       ? `2026-12-${String(index - 29).padStart(2, '0')}`
                       : '';
                     const task = getTaskPeriod(key || trailingTaskKey);
+                    const isTaskVisualStart = task?.position === 'start' || (month === 12 && key === '2026-12-01');
+                    const showTaskLabel = Boolean(task?.showLabel && !trailingTaskKey);
                     const isSunday = index % 7 === 0;
 
                     return (
                       <div
                         key={`${month}-${index}`}
-                        className={`relative min-h-[72px] min-w-0 bg-white p-1.5 sm:min-h-[86px] sm:p-2 ${task?.showLabel ? 'z-20' : task ? 'z-10' : ''}`}
+                        className={`relative min-h-[72px] min-w-0 bg-white p-1.5 sm:min-h-[86px] sm:p-2 ${showTaskLabel ? 'z-20' : task ? 'z-10' : ''}`}
                       >
                         {day ? (
                           <>
@@ -146,13 +148,13 @@ export const BootcampScheduleCalendar: React.FC = () => {
                         ) : null}
                         {task ? (
                           <div
-                            className={`relative mt-1 h-6 -mx-1.5 bg-gradient-to-r from-sky-500 to-blue-600 shadow-sm sm:-mx-2 ${
-                              task.position === 'start' ? 'rounded-l-lg' : ''
+                            className={`relative mt-1 h-6 -mx-1.5 bg-sky-200 sm:-mx-2 ${
+                              isTaskVisualStart ? 'rounded-l-lg' : ''
                             } ${task.position === 'end' ? 'rounded-r-lg' : ''}`}
                             aria-label={task.label}
                           >
-                            {task.showLabel ? (
-                              <span className="absolute left-2 top-1/2 z-30 -translate-y-1/2 whitespace-nowrap text-[8px] font-black text-white drop-shadow-sm sm:text-[10px]">
+                            {showTaskLabel ? (
+                              <span className="absolute left-2 top-1/2 z-30 -translate-y-1/2 whitespace-nowrap text-[8px] font-black text-sky-900 sm:text-[10px]">
                                 {task.label}
                               </span>
                             ) : null}
