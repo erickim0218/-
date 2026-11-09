@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar as CalendarIcon, CheckCircle2, Clock3, Snowflake } from 'lucide-react';
+import { ArrowDown, BriefcaseBusiness, Calendar as CalendarIcon, Clock3, FileText, MessageSquareText, Snowflake } from 'lucide-react';
 import { WinterCampIllustration, WinterSnowfall } from './WinterCampDecor';
 
 const weeklySchedule = [
@@ -68,6 +68,8 @@ const eventToneClass: Record<CalendarEvent['tone'], string> = {
   deadline: 'border-slate-800 bg-slate-900 text-white',
   class: 'border-sky-500 bg-sky-500 text-white shadow-sm shadow-sky-200'
 };
+
+const weekIcons = [FileText, MessageSquareText, BriefcaseBusiness];
 
 export const BootcampScheduleCalendar: React.FC = () => {
   return (
@@ -187,37 +189,73 @@ export const BootcampScheduleCalendar: React.FC = () => {
             </span>
           </div>
 
-          <div className="grid gap-3 p-4 sm:p-6">
-            {weeklySchedule.map((item, index) => (
-              <article key={item.week} className="grid gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:grid-cols-[110px_1fr] sm:items-center">
-                <div>
-                  <span className="text-xs font-black text-sky-300">{item.week}</span>
-                  <p className="mt-1 text-sm font-black text-white">{item.date}</p>
-                </div>
-                <div className="border-t border-white/10 pt-4 sm:border-l sm:border-t-0 sm:pl-5 sm:pt-0">
-                  <h3 className="flex items-center gap-2 text-sm font-black text-white sm:text-base">
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-sky-400" />
-                    {item.title}
-                  </h3>
-                  <ul className="mt-2 space-y-1 text-xs leading-relaxed text-slate-300 sm:text-sm">
-                    {item.topics.map((topic) => (
-                      <li key={topic} className="flex gap-2">
-                        <span className="text-sky-400">–</span>
-                        <span>{topic}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-3 space-y-0.5 text-xs font-bold leading-relaxed text-white/90 sm:text-sm">
-                    {item.message.map((line) => (
-                      <p key={line}>{line}</p>
-                    ))}
-                  </div>
-                  <p className="mt-3 rounded-lg border border-sky-300/20 bg-sky-300/10 px-3 py-2 text-[11px] font-black text-sky-200 sm:text-xs">
-                    강의 후 1:1 밀착 리포지셔닝 컨설팅
-                  </p>
-                </div>
-              </article>
-            ))}
+          <div className="relative grid gap-5 p-4 sm:p-6">
+            <div className="pointer-events-none absolute bottom-12 left-[2.1rem] top-12 w-px bg-sky-300/20 sm:left-[4.6rem]" />
+            {weeklySchedule.map((item, index) => {
+              const WeekIcon = weekIcons[index];
+
+              return (
+                <React.Fragment key={item.week}>
+                  <article className="relative overflow-hidden rounded-3xl border border-sky-300/20 bg-[#131E29] shadow-[0_18px_50px_rgba(0,0,0,0.18)]">
+                    <span className="pointer-events-none absolute -right-1 -top-7 select-none text-[7rem] font-black leading-none text-white/[0.035] sm:text-[9rem]">
+                      0{index + 1}
+                    </span>
+
+                    <div className="grid sm:grid-cols-[150px_1fr]">
+                      <div className="relative z-10 flex items-center gap-3 border-b border-sky-300/15 bg-sky-300/[0.07] p-5 sm:flex-col sm:items-start sm:justify-between sm:border-b-0 sm:border-r sm:p-6">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-sky-400 text-sky-950 shadow-lg shadow-sky-950/20">
+                          <WeekIcon className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <span className="text-xs font-black tracking-[0.16em] text-sky-300">WEEK 0{index + 1}</span>
+                          <p className="mt-1 text-base font-black text-white">{item.week}</p>
+                          <p className="mt-1 text-xs font-bold text-slate-400">{item.date}</p>
+                        </div>
+                      </div>
+
+                      <div className="relative z-10 p-5 sm:p-7">
+                        <h3 className="text-xl font-black leading-tight text-white sm:text-2xl">
+                          {item.title}
+                        </h3>
+
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {item.topics.map((topic) => (
+                            <span key={topic} className="rounded-full border border-sky-300/25 bg-sky-300/10 px-3 py-1.5 text-[11px] font-black text-sky-200 sm:text-xs">
+                              {topic}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="mt-5 border-l-2 border-sky-400 pl-4">
+                          {item.message.map((line, messageIndex) => (
+                            <p key={line} className={`${messageIndex === 0 ? 'text-sm text-white sm:text-base' : 'mt-1 text-xs text-slate-300 sm:text-sm'} font-black leading-relaxed`}>
+                              {line}
+                            </p>
+                          ))}
+                        </div>
+
+                        <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-sky-300/25 bg-sky-300/10 px-4 py-3">
+                          <p className="text-[11px] font-black text-sky-100 sm:text-xs">
+                            강의 후 1:1 밀착 리포지셔닝 컨설팅
+                          </p>
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-300 text-sky-950">
+                            <ArrowDown className="h-3.5 w-3.5" />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+
+                  {index < weeklySchedule.length - 1 ? (
+                    <div className="relative z-20 -my-2 flex justify-center" aria-hidden="true">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full border border-sky-300/30 bg-[#0F1720] text-sky-300">
+                        <ArrowDown className="h-3.5 w-3.5" />
+                      </span>
+                    </div>
+                  ) : null}
+                </React.Fragment>
+              );
+            })}
           </div>
         </div>
 
