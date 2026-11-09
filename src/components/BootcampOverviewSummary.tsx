@@ -109,7 +109,7 @@ export const BootcampOverviewSummary: React.FC<BootcampOverviewSummaryProps> = (
               </span>
               <span className="text-xs text-zinc-400">부트캠프 핵심 요약 장표</span>
             </div>
-            <h3 className="text-lg font-bold text-white">기획자 J 1:1 리포지셔닝 부트캠프 요약</h3>
+            <h3 className="text-lg font-bold text-white">기획자 J 리포지셔닝 윈터캠프 요약</h3>
           </div>
         </div>
 
