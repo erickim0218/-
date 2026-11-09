@@ -1,9 +1,9 @@
 import React from 'react';
-import { Rocket, CheckCircle2, TrendingUp, AlertTriangle, Sparkles } from 'lucide-react';
+import { CheckCircle2, TrendingUp, AlertTriangle, Sparkles } from 'lucide-react';
 
 export const RocketInfographic: React.FC = () => {
   return (
-    <section className="p-6 sm:p-12 border-b border-zinc-200 bg-zinc-950 text-white overflow-hidden">
+    <section className="winter-camp-theme p-6 sm:p-12 border-b border-sky-900/30 bg-[#071C2D] text-white overflow-hidden">
       <div className="max-w-5xl mx-auto space-y-10">
         
         {/* 타이틀 헤더 */}
@@ -103,53 +103,8 @@ export const RocketInfographic: React.FC = () => {
                 <circle cx="680" cy="38" r="5" fill="#10B981" />
               </g>
 
-              {/* 상승 궤도 끝의 작은 로켓 */}
-              <g transform="translate(750, 15) rotate(45)">
-                {/* 로켓 본체 */}
-                <path
-                  d="M0 -18 C7 -12 9 -3 7 8 L0 13 L-7 8 C-9 -3 -7 -12 0 -18Z"
-                  fill="#FFD600"
-                  stroke="#FFFFFF"
-                  strokeWidth="2"
-                  strokeLinejoin="round"
-                />
-
-                {/* 로켓 창문 */}
-                <circle
-                  cx="0"
-                  cy="-6"
-                  r="3"
-                  fill="#09090B"
-                />
-
-                {/* 왼쪽 날개 */}
-                <path
-                  d="M-7 3 L-13 10 L-6 9Z"
-                  fill="#FFD600"
-                  stroke="#FFFFFF"
-                  strokeWidth="1.5"
-                  strokeLinejoin="round"
-                />
-
-                {/* 오른쪽 날개 */}
-                <path
-                  d="M7 3 L13 10 L6 9Z"
-                  fill="#FFD600"
-                  stroke="#FFFFFF"
-                  strokeWidth="1.5"
-                  strokeLinejoin="round"
-                />
-
-                {/* 추진 불꽃 */}
-                <path
-                  d="M-4 11 L0 21 L4 11Z"
-                  fill="#F97316"
-                />
-                <path
-                  d="M-2 12 L0 18 L2 12Z"
-                  fill="#FFFFFF"
-                />
-              </g>
+              {/* 윈터캠프의 도착점을 상징하는 눈꽃 */}
+              <text x="750" y="27" textAnchor="middle" fill="#7DD3FC" fontSize="34" fontWeight="900">❄</text>
             </svg>
           </div>
 

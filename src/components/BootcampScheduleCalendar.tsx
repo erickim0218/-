@@ -25,7 +25,7 @@ const weeklySchedule = [
 
 export const BootcampScheduleCalendar: React.FC = () => {
   return (
-    <section id="bootcamp-schedule" className="scroll-mt-10 border-b border-zinc-200 bg-white p-6 text-zinc-900 sm:p-12">
+    <section id="bootcamp-schedule" className="winter-camp-theme scroll-mt-10 border-b border-sky-200 bg-[linear-gradient(180deg,#FFFFFF_0%,#EFF9FE_100%)] p-6 text-zinc-900 sm:p-12">
       <div className="mx-auto max-w-4xl space-y-10">
         <div className="space-y-3 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-1.5 text-xs font-bold text-sky-800 shadow-sm">
@@ -46,7 +46,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
             <WinterSnowfall className="opacity-70" />
             <WinterCampIllustration className="pointer-events-none absolute -bottom-10 right-24 hidden w-44 opacity-50 md:block" />
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#FFD600] text-black">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-sky-400 text-sky-950 shadow-lg shadow-sky-950/10">
                 <CalendarIcon className="h-5 w-5" />
               </div>
               <div>
@@ -63,7 +63,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
             {weeklySchedule.map((item, index) => (
               <article key={item.week} className="grid gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:grid-cols-[110px_1fr] sm:items-center">
                 <div>
-                  <span className="text-xs font-black text-[#FFD600]">{item.week}</span>
+                  <span className="text-xs font-black text-sky-300">{item.week}</span>
                   <p className="mt-1 text-sm font-black text-white">{item.date}</p>
                 </div>
                 <div className="border-t border-white/10 pt-4 sm:border-l sm:border-t-0 sm:pl-5 sm:pt-0">

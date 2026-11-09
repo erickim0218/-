@@ -80,7 +80,7 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
   const isBootcampOpen = !isClosed;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#121216]/95 backdrop-blur-md border-t border-zinc-800 text-white py-2.5 px-3 sm:py-3 sm:px-4 shadow-2xl transition-all pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+    <div className="winter-camp-theme fixed bottom-0 left-0 right-0 z-40 bg-[#08243A]/95 backdrop-blur-md border-t border-sky-300/20 text-white py-2.5 px-3 sm:py-3 sm:px-4 shadow-2xl transition-all pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
         
         {/* Mobile View (< 640px) */}
@@ -101,7 +101,7 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
                 className="text-white font-black"
                 style={{ whiteSpace: 'nowrap', wordBreak: 'keep-all', flexShrink: 0 }}
               >
-                <strong className="text-[#FFD600]">{confirmedCount}</strong> / {totalCapacity}명
+                <strong className="text-sky-300">{confirmedCount}</strong> / {totalCapacity}명
               </span>
             </div>
           </div>
@@ -118,7 +118,7 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
                 });
                 onTabChange('bootcamp');
               }}
-              className="px-3 py-1.5 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-xs rounded-xl transition shadow flex items-center justify-center min-h-[34px] whitespace-nowrap cursor-pointer"
+              className="px-3 py-1.5 bg-sky-400 hover:bg-sky-300 text-sky-950 font-black text-xs rounded-xl transition shadow flex items-center justify-center min-h-[34px] whitespace-nowrap cursor-pointer"
             >
               <span>{isBootcampOpen ? '윈터캠프 신청하기' : isBeforeOpen ? '11월 13일 모집 시작' : '다음 모집 예약 문의'}</span>
             </button>
@@ -127,7 +127,7 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
 
         {/* Desktop & Tablet View (>= 640px) */}
         <div className="hidden sm:flex items-center gap-3 overflow-hidden">
-          <span className="px-2.5 py-1 bg-[#FFD600] text-[#09090B] font-black text-xs rounded-lg shrink-0">
+          <span className="px-2.5 py-1 bg-sky-200 text-sky-950 font-black text-xs rounded-lg shrink-0">
             {isBootcampOpen ? 'WINTER CAMP' : isBeforeOpen ? '모집 예정' : '모집 마감'}
           </span>
           <div className="flex items-center gap-2 text-xs sm:text-sm font-bold truncate">
@@ -138,7 +138,7 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
               윈터캠프 실시간 모집인원:
             </span>
             <span
-              className="text-[#FFD600]"
+              className="text-sky-300"
               style={{ whiteSpace: 'nowrap', wordBreak: 'keep-all', flexShrink: 0 }}
             >
               {confirmedCount} / {totalCapacity}명
@@ -168,7 +168,7 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
               });
               onTabChange('bootcamp');
             }}
-            className="px-4 py-2 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-xs sm:text-sm rounded-xl transition shadow-lg flex items-center gap-1.5 cursor-pointer"
+            className="px-4 py-2 bg-sky-400 hover:bg-sky-300 text-sky-950 font-black text-xs sm:text-sm rounded-xl transition shadow-lg shadow-sky-950/20 flex items-center gap-1.5 cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />
             <span>{isBootcampOpen ? '윈터캠프 신청하기' : isBeforeOpen ? '11월 13일 모집 시작' : '다음 모집 예약 문의'}</span>

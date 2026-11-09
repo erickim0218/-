@@ -95,7 +95,7 @@ export const BootcampOverviewSummary: React.FC<BootcampOverviewSummaryProps> = (
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 mb-12">
+    <div className="winter-camp-theme w-full max-w-5xl mx-auto px-4 mb-12">
       {/* 장표 헤더 */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 pb-4 border-b border-zinc-800">
         <div className="flex items-center gap-3">

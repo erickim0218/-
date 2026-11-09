@@ -44,10 +44,10 @@ export const WinterCampIllustration: React.FC<{ className?: string }> = ({ class
       <rect x="20" y="11" width="50" height="7" rx="3.5" fill="#111114" />
       <circle cx="38" cy="22" r="2.3" fill="#111114" />
       <circle cx="52" cy="22" r="2.3" fill="#111114" />
-      <path d="M46 26L60 30L46 33Z" fill="#FFD600" />
+      <path d="M46 26L60 30L46 33Z" fill="#38BDF8" />
       <path d="M36 37C42 41 49 41 55 37" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" />
-      <path d="M24 47C38 53 53 53 67 47" fill="none" stroke="#FFD600" strokeWidth="7" strokeLinecap="round" />
-      <path d="M28 51L20 72" fill="none" stroke="#FFD600" strokeWidth="6" strokeLinecap="round" />
+      <path d="M24 47C38 53 53 53 67 47" fill="none" stroke="#38BDF8" strokeWidth="7" strokeLinecap="round" />
+      <path d="M28 51L20 72" fill="none" stroke="#38BDF8" strokeWidth="6" strokeLinecap="round" />
       <circle cx="45" cy="60" r="2.6" fill="#64748B" />
       <circle cx="45" cy="73" r="2.6" fill="#64748B" />
       <path d="M19 57L2 44M70 57L88 43" fill="none" stroke="#7C5B3B" strokeWidth="3" strokeLinecap="round" />
@@ -55,8 +55,8 @@ export const WinterCampIllustration: React.FC<{ className?: string }> = ({ class
     <g transform="translate(167 68)">
       <path d="M8 49C21 58 83 59 108 48" fill="none" stroke="#9ACFE6" strokeWidth="5" strokeLinecap="round" />
       <path d="M22 45L15 7M91 45L99 10" fill="none" stroke="#0F172A" strokeWidth="4" strokeLinecap="round" />
-      <path d="M17 9C41 18 72 18 99 10L91 42C68 48 44 48 22 43Z" fill="#FFD600" stroke="#111114" strokeWidth="3" strokeLinejoin="round" />
-      <path d="M28 18C48 24 69 24 88 18" fill="none" stroke="#FFF2A3" strokeWidth="3" strokeLinecap="round" />
+      <path d="M17 9C41 18 72 18 99 10L91 42C68 48 44 48 22 43Z" fill="#7DD3FC" stroke="#0C4A6E" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M28 18C48 24 69 24 88 18" fill="none" stroke="#E0F7FF" strokeWidth="3" strokeLinecap="round" />
       <path d="M104 9C115 3 122 7 123 16" fill="none" stroke="#111114" strokeWidth="4" strokeLinecap="round" />
     </g>
     <g fill="#DFF3FF" opacity="0.9">

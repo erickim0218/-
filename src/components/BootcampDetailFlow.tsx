@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   X,
   Calendar,
-  Rocket,
   Award,
   ArrowRight,
   MessageSquare,
@@ -21,7 +20,6 @@ import { UserReviewsSection } from './UserReviewsSection';
 import { RocketInfographic } from './RocketInfographic';
 import { BootcampScheduleCalendar } from './BootcampScheduleCalendar';
 import { WinterCampIllustration, WinterSnowfall } from './WinterCampDecor';
-import standardRocketImg from '../assets/images/standard_rocket_launch_1788079504479.jpg';
 import { BootcampReview } from '../data/bootcampReviews';
 import { supabase } from '../lib/supabase';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
@@ -207,23 +205,23 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
   };
 
   return (
-    <div className="w-full bg-[#09090B] text-zinc-100 font-sans leading-relaxed selection:bg-[#FFD600] selection:text-[#09090B] pb-24">
+    <div className="winter-camp-theme w-full bg-[#EAF7FD] text-zinc-100 font-sans leading-relaxed selection:bg-sky-200 selection:text-sky-950 pb-24">
 
       {/* 메인 히어로 헤더 */}
       <section className="pt-2 sm:pt-4 pb-10 px-4 max-w-4xl mx-auto">
-        <div className="bg-[linear-gradient(145deg,#121216_0%,#121820_58%,#102331_100%)] border border-sky-200/20 rounded-3xl p-6 sm:p-10 space-y-6 shadow-2xl relative overflow-hidden">
+        <div className="bg-[linear-gradient(145deg,#FFFFFF_0%,#F4FBFF_52%,#DDF4FF_100%)] border border-sky-200 rounded-[2rem] p-6 sm:p-10 space-y-6 shadow-[0_24px_70px_rgba(14,116,144,0.18)] relative overflow-hidden">
           <WinterSnowfall />
-          <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-sky-200/10 blur-3xl" />
-          <WinterCampIllustration className="pointer-events-none absolute -bottom-5 -right-5 hidden w-60 opacity-85 sm:block md:w-72" />
+          <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-sky-200/60 blur-3xl" />
+          <WinterCampIllustration className="pointer-events-none absolute -bottom-4 -right-2 hidden w-64 opacity-100 sm:block md:w-80" />
           
           {/* 상단 프로그램 배지 */}
           <div className="relative z-10 flex items-center gap-2">
               {isClosed ? (
-                <span className="px-2.5 py-1 text-xs font-black rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                <span className="px-3 py-1.5 text-xs font-black rounded-full bg-slate-100 text-slate-600 border border-slate-200">
                   {isBeforeOpen ? 'REPOSITIONING WINTER CAMP · 모집 예정' : 'REPOSITIONING WINTER CAMP · 모집 마감'}
                 </span>
               ) : (
-                <span className="px-2.5 py-1 text-xs font-black rounded-lg bg-[#FFD600]/20 text-[#FFD600] border border-[#FFD600]/40">
+                <span className="px-3 py-1.5 text-xs font-black rounded-full bg-sky-100 text-sky-800 border border-sky-200 shadow-sm">
                   REPOSITIONING WINTER CAMP · 모집 중
                 </span>
               )}
@@ -231,38 +229,38 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
 
           <div className="relative z-10 sm:max-w-[68%]">
             <div>
-              <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-950 leading-tight">
                 <span className="block">기획자J의</span>
-                <span className="block text-[#FFD600] drop-shadow-[0_0_22px_rgba(186,230,253,0.16)]">{BOOTCAMP_PUBLIC_NAME}</span>
+                <span className="block text-sky-700">{BOOTCAMP_PUBLIC_NAME}</span>
               </h1>
-              <p className="mt-5 max-w-3xl text-base sm:text-xl font-black text-zinc-200 tracking-tight leading-snug">
+              <p className="mt-5 max-w-3xl text-base sm:text-xl font-black text-slate-800 tracking-tight leading-snug">
                 이번 겨울, 3주 동안 취업·이직의 방향을 끝냅니다.
               </p>
-              <p className="mt-2 text-xs sm:text-sm font-semibold text-zinc-400">
+              <p className="mt-2 text-xs sm:text-sm font-semibold text-slate-500">
                 매주 일요일 집중 강의 · 1:1 밀착 컨설팅 · 상시 피드백
               </p>
             </div>
           </div>
 
           {/* 핵심 지표 */}
-          <div className="relative z-10 grid grid-cols-3 gap-1.5 sm:mr-[28%] sm:gap-3 bg-[#18181C]/90 p-3 sm:p-4 rounded-2xl border border-sky-100/10 text-center backdrop-blur-sm">
+          <div className="relative z-10 grid grid-cols-3 gap-1.5 sm:mr-[30%] sm:gap-3 bg-white/80 p-3 sm:p-4 rounded-2xl border border-sky-200 text-center backdrop-blur-sm shadow-sm">
             <div className="min-w-0 p-1">
-              <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">누적 수강인원</span>
-              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">128명</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-500 block mb-1 leading-snug">누적 수강인원</span>
+              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-sky-700">128명</span>
             </div>
-            <div className="min-w-0 p-1 border-x border-zinc-800">
-              <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">수강 만족도</span>
-              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">99.8%</span>
+            <div className="min-w-0 p-1 border-x border-sky-200">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 block mb-1 leading-snug">수강 만족도</span>
+              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-sky-700">99.8%</span>
             </div>
             <div className="min-w-0 p-1">
-              <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">서류 합격률 평균</span>
-              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">78.7%</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-500 block mb-1 leading-snug">서류 합격률 평균</span>
+              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-sky-700">78.7%</span>
             </div>
           </div>
 
-          <div className="relative z-10 pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-sky-100/10">
-            <div className="flex items-center gap-2 text-xs text-zinc-400">
-              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+          <div className="relative z-10 pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-sky-200">
+            <div className="flex items-center gap-2 text-xs text-slate-600">
+              <ShieldCheck className="w-4 h-4 text-sky-600 shrink-0" />
               <span>1회 차 컨설팅 후 만족하지 않을 경우 24시간 이내 전액 환불 가능</span>
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto">
@@ -271,7 +269,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleInquiryClick}
-                className="w-full sm:w-auto px-6 py-3 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-sm rounded-xl transition shadow-lg flex items-center justify-center gap-2 shrink-0 transform active:scale-95"
+                className="w-full sm:w-auto px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-black text-sm rounded-xl transition shadow-lg shadow-sky-900/15 flex items-center justify-center gap-2 shrink-0 transform active:scale-95"
               >
                 <span>💬 문의하기</span>
               </a>
@@ -299,9 +297,10 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
       <div className="w-full overflow-hidden mt-4 mb-0">
         
         {/* 레드 모션 섹션 */}
-        <section className="relative w-full min-h-[380px] sm:min-h-[440px] bg-[#8B0000] flex flex-col items-center justify-center p-6 sm:p-12 text-center overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-red-700 via-rose-600 to-red-800 opacity-90 mix-blend-multiply pointer-events-none" />
-          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-400 via-rose-700 to-black blur-xl pointer-events-none" />
+        <section className="relative w-full min-h-[380px] sm:min-h-[440px] bg-[#08243A] flex flex-col items-center justify-center p-6 sm:p-12 text-center overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#071C2D] via-[#0B4B70] to-[#08243A] opacity-95 pointer-events-none" />
+          <div className="absolute inset-0 opacity-50 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-sky-300/40 via-sky-800/20 to-transparent blur-xl pointer-events-none" />
+          <WinterSnowfall className="opacity-90" />
           
           {/* 옅은 사선 패턴 오버레이 */}
           <div 
@@ -328,8 +327,8 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 </span>
               </div>
               <div>
-                <span className="inline-block bg-[#09090B] text-white font-black text-lg sm:text-3xl md:text-4xl px-6 py-3 sm:px-8 sm:py-3.5 rounded shadow-2xl">
-                  기획자J는 <span className="text-[#FFD600]">메시지를 설계합니다.</span>
+                <span className="inline-block bg-white text-slate-950 font-black text-lg sm:text-3xl md:text-4xl px-6 py-3 sm:px-8 sm:py-3.5 rounded shadow-2xl">
+                  기획자J는 <span className="text-sky-700">메시지를 설계합니다.</span>
                 </span>
               </div>
             </div>
@@ -468,34 +467,21 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
           </div>
         </section>
 
-        {/* 2. 로켓 섹션 (선명하고 또렷한 로켓 비주얼 카드) */}
-        <section className="p-6 sm:p-10 border-b border-zinc-200 bg-slate-50">
-          <div className="max-w-4xl mx-auto rounded-2xl overflow-hidden border border-zinc-200 bg-white shadow-xl relative">
-            
-            {/* 로켓 이미지 배너 - 100% 명확하고 또렷한 로켓 그래픽 */}
-            <div className="relative w-full h-[400px] sm:h-[520px] md:h-[620px] bg-zinc-950 flex items-center justify-center overflow-hidden">
-              <img
-                src={standardRocketImg}
-                alt="리포지셔닝 윈터캠프 로켓"
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-contain sm:object-cover object-center brightness-105 contrast-105 opacity-100"
-              />
-              
-              {/* 상하단 텍스트 가독성용 은은한 그라데이션 오버레이 (로켓 본체는 100% 선명하게 보임) */}
-              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/85 via-transparent to-zinc-950/30 pointer-events-none" />
-              
-              {/* 상단 뱃지 */}
+        {/* 2. 윈터캠프 시즈널 키비주얼 */}
+        <section className="p-6 sm:p-10 border-b border-sky-200 bg-[#EAF7FD]">
+          <div className="max-w-4xl mx-auto rounded-[2rem] overflow-hidden border border-sky-200 bg-white shadow-[0_24px_70px_rgba(14,116,144,0.16)] relative">
+            <div className="relative min-h-[390px] sm:min-h-[500px] bg-[linear-gradient(180deg,#FFFFFF_0%,#F1FAFF_58%,#CDEEFF_100%)] flex items-center justify-center overflow-hidden px-6 pt-20 pb-8">
+              <WinterSnowfall />
               <div className="absolute top-6 left-6 right-6 sm:top-8 sm:left-8 z-10">
-                <div className="inline-flex items-center gap-2 bg-[#FFD600] text-zinc-950 px-4 py-1.5 rounded-full font-black text-xs sm:text-sm shadow-xl">
-                  <Rocket className="w-4 h-4 fill-current text-zinc-950" />
-                  <span>리포지셔닝 윈터캠프란?</span>
+                <div className="inline-flex items-center gap-2 bg-sky-100 text-sky-900 px-4 py-1.5 rounded-full font-black text-xs sm:text-sm border border-sky-200 shadow-sm">
+                  <span>❄</span>
+                  <span>2026 REPOSITIONING WINTER CAMP</span>
                 </div>
               </div>
-
-              {/* 메인 타이틀 */}
-              <div className="absolute bottom-6 left-6 right-6 sm:bottom-8 sm:left-8 sm:right-8 space-y-2 z-10">
-                <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight drop-shadow-xl">
-                  리포지셔닝 윈터캠프는 <span className="text-[#FFD600]">로켓</span>입니다.
+              <WinterCampIllustration className="w-full max-w-[620px] translate-y-7 drop-shadow-[0_22px_20px_rgba(14,116,144,0.16)]" />
+              <div className="absolute bottom-6 left-6 right-6 sm:bottom-8 sm:left-8 sm:right-8 z-10">
+                <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-950 tracking-tight leading-tight">
+                  이번 겨울, <span className="text-sky-700">3주 집중 캠프</span>로<br />합격의 방향을 완성합니다.
                 </h2>
               </div>
             </div>
@@ -506,7 +492,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               <div className="py-2 space-y-3">
                 <p className="text-base sm:text-xl font-bold text-zinc-900 leading-relaxed">
                   스펙을 단순히 나열하는 서류로는 원하는 기업에 합격하기 어렵습니다.<br />
-                  당신의 경험과 역량을 인사담당자의 뇌리에 남을 <strong className="text-amber-900 bg-amber-100 px-2 py-0.5 rounded font-black">선명한 메시지</strong>로 재설계합니다.
+                  당신의 경험과 역량을 인사담당자의 뇌리에 남을 <strong className="text-sky-900 bg-sky-100 px-2 py-0.5 rounded font-black">선명한 메시지</strong>로 재설계합니다.
                 </p>
                 <p className="text-xs sm:text-sm text-zinc-600 font-normal leading-relaxed">
                   스펙 탓만 하며 방황하는 구직 기간을 끝내고, 3주 동안 배우고 적용하고 점검하는 과정을 반복하며 목표 기업에 도전할 전략을 완성합니다.
@@ -516,8 +502,8 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               {/* 핵심 2가지 카드 */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div className="p-5 bg-slate-50 border border-zinc-200 rounded-xl space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-900">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#FFD600] inline-block border border-amber-400" />
+                  <div className="flex items-center gap-2 text-xs font-bold text-sky-900">
+                    <span className="w-2.5 h-2.5 rounded-full bg-sky-400 inline-block border border-sky-500" />
                     <span>01. 차별화된 한 줄 메시지</span>
                   </div>
                   <h3 className="text-sm sm:text-base font-bold text-zinc-900">기억에 남는 브랜딩 컨셉 수립</h3>
@@ -527,8 +513,8 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 </div>
 
                 <div className="p-5 bg-slate-50 border border-zinc-200 rounded-xl space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-900">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#FFD600] inline-block border border-amber-400" />
+                  <div className="flex items-center gap-2 text-xs font-bold text-sky-900">
+                    <span className="w-2.5 h-2.5 rounded-full bg-sky-400 inline-block border border-sky-500" />
                     <span>02. 기획자J 1:1 밀착 코칭</span>
                   </div>
                   <h3 className="text-sm sm:text-base font-bold text-zinc-900">서류 첨삭부터 면접 대비까지</h3>
@@ -541,7 +527,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               {/* 하단 기획자J 서명 */}
               <div className="pt-4 border-t border-zinc-200 flex items-center justify-between text-xs sm:text-sm text-zinc-500">
                 <span className="font-semibold text-zinc-800">리포지셔닝 윈터캠프 총괄 기획자J</span>
-                <span className="text-amber-800 font-bold">합격을 향한 전략 리포지셔닝</span>
+                <span className="text-sky-800 font-bold">합격을 향한 전략 리포지셔닝</span>
               </div>
 
             </div>

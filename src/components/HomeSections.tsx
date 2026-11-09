@@ -17,6 +17,7 @@ import {
   BOOTCAMP_DEADLINE,
   BOOTCAMP_RECRUITMENT_START
 } from '../config/bootcampCampaign';
+import { WinterSnowfall } from './WinterCampDecor';
 
 interface HomeSectionsProps {
   onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
@@ -229,24 +230,25 @@ export const FeaturedCoursesSection: React.FC<{
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* Card 1: Live Bootcamp */}
-          <div className="bg-[#121216] border border-[#FFD600]/40 rounded-2xl p-6 flex flex-col justify-between space-y-6 relative overflow-hidden">
+          <div className="winter-camp-theme bg-[linear-gradient(145deg,#071C2D_0%,#0B3954_100%)] border border-sky-300/30 rounded-2xl p-6 flex flex-col justify-between space-y-6 relative overflow-hidden shadow-xl shadow-sky-950/20">
+            <WinterSnowfall className="opacity-70" />
             <div className={`absolute top-0 right-0 font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-widest ${
-              isBootcampOpen ? 'bg-[#FFD600] text-[#09090B]' : 'bg-rose-600 text-white'
+              isBootcampOpen ? 'bg-sky-300 text-sky-950' : 'bg-slate-600 text-white'
             }`}>
               {isBootcampOpen ? '모집중 (선착순 5명)' : isBootcampBeforeOpen ? '11월 13일 모집 시작' : '모집 마감'}
             </div>
 
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <span className="p-2 rounded-xl bg-[#FFD600]/10 text-[#FFD600]">
+                <span className="p-2 rounded-xl bg-sky-300/10 text-sky-300">
                   <Zap className="w-5 h-5" />
                 </span>
-                <span className="text-xs font-bold text-[#FFD600] tracking-wider uppercase">REPOSITIONING WINTER CAMP</span>
+                <span className="text-xs font-bold text-sky-300 tracking-wider uppercase">REPOSITIONING WINTER CAMP</span>
               </div>
 
               <div>
                 <h3 className="text-xl font-black text-white">리포지셔닝 윈터캠프</h3>
-                <p className="text-xs text-[#FFD600] font-bold pt-1">
+                <p className="text-xs text-sky-300 font-bold pt-1">
                   🔥 1기~8기 연속 전회 완판 릴레이!
                 </p>
                 <p className="text-xs text-zinc-400 pt-2 leading-relaxed">
@@ -256,15 +258,15 @@ export const FeaturedCoursesSection: React.FC<{
 
               <div className="space-y-2 pt-2 border-t border-[#1F1F24]">
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
-                  <Check className="w-4 h-4 text-[#FFD600]" />
+                  <Check className="w-4 h-4 text-sky-300" />
                   <span>1주차: 취업시장 & 자소서 리포지셔닝 특강</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
-                  <Check className="w-4 h-4 text-[#FFD600]" />
+                  <Check className="w-4 h-4 text-sky-300" />
                   <span>2주차: 우수 과제 리뷰 & 면접통제 특강</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
-                  <Check className="w-4 h-4 text-[#FFD600]" />
+                  <Check className="w-4 h-4 text-sky-300" />
                   <span>3주차: 이직 STP 전략 특강 & 1:1 3회 컨설팅</span>
                 </div>
               </div>
@@ -272,7 +274,7 @@ export const FeaturedCoursesSection: React.FC<{
 
             <button
               onClick={() => onTabChange('bootcamp')}
-              className="w-full py-3.5 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-sm rounded-xl transition flex items-center justify-center gap-1.5 shadow-lg"
+              className="w-full py-3.5 bg-sky-400 hover:bg-sky-300 text-sky-950 font-black text-sm rounded-xl transition flex items-center justify-center gap-1.5 shadow-lg shadow-sky-950/20"
             >
               부트캠프 커리큘럼 상세보기
               <ChevronRight className="w-4 h-4" />
@@ -659,11 +661,12 @@ export const BootcampCurriculumPreview: React.FC<{
   onTabChange: (tab: string) => void;
 }> = ({ onTabChange }) => {
   return (
-    <section className="py-20 bg-[#0C0C0F] text-white border-b border-[#1A1A1E]">
+    <section className="winter-camp-theme relative overflow-hidden py-20 bg-[#071C2D] text-white border-b border-sky-900/40">
+      <WinterSnowfall className="opacity-50" />
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="text-center space-y-3">
-          <span className="px-3 py-1 bg-[#FFD600]/10 border border-[#FFD600]/30 text-[#FFD600] text-xs font-black rounded-full uppercase">
-            🔥 BOOTCAMP CURRICULUM
+          <span className="px-3 py-1 bg-sky-300/10 border border-sky-300/30 text-sky-300 text-xs font-black rounded-full uppercase">
+            ❄ WINTER CAMP CURRICULUM
           </span>
           <h2 className="text-2xl sm:text-4xl font-black text-white">
             기획자 J의 리포지셔닝 윈터캠프 3주 과정

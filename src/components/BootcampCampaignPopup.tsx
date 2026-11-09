@@ -39,28 +39,28 @@ const variants = [
   {
     id: 'bootcamp_popup_1',
     badge: BOOTCAMP_PUBLIC_NAME,
-    title: <>이번 겨울,<br /><span className="text-[#B38F00]">취업·이직의 방향</span>을 끝냅니다.</>,
+    title: <>이번 겨울,<br /><span className="text-sky-700">취업·이직의 방향</span>을 끝냅니다.</>,
     body: <>겨울 3주 집중반으로 기업의 니즈를 읽고,<br />이력서·자소서·면접을 하나의 합격 전략으로 완성합니다.</>,
     cta: '윈터캠프 모집 확인하기'
   },
   {
     id: 'bootcamp_popup_2',
     badge: BOOTCAMP_PUBLIC_NAME,
-    title: <>겨울에도<br /><span className="text-[#B38F00]">혼자 준비하세요?</span></>,
+    title: <>겨울에도<br /><span className="text-sky-700">혼자 준비하세요?</span></>,
     body: <>기획자 J와 3주간 방향을 바로잡고,<br />일요일 집중 강의와 밀착 피드백으로 결과물을 완성합니다.</>,
     cta: '윈터캠프 모집 확인하기'
   },
   {
     id: 'bootcamp_popup_3',
     badge: BOOTCAMP_PUBLIC_NAME,
-    title: <>떨어질 때마다<br /><span className="text-[#B38F00]">자소서만 고치세요?</span></>,
+    title: <>떨어질 때마다<br /><span className="text-sky-700">자소서만 고치세요?</span></>,
     body: <>문장 몇 줄을 고치는 과정이 아닙니다.<br />기업이 나를 선택할 이유부터 다시 세웁니다.</>,
     cta: '합격의 방향 바꾸기'
   },
   {
     id: 'bootcamp_popup_4',
     badge: BOOTCAMP_PUBLIC_NAME,
-    title: <>수많은 후기가 증명한<br /><span className="text-[#B38F00]">3주의 리포지셔닝</span></>,
+    title: <>수많은 후기가 증명한<br /><span className="text-sky-700">3주의 리포지셔닝</span></>,
     metric: '쓰레드 팔로워 1만 · 부트캠프 만족도 98.6%',
     body: <>혼자서는 보이지 않던 강점을 찾고,<br />서류와 면접에서 통하는 전략으로 바꿉니다.</>,
     cta: '부트캠프 후기 및 상세내용 확인하기'
@@ -246,7 +246,7 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
   if (!isOpen || !enabled || !isEligiblePage || !canShowCampaign) return null;
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-end justify-center bg-black/35 px-3 pb-3 pt-20 sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-label="리포지셔닝 윈터캠프 안내">
+    <div className="winter-camp-theme fixed inset-0 z-[120] flex items-end justify-center bg-slate-950/55 px-3 pb-3 pt-20 backdrop-blur-[2px] sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-label="리포지셔닝 윈터캠프 안내">
       <div className="relative max-h-[calc(100dvh-1.5rem)] w-full max-w-[560px] overflow-y-auto rounded-2xl border border-sky-200 bg-white shadow-[0_30px_100px_rgba(0,0,0,0.48)] ring-1 ring-white/70">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-br from-sky-50 via-white to-[#FFF9D8]" />
         <WinterSnowfall className="h-40 text-sky-300" />
@@ -262,7 +262,7 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
 
         <button type="button" onClick={openBootcamp} className="relative block w-full px-6 pb-5 pt-7 text-left sm:px-9 sm:pb-7 sm:pt-9">
           <div className="flex items-start justify-between gap-4 pr-11">
-            <span className="inline-flex shrink-0 rounded-full border border-[#E5BD00]/35 bg-[#FFD600]/20 px-3 py-1.5 text-[11px] font-black text-[#7A6500]">
+            <span className="inline-flex shrink-0 rounded-full border border-sky-200 bg-sky-100 px-3 py-1.5 text-[11px] font-black text-sky-900">
               {variant.badge}
             </span>
             <div className="hidden text-right sm:block">
@@ -298,7 +298,7 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
               ))}
             </div>
           </div>
-          <span className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FFD600] px-5 py-4 text-sm font-black text-black transition hover:bg-yellow-300">
+          <span className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-sky-600 px-5 py-4 text-sm font-black text-white shadow-lg shadow-sky-900/15 transition hover:bg-sky-500">
             {isClosed ? '윈터캠프 모집 마감' : variant.cta}
             <ArrowRight className="h-4 w-4" />
           </span>
