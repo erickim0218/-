@@ -472,7 +472,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
             <div className="relative w-full h-[400px] sm:h-[520px] md:h-[620px] bg-zinc-950 flex items-center justify-center overflow-hidden">
               <img
                 src={standardRocketImg}
-                alt="리포지셔닝 부트캠프 로켓"
+                alt="리포지셔닝 윈터캠프 로켓"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-contain sm:object-cover object-center brightness-105 contrast-105 opacity-100"
               />
@@ -484,14 +484,14 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               <div className="absolute top-6 left-6 right-6 sm:top-8 sm:left-8 z-10">
                 <div className="inline-flex items-center gap-2 bg-[#FFD600] text-zinc-950 px-4 py-1.5 rounded-full font-black text-xs sm:text-sm shadow-xl">
                   <Rocket className="w-4 h-4 fill-current text-zinc-950" />
-                  <span>리포지셔닝 부트캠프란?</span>
+                  <span>리포지셔닝 윈터캠프란?</span>
                 </div>
               </div>
 
               {/* 메인 타이틀 */}
               <div className="absolute bottom-6 left-6 right-6 sm:bottom-8 sm:left-8 sm:right-8 space-y-2 z-10">
                 <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight drop-shadow-xl">
-                  리포지셔닝 부트캠프는 <span className="text-[#FFD600]">로켓</span>입니다.
+                  리포지셔닝 윈터캠프는 <span className="text-[#FFD600]">로켓</span>입니다.
                 </h2>
               </div>
             </div>
@@ -536,7 +536,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
 
               {/* 하단 기획자J 서명 */}
               <div className="pt-4 border-t border-zinc-200 flex items-center justify-between text-xs sm:text-sm text-zinc-500">
-                <span className="font-semibold text-zinc-800">리포지셔닝 부트캠프 총괄 기획자J</span>
+                <span className="font-semibold text-zinc-800">리포지셔닝 윈터캠프 총괄 기획자J</span>
                 <span className="text-amber-800 font-bold">합격을 향한 전략 리포지셔닝</span>
               </div>
 
