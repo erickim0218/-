@@ -3,6 +3,7 @@ import { ArrowRight, Clock3, X } from 'lucide-react';
 import { trackAnalyticsEvent } from '../lib/analytics';
 import { supabase } from '../lib/supabase';
 import { MemberTier } from '../types';
+import { WinterCampIllustration, WinterSnowfall } from './WinterCampDecor';
 import {
   BOOTCAMP_ANALYTICS_COHORT,
   BOOTCAMP_CAPACITY,
@@ -246,8 +247,10 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
 
   return (
     <div className="fixed inset-0 z-[120] flex items-end justify-center bg-black/35 px-3 pb-3 pt-20 sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-label="리포지셔닝 윈터캠프 안내">
-      <div className="relative max-h-[calc(100dvh-1.5rem)] w-full max-w-[560px] overflow-y-auto rounded-2xl border border-black/10 bg-white shadow-[0_30px_100px_rgba(0,0,0,0.48)] ring-1 ring-white/70">
-        <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#FFD600]/20 blur-3xl" />
+      <div className="relative max-h-[calc(100dvh-1.5rem)] w-full max-w-[560px] overflow-y-auto rounded-2xl border border-sky-200 bg-white shadow-[0_30px_100px_rgba(0,0,0,0.48)] ring-1 ring-white/70">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-br from-sky-50 via-white to-[#FFF9D8]" />
+        <WinterSnowfall className="h-40 text-sky-300" />
+        <WinterCampIllustration className="pointer-events-none absolute right-3 top-12 hidden w-36 opacity-90 sm:block" />
         <button
           type="button"
           onClick={closePopup}
@@ -274,7 +277,7 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
             <span className="font-mono font-black text-black">{countdownText}</span>
             <span className="text-zinc-500">현재 {displayCount}/{BOOTCAMP_CAPACITY}명 · 잔여 {remainingSlots}명</span>
           </div>
-          <h2 className="mt-5 pr-5 text-[28px] font-black leading-[1.2] tracking-[-0.04em] text-[#111114] sm:text-[38px]">
+          <h2 className="mt-5 pr-5 text-[28px] font-black leading-[1.2] tracking-[-0.04em] text-[#111114] sm:max-w-[72%] sm:text-[38px]">
             {variant.title}
           </h2>
           {'metric' in variant ? (
@@ -282,7 +285,7 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
               {variant.metric}
             </p>
           ) : null}
-          <p className="mt-5 text-sm font-medium leading-6 text-zinc-600 sm:text-[15px] sm:leading-7">
+          <p className="mt-5 text-sm font-medium leading-6 text-zinc-600 sm:max-w-[78%] sm:text-[15px] sm:leading-7">
             {variant.body}
           </p>
           <div className="mt-6 border-y border-black/10 py-4">
