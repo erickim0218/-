@@ -147,6 +147,13 @@ export const BootcampScheduleCalendar: React.FC = () => {
                               </span>
                             ) : null}
                           </>
+                        ) : task ? (
+                          <span
+                            aria-hidden="true"
+                            className="block text-[11px] font-bold opacity-0 sm:text-xs"
+                          >
+                            0
+                          </span>
                         ) : null}
                         {task ? (
                           <div
