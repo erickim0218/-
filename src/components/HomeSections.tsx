@@ -139,11 +139,11 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
               });
               onTabChange('bootcamp');
             }}
-            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-sm sm:text-base rounded-xl transition flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 border border-sky-300 bg-sky-400 hover:bg-sky-300 text-[#082538] font-black text-sm sm:text-base rounded-xl transition flex items-center justify-center gap-2 shadow-[0_12px_30px_rgba(14,165,233,0.22)] cursor-pointer"
           >
-            <Sparkles className="w-4 h-4 text-[#09090B] shrink-0" />
+            <Sparkles className="w-4 h-4 text-[#082538] shrink-0" />
             <span>{isBootcampOpen ? '윈터캠프 신청하기' : isBootcampBeforeOpen ? '윈터캠프 11월 13일 모집 시작' : '모집 마감 (다음 모집 예약)'}</span>
-            <ArrowRight className="w-4 h-4 text-[#09090B] shrink-0" />
+            <ArrowRight className="w-4 h-4 text-[#082538] shrink-0" />
           </button>
         </div>
 
@@ -846,11 +846,11 @@ export const FinalConversionSection: React.FC<{
               });
               onTabChange('bootcamp');
             }}
-            className="w-full sm:w-auto px-8 py-4 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-base rounded-xl transition flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+            className="w-full sm:w-auto px-8 py-4 border border-sky-300 bg-sky-400 hover:bg-sky-300 text-[#082538] font-black text-base rounded-xl transition flex items-center justify-center gap-2 shadow-[0_12px_30px_rgba(14,165,233,0.22)] cursor-pointer"
           >
-            <Sparkles className="w-5 h-5 text-[#09090B] shrink-0" />
+            <Sparkles className="w-5 h-5 text-[#082538] shrink-0" />
             <span>{isBootcampOpen ? '윈터캠프 신청하기' : isBootcampBeforeOpen ? '윈터캠프 11월 13일 모집 시작' : '모집 마감 (다음 모집 예약)'}</span>
-            <ArrowRight className="w-5 h-5 text-[#09090B] shrink-0" />
+            <ArrowRight className="w-5 h-5 text-[#082538] shrink-0" />
           </button>
         </div>
       </div>
