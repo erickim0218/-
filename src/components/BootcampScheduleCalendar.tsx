@@ -38,7 +38,24 @@ const calendarEvents: Record<string, CalendarEvent> = {
   '2026-11-20': { label: '오후 9시 마감', tone: 'deadline' },
   '2026-11-22': { label: '1주차 강의', tone: 'class' },
   '2026-11-29': { label: '2주차 강의', tone: 'class' },
-  '2026-12-06': { label: '3주차 강의 · 종료', tone: 'class' }
+  '2026-12-06': { label: '3주차 강의', tone: 'class' }
+};
+
+const taskPeriods = [
+  { start: '2026-11-23', end: '2026-11-28', label: '1주차 과제 수행 기간' },
+  { start: '2026-11-30', end: '2026-12-05', label: '2주차 과제 수행 기간' },
+  { start: '2026-12-07', end: '2026-12-12', label: '3주차 과제 수행 기간' }
+];
+
+const getTaskPeriod = (dateKey: string) => {
+  const period = taskPeriods.find(({ start, end }) => dateKey >= start && dateKey <= end);
+  if (!period) return null;
+
+  return {
+    ...period,
+    position: dateKey === period.start ? 'start' : dateKey === period.end ? 'end' : 'middle',
+    showLabel: dateKey === period.start || dateKey === '2026-12-01'
+  };
 };
 
 const calendarMonths = [
@@ -104,12 +121,16 @@ export const BootcampScheduleCalendar: React.FC = () => {
                   {cells.map((day, index) => {
                     const key = day ? `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}` : '';
                     const event = key ? calendarEvents[key] : undefined;
+                    const trailingTaskKey = !day && month === 11 && index >= 30 && index <= 34
+                      ? `2026-12-${String(index - 29).padStart(2, '0')}`
+                      : '';
+                    const task = getTaskPeriod(key || trailingTaskKey);
                     const isSunday = index % 7 === 0;
 
                     return (
                       <div
                         key={`${month}-${index}`}
-                        className="min-h-[62px] min-w-0 bg-white p-1.5 sm:min-h-[76px] sm:p-2"
+                        className={`relative min-h-[72px] min-w-0 bg-white p-1.5 sm:min-h-[86px] sm:p-2 ${task?.showLabel ? 'z-20' : task ? 'z-10' : ''}`}
                       >
                         {day ? (
                           <>
@@ -122,6 +143,20 @@ export const BootcampScheduleCalendar: React.FC = () => {
                               </span>
                             ) : null}
                           </>
+                        ) : null}
+                        {task ? (
+                          <div
+                            className={`relative mt-1 h-6 -mx-1.5 bg-gradient-to-r from-sky-500 to-blue-600 shadow-sm sm:-mx-2 ${
+                              task.position === 'start' ? 'rounded-l-lg' : ''
+                            } ${task.position === 'end' ? 'rounded-r-lg' : ''}`}
+                            aria-label={task.label}
+                          >
+                            {task.showLabel ? (
+                              <span className="absolute left-2 top-1/2 z-30 -translate-y-1/2 whitespace-nowrap text-[8px] font-black text-white drop-shadow-sm sm:text-[10px]">
+                                {task.label}
+                              </span>
+                            ) : null}
+                          </div>
                         ) : null}
                       </div>
                     );
@@ -184,10 +219,11 @@ export const BootcampScheduleCalendar: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
             ['11/23~11/28', '1주차 과제·피드백'],
             ['11/30~12/5', '2주차 과제·피드백'],
+            ['12/7~12/12', '3주차 과제·피드백'],
             ['캠프 기간 전체', '상시 카카오톡 밀착 피드백']
           ].map(([date, label]) => (
             <div key={label} className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-center">
