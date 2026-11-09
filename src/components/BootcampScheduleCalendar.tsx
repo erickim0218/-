@@ -7,19 +7,22 @@ const weeklySchedule = [
     week: '1주차',
     date: '11월 22일 일요일',
     title: '취업 및 자소서 리포지셔닝',
-    topics: ['자기설득서의 이해와 적용']
+    topics: ['자기설득서의 이해와 적용'],
+    message: ['당신이 알고 있던 취업 공식은 잘못되었습니다.', '내가 상대 기업에 왜 필요한가를 설득하는 설계법']
   },
   {
     week: '2주차',
     date: '11월 29일 일요일',
     title: '면접 리포지셔닝',
-    topics: ['완벽통제면접의 이해와 적용 특강']
+    topics: ['완벽통제면접의 이해와 적용 특강'],
+    message: ['면접, 통제할 것인가 통제당할 것인가.', '철저하게 내가 주도권을 갖는 면접 방법론']
   },
   {
     week: '3주차',
     date: '12월 6일 일요일',
     title: '이직 리포지셔닝',
-    topics: ['취업 STP 전략 특강', 'REAL NEEDS 이력서 특강', '완벽설득포트폴리오 특강']
+    topics: ['취업 STP 전략 특강', 'REAL NEEDS 이력서 특강', '완벽설득포트폴리오 특강'],
+    message: ['이력서와 포트폴리오는 모두 설득의 도구입니다.', '가장 날카롭게 설득하는 무기를 만들어드립니다.']
   }
 ];
 
@@ -64,6 +67,11 @@ export const BootcampScheduleCalendar: React.FC = () => {
           <p className="mx-auto max-w-2xl text-xs leading-relaxed text-zinc-600 sm:text-sm">
             <strong className="text-zinc-950">11월 13일(금) 모집 시작 · 11월 20일(금) 오후 9시 마감</strong><br />
             모든 라이브 강의와 주차별 핵심 일정은 <strong className="text-sky-700">일요일</strong>에 진행됩니다.
+          </p>
+          <p className="mx-auto max-w-2xl text-sm font-bold leading-relaxed text-slate-800 sm:text-base">
+            리포지셔닝 윈터캠프와 함께하는 3주,<br />
+            이 세상 어디에도 없는 최적의 취업 전략으로<br />
+            <strong className="text-sky-700">온전히 결과만 거둬가세요.</strong>
           </p>
         </div>
 
@@ -162,6 +170,11 @@ export const BootcampScheduleCalendar: React.FC = () => {
                       </li>
                     ))}
                   </ul>
+                  <div className="mt-3 space-y-0.5 text-xs font-bold leading-relaxed text-white/90 sm:text-sm">
+                    {item.message.map((line) => (
+                      <p key={line}>{line}</p>
+                    ))}
+                  </div>
                   <p className="mt-3 rounded-lg border border-sky-300/20 bg-sky-300/10 px-3 py-2 text-[11px] font-black text-sky-200 sm:text-xs">
                     강의 후 1:1 밀착 리포지셔닝 컨설팅
                   </p>

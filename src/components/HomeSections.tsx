@@ -672,7 +672,8 @@ export const BootcampCurriculumPreview: React.FC<{
             기획자 J의 리포지셔닝 윈터캠프 3주 과정
           </h2>
           <p className="text-xs sm:text-sm text-zinc-400 max-w-lg mx-auto">
-            3주 동안 배우고 적용하고 점검하며, 스스로 합격 전략을 설계하는 리포지셔너로 성장하는 1:1 밀착 과정
+            리포지셔닝 윈터캠프와 함께하는 3주,<br />
+            이 세상 어디에도 없는 최적의 취업 전략으로 온전히 결과만 거둬가세요.
           </p>
         </div>
 
@@ -688,6 +689,10 @@ export const BootcampCurriculumPreview: React.FC<{
             <p className="text-xs text-zinc-400 leading-relaxed">
               자기설득서의 이해와 적용
             </p>
+            <p className="text-xs font-bold leading-relaxed text-zinc-200">
+              당신이 알고 있던 취업 공식은 잘못되었습니다.<br />
+              내가 상대 기업에 왜 필요한가를 설득하는 설계법
+            </p>
             <p className="text-xs font-black text-sky-300">강의 후 1:1 밀착 리포지셔닝 컨설팅</p>
           </div>
 
@@ -700,6 +705,10 @@ export const BootcampCurriculumPreview: React.FC<{
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
               완벽통제면접의 이해와 적용 특강
+            </p>
+            <p className="text-xs font-bold leading-relaxed text-zinc-200">
+              면접, 통제할 것인가 통제당할 것인가.<br />
+              철저하게 내가 주도권을 갖는 면접 방법론
             </p>
             <p className="text-xs font-black text-sky-300">강의 후 1:1 밀착 리포지셔닝 컨설팅</p>
           </div>
@@ -716,6 +725,10 @@ export const BootcampCurriculumPreview: React.FC<{
               <li>REAL NEEDS 이력서 특강</li>
               <li>완벽설득포트폴리오 특강</li>
             </ul>
+            <p className="text-xs font-bold leading-relaxed text-zinc-200">
+              이력서와 포트폴리오는 모두 설득의 도구입니다.<br />
+              가장 날카롭게 설득하는 무기를 만들어드립니다.
+            </p>
             <p className="text-xs font-black text-sky-300">강의 후 1:1 밀착 리포지셔닝 컨설팅</p>
           </div>
         </div>
