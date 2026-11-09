@@ -1,5 +1,6 @@
 import React from 'react';
 import { Calendar as CalendarIcon, CheckCircle2, Clock3, Snowflake } from 'lucide-react';
+import { WinterCampIllustration, WinterSnowfall } from './WinterCampDecor';
 
 const weeklySchedule = [
   {
@@ -40,8 +41,10 @@ export const BootcampScheduleCalendar: React.FC = () => {
           </p>
         </div>
 
-        <div className="overflow-hidden rounded-3xl border-2 border-zinc-900 bg-[#0F1720] shadow-2xl">
-          <div className="flex flex-col gap-3 border-b border-white/10 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="overflow-hidden rounded-3xl border-2 border-[#102331] bg-[#0F1720] shadow-2xl">
+          <div className="relative flex flex-col gap-3 overflow-hidden border-b border-sky-100/10 bg-gradient-to-r from-[#0F1720] to-[#123047] px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+            <WinterSnowfall className="opacity-70" />
+            <WinterCampIllustration className="pointer-events-none absolute -bottom-10 right-24 hidden w-44 opacity-50 md:block" />
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#FFD600] text-black">
                 <CalendarIcon className="h-5 w-5" />
@@ -51,7 +54,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
                 <p className="text-xs font-bold text-slate-400">11월 22일 시작 · 매주 일요일 · 총 3주</p>
               </div>
             </div>
-            <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-sky-400/30 bg-sky-400/10 px-3 py-1.5 text-xs font-black text-sky-300 sm:self-auto">
+            <span className="relative z-10 inline-flex items-center gap-1.5 self-start rounded-full border border-sky-300/40 bg-sky-200/10 px-3 py-1.5 text-xs font-black text-sky-200 sm:self-auto">
               <Clock3 className="h-3.5 w-3.5" /> 일요일 집중반
             </span>
           </div>
