@@ -470,8 +470,11 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
         {/* 2. 윈터캠프 시즈널 키비주얼 */}
         <section className="p-6 sm:p-10 border-b border-sky-200 bg-[#EAF7FD]">
           <div className="max-w-4xl mx-auto rounded-[2rem] overflow-hidden border border-sky-200 bg-white shadow-[0_24px_70px_rgba(14,116,144,0.16)] relative">
-            <div className="relative min-h-[470px] sm:min-h-[590px] bg-[linear-gradient(180deg,#FFFFFF_0%,#F1FAFF_58%,#CDEEFF_100%)] flex items-center justify-center overflow-hidden px-6 pt-20 pb-8">
+            <div className="relative min-h-[500px] sm:min-h-[620px] bg-[radial-gradient(circle_at_50%_38%,rgba(125,211,252,0.34)_0%,rgba(241,250,255,0.35)_28%,transparent_52%),linear-gradient(180deg,#FFFFFF_0%,#F1FAFF_55%,#CDEEFF_100%)] flex items-center justify-center overflow-hidden px-6 pt-20 pb-8">
               <WinterSnowfall />
+              <div className="pointer-events-none absolute left-1/2 top-[27%] h-52 w-[82%] -translate-x-1/2 rounded-full border border-sky-200/70 bg-white/25 blur-[1px] sm:h-64 sm:w-[70%]" />
+              <div className="pointer-events-none absolute left-[8%] top-[28%] text-5xl text-sky-200/50 sm:text-7xl">❄</div>
+              <div className="pointer-events-none absolute right-[8%] top-[42%] text-4xl text-sky-200/60 sm:text-6xl">❄</div>
               <div className="absolute top-6 left-6 right-6 sm:top-8 sm:left-8 z-10">
                 <div className="inline-flex items-center gap-2 bg-sky-100 text-sky-900 px-4 py-1.5 rounded-full font-black text-xs sm:text-sm border border-sky-200 shadow-sm">
                   <span>❄</span>
@@ -479,14 +482,21 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 </div>
               </div>
 
-              <h2 className="absolute left-6 right-6 top-[27%] z-20 text-center text-[clamp(2.5rem,10vw,5.5rem)] font-black leading-[0.95] tracking-[-0.06em] text-slate-950 drop-shadow-sm sm:top-[24%]">
-                <span className="block">리포지셔닝</span>
-                <span className="mt-2 block text-sky-700">윈터캠프 오픈</span>
-              </h2>
+              <div className="absolute left-6 right-6 top-[25%] z-20 text-center sm:top-[23%]">
+                <div className="mx-auto mb-4 flex max-w-md items-center gap-3 px-5 sm:mb-5">
+                  <span className="h-px flex-1 bg-gradient-to-r from-transparent to-sky-400" />
+                  <span className="text-sm text-sky-600 sm:text-base">❄</span>
+                  <span className="h-px flex-1 bg-gradient-to-l from-transparent to-sky-400" />
+                </div>
+                <h2 className="text-[clamp(2.65rem,10vw,5.8rem)] font-black leading-[0.92] tracking-[-0.065em] text-slate-950 [text-shadow:0_7px_22px_rgba(14,116,144,0.12)]">
+                  <span className="block">리포지셔닝</span>
+                  <span className="mt-2 block bg-gradient-to-b from-sky-600 to-sky-800 bg-clip-text text-transparent">윈터캠프 오픈</span>
+                </h2>
+              </div>
 
-              <WinterCampIllustration className="w-full max-w-[620px] translate-y-28 drop-shadow-[0_22px_20px_rgba(14,116,144,0.16)] sm:translate-y-32" />
-              <div className="absolute bottom-6 left-6 right-6 sm:bottom-8 sm:left-8 sm:right-8 z-10">
-                <p className="text-lg sm:text-3xl md:text-4xl font-black text-slate-950 tracking-tight leading-tight">
+              <WinterCampIllustration className="w-[112%] max-w-[700px] translate-y-32 drop-shadow-[0_22px_20px_rgba(14,116,144,0.20)] sm:translate-y-36" />
+              <div className="absolute bottom-5 left-5 right-5 z-10 rounded-2xl border border-white/80 bg-white/72 px-5 py-4 text-left shadow-[0_12px_35px_rgba(14,116,144,0.14)] backdrop-blur-md sm:bottom-7 sm:left-8 sm:right-8 sm:px-7 sm:py-5">
+                <p className="text-lg sm:text-2xl md:text-3xl font-black text-slate-950 tracking-tight leading-tight">
                   이번 겨울, <span className="text-sky-700">3주 집중 캠프</span>로<br />합격의 방향을 완성합니다.
                 </p>
               </div>
