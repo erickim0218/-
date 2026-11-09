@@ -23,6 +23,32 @@ const weeklySchedule = [
   }
 ];
 
+const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+
+type CalendarEvent = {
+  label: string;
+  tone: 'recruit' | 'deadline' | 'class';
+};
+
+const calendarEvents: Record<string, CalendarEvent> = {
+  '2026-11-13': { label: '모집 시작', tone: 'recruit' },
+  '2026-11-20': { label: '오후 9시 마감', tone: 'deadline' },
+  '2026-11-22': { label: '1주차 강의', tone: 'class' },
+  '2026-11-29': { label: '2주차 강의', tone: 'class' },
+  '2026-12-06': { label: '3주차 강의 · 종료', tone: 'class' }
+};
+
+const calendarMonths = [
+  { year: 2026, month: 11, days: 30, firstDay: 0 },
+  { year: 2026, month: 12, days: 31, firstDay: 2 }
+];
+
+const eventToneClass: Record<CalendarEvent['tone'], string> = {
+  recruit: 'border-sky-300 bg-sky-100 text-sky-900',
+  deadline: 'border-slate-800 bg-slate-900 text-white',
+  class: 'border-sky-500 bg-sky-500 text-white shadow-sm shadow-sky-200'
+};
+
 export const BootcampScheduleCalendar: React.FC = () => {
   return (
     <section id="bootcamp-schedule" className="winter-camp-theme scroll-mt-10 border-b border-sky-200 bg-[linear-gradient(180deg,#FFFFFF_0%,#EFF9FE_100%)] p-6 text-zinc-900 sm:p-12">
@@ -39,6 +65,63 @@ export const BootcampScheduleCalendar: React.FC = () => {
             <strong className="text-zinc-950">11월 13일(금) 모집 시작 · 11월 20일(금) 오후 9시 마감</strong><br />
             모든 라이브 강의와 주차별 핵심 일정은 <strong className="text-sky-700">일요일</strong>에 진행됩니다.
           </p>
+        </div>
+
+        <div className="grid gap-5 lg:grid-cols-2" aria-label="2026 리포지셔닝 윈터캠프 일정 달력">
+          {calendarMonths.map(({ year, month, days, firstDay }) => {
+            const cells = Array.from({ length: firstDay + days }, (_, index) =>
+              index < firstDay ? null : index - firstDay + 1
+            );
+            while (cells.length % 7 !== 0) cells.push(null);
+
+            return (
+              <article key={`${year}-${month}`} className="overflow-hidden rounded-3xl border border-sky-200 bg-white shadow-[0_16px_45px_rgba(14,116,144,0.10)]">
+                <div className="flex items-center justify-between border-b border-sky-100 bg-sky-50 px-5 py-4">
+                  <div>
+                    <p className="text-[10px] font-black tracking-[0.2em] text-sky-700">WINTER CAMP</p>
+                    <h3 className="mt-0.5 text-lg font-black text-slate-950">{year}년 {month}월</h3>
+                  </div>
+                  <Snowflake className="h-5 w-5 text-sky-500" />
+                </div>
+
+                <div className="grid grid-cols-7 bg-[#102331] text-center text-[10px] font-black text-white sm:text-xs">
+                  {weekdays.map((weekday, index) => (
+                    <div key={weekday} className={`py-2.5 ${index === 0 ? 'text-rose-300' : ''}`}>
+                      {weekday}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-7 bg-sky-100/70 p-px">
+                  {cells.map((day, index) => {
+                    const key = day ? `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}` : '';
+                    const event = key ? calendarEvents[key] : undefined;
+                    const isSunday = index % 7 === 0;
+
+                    return (
+                      <div
+                        key={`${month}-${index}`}
+                        className="min-h-[62px] min-w-0 bg-white p-1.5 sm:min-h-[76px] sm:p-2"
+                      >
+                        {day ? (
+                          <>
+                            <span className={`block text-[11px] font-bold sm:text-xs ${isSunday ? 'text-rose-600' : 'text-slate-600'}`}>
+                              {day}
+                            </span>
+                            {event ? (
+                              <span className={`mt-1 block break-keep rounded-md border px-1 py-1 text-center text-[8px] font-black leading-tight sm:text-[10px] ${eventToneClass[event.tone]}`}>
+                                {event.label}
+                              </span>
+                            ) : null}
+                          </>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              </article>
+            );
+          })}
         </div>
 
         <div className="overflow-hidden rounded-3xl border-2 border-[#102331] bg-[#0F1720] shadow-2xl">
