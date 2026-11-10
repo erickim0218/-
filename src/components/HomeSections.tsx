@@ -735,7 +735,7 @@ export const BootcampCurriculumPreview: React.FC<{
 
         <div className="p-6 bg-[#18181C] border border-[#FFD600]/30 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="space-y-1">
-            <span className="text-[#FFD600] font-black text-sm block">리포지셔닝 윈터캠프 · 11월 13일(금) 모집 시작 · 11월 20일(금) 오후 9시 마감 · 선착순 5명</span>
+            <span className="text-[#FFD600] font-black text-sm block">리포지셔닝 윈터캠프 · 현재 모집 중 · 11월 20일(금) 오후 9시 마감 · 선착순 5명</span>
             <p className="text-xs text-zinc-300">1회차 컨설팅 만족 불발 시 24시간 이내 전액 환불 보장</p>
           </div>
           <button
