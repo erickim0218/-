@@ -34,7 +34,7 @@ type CalendarEvent = {
 };
 
 const calendarEvents: Record<string, CalendarEvent> = {
-  '2026-11-13': { label: '모집 시작', tone: 'recruit' },
+  '2026-11-10': { label: '모집 시작', tone: 'recruit' },
   '2026-11-20': { label: '오후 9시 마감', tone: 'deadline' },
   '2026-11-22': { label: '1주차 강의', tone: 'class' },
   '2026-11-29': { label: '2주차 강의', tone: 'class' },
@@ -84,7 +84,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
             겨울 3주 <span className="text-sky-700">집중 일정</span>
           </h2>
           <p className="mx-auto max-w-2xl text-xs leading-relaxed text-zinc-600 sm:text-sm">
-            <strong className="text-zinc-950">11월 13일(금) 모집 시작 · 11월 20일(금) 오후 9시 마감</strong><br />
+            <strong className="text-zinc-950">현재 모집 중 · 11월 20일(금) 오후 9시 마감</strong><br />
             모든 라이브 강의와 주차별 핵심 일정은 <strong className="text-sky-700">일요일</strong>에 진행됩니다.
           </p>
           <p className="mx-auto max-w-2xl text-sm font-bold leading-relaxed text-slate-800 sm:text-base">
