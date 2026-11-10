@@ -14,7 +14,8 @@ import {
   Award,
   Sparkles,
   ArrowRight,
-  ShieldCheck
+  ShieldCheck,
+  ChevronDown
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
@@ -36,6 +37,162 @@ interface AnalyticsEventRow {
   created_at: string;
 }
 
+type SummaryMetricKey = 'uniqueVisitors' | 'totalVisits' | 'pageViews' | 'bootcampClicks' | 'detailViews' | 'inquiryClicks';
+
+interface TrendPoint {
+  label: string;
+  fullLabel: string;
+  value: number;
+}
+
+const metricMeta: Record<SummaryMetricKey, { label: string; color: string; eventName?: string }> = {
+  uniqueVisitors: { label: '고유 방문자 수', color: '#FFFFFF' },
+  totalVisits: { label: '총 방문 수', color: '#D4D4D8' },
+  pageViews: { label: '페이지 조회수', color: '#A1A1AA', eventName: 'page_view' },
+  bootcampClicks: { label: '부트캠프 클릭', color: '#FFD600', eventName: 'bootcamp_click' },
+  detailViews: { label: '상세페이지 조회', color: '#A5B4FC', eventName: 'bootcamp_detail_view' },
+  inquiryClicks: { label: '문의 클릭', color: '#6EE7B7', eventName: 'inquiry_click' }
+};
+
+function getTrendRange(period: 'today' | 'yesterday' | '7days' | '30days' | 'custom', customStart: string, customEnd: string) {
+  const now = new Date();
+  const start = new Date(now);
+  const end = new Date(now);
+
+  if (period === 'today') {
+    start.setHours(0, 0, 0, 0);
+  } else if (period === 'yesterday') {
+    start.setDate(start.getDate() - 1);
+    start.setHours(0, 0, 0, 0);
+    end.setDate(end.getDate() - 1);
+    end.setHours(23, 59, 59, 999);
+  } else if (period === '7days') {
+    start.setDate(start.getDate() - 7);
+  } else if (period === '30days') {
+    start.setDate(start.getDate() - 30);
+  } else if (customStart && customEnd) {
+    const customStartDate = new Date(`${customStart}T00:00:00`);
+    const customEndDate = new Date(`${customEnd}T23:59:59.999`);
+    if (!Number.isNaN(customStartDate.getTime()) && !Number.isNaN(customEndDate.getTime())) {
+      return { start: customStartDate, end: customEndDate };
+    }
+  }
+
+  return { start, end };
+}
+
+function buildTrendPoints(
+  events: AnalyticsEventRow[],
+  metric: SummaryMetricKey,
+  period: 'today' | 'yesterday' | '7days' | '30days' | 'custom',
+  customStart: string,
+  customEnd: string
+): { points: TrendPoint[]; intervalLabel: string } {
+  const { start, end } = getTrendRange(period, customStart, customEnd);
+  const duration = Math.max(1, end.getTime() - start.getTime());
+  const hour = 60 * 60 * 1000;
+  const day = 24 * hour;
+  let intervalMs = hour;
+  let intervalLabel = '1시간';
+
+  if (duration > 2 * day && duration <= 8 * day) {
+    intervalMs = 6 * hour;
+    intervalLabel = '6시간';
+  } else if (duration > 8 * day) {
+    const dayStep = Math.max(1, Math.ceil(duration / (31 * day)));
+    intervalMs = dayStep * day;
+    intervalLabel = dayStep === 1 ? '1일' : `${dayStep}일`;
+  }
+
+  const bucketCount = Math.max(1, Math.ceil((end.getTime() - start.getTime() + 1) / intervalMs));
+  const values = Array.from({ length: bucketCount }, () => 0);
+  const ascendingEvents = [...events]
+    .filter((event) => {
+      const time = new Date(event.created_at).getTime();
+      return time >= start.getTime() && time <= end.getTime();
+    })
+    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+  const seen = new Set<string>();
+  ascendingEvents.forEach((event) => {
+    if (metricMeta[metric].eventName && event.event_name !== metricMeta[metric].eventName) return;
+
+    const uniqueKey = metric === 'uniqueVisitors'
+      ? event.visitor_id
+      : metric === 'totalVisits'
+        ? event.session_id
+        : '';
+    if (uniqueKey) {
+      if (seen.has(uniqueKey)) return;
+      seen.add(uniqueKey);
+    }
+
+    const index = Math.min(
+      bucketCount - 1,
+      Math.max(0, Math.floor((new Date(event.created_at).getTime() - start.getTime()) / intervalMs))
+    );
+    values[index] += 1;
+  });
+
+  const points = values.map((value, index) => {
+    const bucketStart = new Date(start.getTime() + index * intervalMs);
+    const bucketEnd = new Date(Math.min(end.getTime(), bucketStart.getTime() + intervalMs - 1));
+    const isHourly = intervalMs < day;
+    const label = isHourly
+      ? bucketStart.toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', hour12: false })
+      : bucketStart.toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' });
+    const fullLabel = `${bucketStart.toLocaleString('ko-KR', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })} ~ ${bucketEnd.toLocaleString('ko-KR', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}`;
+    return { label, fullLabel, value };
+  });
+
+  return { points, intervalLabel };
+}
+
+const AnalyticsTrendChart: React.FC<{
+  points: TrendPoint[];
+  color: string;
+}> = ({ points, color }) => {
+  const width = 920;
+  const height = 250;
+  const padding = { top: 24, right: 20, bottom: 48, left: 44 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+  const maxValue = Math.max(1, ...points.map((point) => point.value));
+  const xFor = (index: number) => padding.left + (points.length <= 1 ? chartWidth / 2 : (index / (points.length - 1)) * chartWidth);
+  const yFor = (value: number) => padding.top + chartHeight - (value / maxValue) * chartHeight;
+  const linePoints = points.map((point, index) => `${xFor(index)},${yFor(point.value)}`).join(' ');
+  const areaPoints = `${padding.left},${padding.top + chartHeight} ${linePoints} ${padding.left + chartWidth},${padding.top + chartHeight}`;
+  const labelStep = Math.max(1, Math.ceil(points.length / 6));
+
+  return (
+    <div className="w-full overflow-x-auto">
+      <svg viewBox={`0 0 ${width} ${height}`} className="min-w-[680px] w-full h-auto" role="img" aria-label="선택한 통계의 시간대별 증가 추이">
+        {[0, 0.5, 1].map((ratio) => {
+          const y = padding.top + chartHeight - chartHeight * ratio;
+          return (
+            <g key={ratio}>
+              <line x1={padding.left} x2={padding.left + chartWidth} y1={y} y2={y} stroke="#3F3F46" strokeWidth="1" strokeDasharray="4 6" />
+              <text x={padding.left - 10} y={y + 4} textAnchor="end" fill="#71717A" fontSize="11">{Math.round(maxValue * ratio)}</text>
+            </g>
+          );
+        })}
+        <polygon points={areaPoints} fill={color} opacity="0.08" />
+        <polyline points={linePoints} fill="none" stroke={color} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
+        {points.map((point, index) => (
+          <g key={`${point.fullLabel}-${index}`}>
+            <circle cx={xFor(index)} cy={yFor(point.value)} r="5" fill="#121216" stroke={color} strokeWidth="3">
+              <title>{`${point.fullLabel}: +${point.value}`}</title>
+            </circle>
+            {(index % labelStep === 0 || index === points.length - 1) && (
+              <text x={xFor(index)} y={height - 16} textAnchor="middle" fill="#A1A1AA" fontSize="11">{point.label}</text>
+            )}
+          </g>
+        ))}
+      </svg>
+    </div>
+  );
+};
+
 export const AnalyticsAdminTab: React.FC = () => {
   const [period, setPeriod] = useState<'today' | 'yesterday' | '7days' | '30days' | 'custom'>('7days');
   const [customStart, setCustomStart] = useState<string>('');
@@ -45,6 +202,7 @@ export const AnalyticsAdminTab: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [lastUpdated, setLastUpdated] = useState<string>('');
+  const [expandedMetric, setExpandedMetric] = useState<SummaryMetricKey | null>(null);
 
   const fetchAnalyticsData = async () => {
     setIsLoading(true);
@@ -103,6 +261,51 @@ export const AnalyticsAdminTab: React.FC = () => {
   const homeBootcampClicks = events.filter((e) => e.event_name === 'bootcamp_click').length;
   const bootcampDetailViews = events.filter((e) => e.event_name === 'bootcamp_detail_view').length;
   const inquiryClicks = events.filter((e) => e.event_name === 'inquiry_click').length;
+
+  const summaryCards: Array<{
+    key: SummaryMetricKey;
+    label: string;
+    value: number;
+    unit: string;
+    icon: React.ReactNode;
+    borderClass: string;
+    textClass: string;
+    unitClass: string;
+    backgroundClass?: string;
+  }> = [
+    {
+      key: 'uniqueVisitors', label: '고유 방문자 수', value: uniqueVisitors, unit: '명',
+      icon: <Users className="w-4 h-4" />, borderClass: 'border-[#27272A]', textClass: 'text-white', unitClass: 'text-zinc-500'
+    },
+    {
+      key: 'totalVisits', label: '총 방문 수', value: totalVisits, unit: '회',
+      icon: <Globe className="w-4 h-4" />, borderClass: 'border-[#27272A]', textClass: 'text-white', unitClass: 'text-zinc-500'
+    },
+    {
+      key: 'pageViews', label: '페이지 조회수', value: pageViews, unit: '회',
+      icon: <Eye className="w-4 h-4" />, borderClass: 'border-[#27272A]', textClass: 'text-white', unitClass: 'text-zinc-500'
+    },
+    {
+      key: 'bootcampClicks', label: '부트캠프 클릭', value: homeBootcampClicks, unit: '회',
+      icon: <Sparkles className="w-4 h-4" />, borderClass: 'border-[#FFD600]/30', textClass: 'text-[#FFD600]', unitClass: 'text-amber-500/80', backgroundClass: 'bg-gradient-to-br from-[#121216] to-[#FFD600]/5'
+    },
+    {
+      key: 'detailViews', label: '상세페이지 조회', value: bootcampDetailViews, unit: '회',
+      icon: <Award className="w-4 h-4" />, borderClass: 'border-indigo-500/30', textClass: 'text-indigo-300', unitClass: 'text-indigo-400/80', backgroundClass: 'bg-gradient-to-br from-[#121216] to-indigo-500/5'
+    },
+    {
+      key: 'inquiryClicks', label: '문의 클릭', value: inquiryClicks, unit: '회',
+      icon: <MousePointerClick className="w-4 h-4" />, borderClass: 'border-emerald-500/30', textClass: 'text-emerald-300', unitClass: 'text-emerald-400/80', backgroundClass: 'bg-gradient-to-br from-[#121216] to-emerald-500/5'
+    }
+  ];
+
+  const activeTrend = expandedMetric
+    ? buildTrendPoints(events, expandedMetric, period, customStart, customEnd)
+    : null;
+  const peakPoint = activeTrend?.points.reduce<TrendPoint | null>(
+    (peak, point) => (!peak || point.value > peak.value ? point : peak),
+    null
+  ) || null;
 
   // Session-based conversion rate calculation
   const homeVisitSessions = new Set(events.filter((e) => e.page_path === 'home' || !e.page_path).map((e) => e.session_id)).size;
@@ -263,72 +466,68 @@ export const AnalyticsAdminTab: React.FC = () => {
       )}
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-        {/* 1. 고유 방문자 */}
-        <div className="bg-[#121216] border border-[#27272A] rounded-2xl p-5 space-y-2">
-          <div className="flex items-center justify-between text-zinc-400">
-            <span className="text-xs font-bold">고유 방문자 수</span>
-            <Users className="w-4 h-4 text-zinc-400" />
-          </div>
-          <div className="text-2xl font-black text-white">
-            {uniqueVisitors.toLocaleString()} <span className="text-xs font-normal text-zinc-500">명</span>
-          </div>
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+          {summaryCards.map((card) => {
+            const isExpanded = expandedMetric === card.key;
+            return (
+              <button
+                key={card.key}
+                type="button"
+                aria-expanded={isExpanded}
+                onClick={() => setExpandedMetric(isExpanded ? null : card.key)}
+                className={`bg-[#121216] border ${card.borderClass} ${card.backgroundClass || ''} rounded-2xl p-5 space-y-2 text-left transition-all cursor-pointer hover:-translate-y-0.5 hover:border-zinc-500 ${isExpanded ? 'ring-2 ring-white/15 shadow-xl' : ''}`}
+              >
+                <div className={`flex items-center justify-between ${card.key === 'bootcampClicks' ? 'text-[#FFD600]' : card.key === 'detailViews' ? 'text-indigo-400' : card.key === 'inquiryClicks' ? 'text-emerald-400' : 'text-zinc-400'}`}>
+                  <span className="text-xs font-bold">{card.label}</span>
+                  <span className="flex items-center gap-1.5">
+                    {card.icon}
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                  </span>
+                </div>
+                <div className={`text-2xl font-black ${card.textClass}`}>
+                  {card.value.toLocaleString()} <span className={`text-xs font-normal ${card.unitClass}`}>{card.unit}</span>
+                </div>
+                <p className="text-[10px] font-semibold text-zinc-600">눌러서 증가 추이 보기</p>
+              </button>
+            );
+          })}
         </div>
 
-        {/* 2. 방문 수 (세션) */}
-        <div className="bg-[#121216] border border-[#27272A] rounded-2xl p-5 space-y-2">
-          <div className="flex items-center justify-between text-zinc-400">
-            <span className="text-xs font-bold">총 방문 수</span>
-            <Globe className="w-4 h-4 text-zinc-400" />
+        {expandedMetric && activeTrend && (
+          <div className="bg-[#121216] border border-[#27272A] rounded-3xl p-5 sm:p-7 shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4" style={{ color: metricMeta[expandedMetric].color }} />
+                  <h3 className="text-base sm:text-lg font-black text-white">{metricMeta[expandedMetric].label} 증가 추이</h3>
+                </div>
+                <p className="mt-1 text-[11px] sm:text-xs text-zinc-500">
+                  선택 기간을 {activeTrend.intervalLabel} 단위로 나눠 새로 발생한 수치를 표시합니다. 점에 마우스를 올리면 정확한 구간을 확인할 수 있습니다.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-right">
+                  <div className="text-[10px] font-bold text-zinc-500">가장 많이 증가한 구간</div>
+                  <div className="mt-0.5 text-xs font-black text-white">
+                    {peakPoint ? `${peakPoint.fullLabel} · +${peakPoint.value}` : '집계 데이터 없음'}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setExpandedMetric(null)}
+                  className="rounded-xl border border-zinc-800 bg-zinc-900 p-2.5 text-zinc-400 transition hover:text-white cursor-pointer"
+                  aria-label="그래프 접기"
+                >
+                  <ChevronDown className="w-4 h-4 rotate-180" />
+                </button>
+              </div>
+            </div>
+            <div className="mt-5 border-t border-zinc-800 pt-4">
+              <AnalyticsTrendChart points={activeTrend.points} color={metricMeta[expandedMetric].color} />
+            </div>
           </div>
-          <div className="text-2xl font-black text-white">
-            {totalVisits.toLocaleString()} <span className="text-xs font-normal text-zinc-500">회</span>
-          </div>
-        </div>
-
-        {/* 3. 페이지 조회수 */}
-        <div className="bg-[#121216] border border-[#27272A] rounded-2xl p-5 space-y-2">
-          <div className="flex items-center justify-between text-zinc-400">
-            <span className="text-xs font-bold">페이지 조회수</span>
-            <Eye className="w-4 h-4 text-zinc-400" />
-          </div>
-          <div className="text-2xl font-black text-white">
-            {pageViews.toLocaleString()} <span className="text-xs font-normal text-zinc-500">회</span>
-          </div>
-        </div>
-
-        {/* 4. 홈 부트캠프 클릭 */}
-        <div className="bg-[#121216] border border-[#FFD600]/30 rounded-2xl p-5 space-y-2 bg-gradient-to-br from-[#121216] to-[#FFD600]/5">
-          <div className="flex items-center justify-between text-[#FFD600]">
-            <span className="text-xs font-bold">부트캠프 클릭</span>
-            <Sparkles className="w-4 h-4 text-[#FFD600]" />
-          </div>
-          <div className="text-2xl font-black text-[#FFD600]">
-            {homeBootcampClicks.toLocaleString()} <span className="text-xs font-normal text-amber-500/80">회</span>
-          </div>
-        </div>
-
-        {/* 5. 상세페이지 조회 */}
-        <div className="bg-[#121216] border border-indigo-500/30 rounded-2xl p-5 space-y-2 bg-gradient-to-br from-[#121216] to-indigo-500/5">
-          <div className="flex items-center justify-between text-indigo-400">
-            <span className="text-xs font-bold">상세페이지 조회</span>
-            <Award className="w-4 h-4 text-indigo-400" />
-          </div>
-          <div className="text-2xl font-black text-indigo-300">
-            {bootcampDetailViews.toLocaleString()} <span className="text-xs font-normal text-indigo-400/80">회</span>
-          </div>
-        </div>
-
-        {/* 6. 문의 클릭 */}
-        <div className="bg-[#121216] border border-emerald-500/30 rounded-2xl p-5 space-y-2 bg-gradient-to-br from-[#121216] to-emerald-500/5">
-          <div className="flex items-center justify-between text-emerald-400">
-            <span className="text-xs font-bold">문의 클릭</span>
-            <MousePointerClick className="w-4 h-4 text-emerald-400" />
-          </div>
-          <div className="text-2xl font-black text-emerald-300">
-            {inquiryClicks.toLocaleString()} <span className="text-xs font-normal text-emerald-400/80">회</span>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Conversion Funnel Flow */}
