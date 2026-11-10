@@ -547,6 +547,56 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
         {/* 2026년 11월·12월 일정 & 1~3주차 상세 커리큘럼 */}
         <BootcampScheduleCalendar />
 
+        {/* 부트캠프 참여자 공통 자료실 혜택 */}
+        <section className="px-6 py-12 sm:px-12 sm:py-16 border-b border-[#174767] bg-[#071B31] text-white">
+          <div className="max-w-5xl mx-auto space-y-8">
+            <div className="text-center space-y-3">
+              <span className="inline-flex items-center rounded-full border border-sky-300/40 bg-sky-300/10 px-4 py-1.5 text-xs font-black text-sky-200">
+                모든 부트캠프 참여자 공통 혜택
+              </span>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
+                캠프에 참여하는 순간,<br className="sm:hidden" /> 자료실이 전부 열립니다.
+              </h2>
+              <p className="mx-auto max-w-2xl text-sm sm:text-base leading-relaxed text-slate-300">
+                무료 핵심자료는 물론 잠겨 있던 프로자료와 실전 프롬프트까지 모두 이용할 수 있습니다.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 sm:p-6 space-y-3">
+                <p className="text-xs font-black text-sky-300">01. 핵심자료</p>
+                <h3 className="text-lg font-black">기본부터 다시 잡는 자료</h3>
+                <ul className="space-y-2 text-sm text-slate-200">
+                  <li className="flex gap-2"><Check className="w-4 h-4 mt-0.5 shrink-0 text-sky-300" />자기설득서</li>
+                  <li className="flex gap-2"><Check className="w-4 h-4 mt-0.5 shrink-0 text-sky-300" />완벽통제면접</li>
+                </ul>
+              </div>
+
+              <div className="rounded-2xl border border-sky-300/40 bg-sky-300/[0.09] p-5 sm:p-6 space-y-3 md:scale-[1.02]">
+                <p className="text-xs font-black text-sky-300">02. 프로자료 전체</p>
+                <h3 className="text-lg font-black">바로 적용하는 실전자료</h3>
+                <ul className="space-y-2 text-sm text-slate-100">
+                  <li className="flex gap-2"><Check className="w-4 h-4 mt-0.5 shrink-0 text-sky-300" />취업 STP 전략</li>
+                  <li className="flex gap-2"><Check className="w-4 h-4 mt-0.5 shrink-0 text-sky-300" />REAL NEEDS 이력서 전략·예시·Word 템플릿</li>
+                  <li className="flex gap-2"><Check className="w-4 h-4 mt-0.5 shrink-0 text-sky-300" />완벽설득포트폴리오 전략·완성 예시</li>
+                </ul>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 sm:p-6 space-y-3">
+                <p className="text-xs font-black text-sky-300">03. 실전 프롬프트</p>
+                <h3 className="text-lg font-black">자료를 내 것으로 만드는 도구</h3>
+                <p className="text-sm leading-relaxed text-slate-200">
+                  프로자료를 내 지원 기업과 직무에 맞게 적용할 수 있는 실전 프롬프트도 함께 제공합니다.
+                </p>
+              </div>
+            </div>
+
+            <p className="text-center text-xs sm:text-sm font-bold text-sky-200">
+              별도 결제 없이, 부트캠프 수강 권한으로 자료실의 모든 자료를 열람할 수 있습니다.
+            </p>
+          </div>
+        </section>
+
         {/* 6. 수강 가격 플랜 */}
         <section id="pricing-plans" className="p-8 sm:p-12 border-b border-zinc-200 bg-slate-50 space-y-8 scroll-mt-6">
           <div className="text-center space-y-2 max-w-xl mx-auto">
@@ -581,6 +631,10 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-amber-600 shrink-0" />
                     <span>자기설득서 표준 템플릿 제공</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-amber-600 shrink-0" />
+                    <span className="font-bold text-zinc-900">자료실 프로자료 전체 + 실전 프롬프트 제공</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-amber-600 shrink-0" />
