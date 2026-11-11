@@ -35,6 +35,22 @@ export interface ClaimedPracticalResource {
 
 export const PRACTICAL_RESOURCE_BUCKET = 'practical-resources';
 
+export function isComplimentaryPracticalResourceName(value: string) {
+  const normalized = value.normalize('NFC').replace(/[\s_-]/g, '').toLowerCase();
+  return normalized.includes('자기설득서')
+    || normalized.includes('완벽통제면접')
+    || normalized.includes('취업stp')
+    || normalized.includes('stp전략');
+}
+
+export function isComplimentaryPracticalResource(
+  resource: Pick<PracticalResource, 'title' | 'file_name' | 'file_path'>
+) {
+  return isComplimentaryPracticalResourceName(
+    `${resource.title || ''} ${resource.file_name || ''} ${resource.file_path || ''}`
+  );
+}
+
 export function getPracticalResourceGroup(resource: Pick<PracticalResource, 'file_name' | 'file_path'>): PracticalResourceGroup {
   const source = `${resource.file_name || ''} ${resource.file_path || ''}`.normalize('NFC').toLowerCase();
   return source.includes('[프로자료]')
@@ -248,15 +264,20 @@ export async function createPracticalResource(input: PracticalResourceInput) {
     if (uploadError) throw uploadError;
   }
 
+  const complimentaryResource = isComplimentaryPracticalResourceName(
+    `${input.title} ${fileName || ''} ${filePath || ''}`
+  );
+  const enforcedAccessLevel: PracticalResourceAccess = complimentaryResource ? 'free' : 'pro';
+
   const { data, error } = await supabase
     .from('practical_resources')
     .insert({
       title: input.title.trim(),
       description: input.description.trim(),
       category: input.category,
-      access_level: input.accessLevel,
+      access_level: enforcedAccessLevel,
       file_path: filePath,
-      external_url: input.accessLevel === 'free' ? input.externalUrl?.trim() || null : null,
+      external_url: enforcedAccessLevel === 'free' ? input.externalUrl?.trim() || null : null,
       file_name: fileName,
       file_size: fileSize,
       mime_type: mimeType,
@@ -285,9 +306,20 @@ export async function setPracticalResourcePublished(id: string, isPublished: boo
 }
 
 export async function setPracticalResourceAccess(id: string, accessLevel: PracticalResourceAccess) {
+  const { data: resource, error: resourceError } = await supabase
+    .from('practical_resources')
+    .select('title, file_name, file_path')
+    .eq('id', id)
+    .single();
+  if (resourceError) throw resourceError;
+  const enforcedAccessLevel: PracticalResourceAccess = isComplimentaryPracticalResource(resource) ? 'free' : 'pro';
   const { error } = await supabase
     .from('practical_resources')
-    .update({ access_level: accessLevel, updated_at: new Date().toISOString() })
+    .update({
+      access_level: enforcedAccessLevel,
+      external_url: enforcedAccessLevel === 'pro' ? null : undefined,
+      updated_at: new Date().toISOString()
+    })
     .eq('id', id);
   if (error) throw error;
 }
@@ -296,9 +328,23 @@ export async function updatePracticalResourceMetadata(
   id: string,
   values: Pick<PracticalResource, 'title' | 'description' | 'category' | 'access_level' | 'sort_order'>
 ) {
+  const { data: resource, error: resourceError } = await supabase
+    .from('practical_resources')
+    .select('file_name, file_path')
+    .eq('id', id)
+    .single();
+  if (resourceError) throw resourceError;
+  const enforcedAccessLevel: PracticalResourceAccess = isComplimentaryPracticalResourceName(
+    `${values.title} ${resource.file_name || ''} ${resource.file_path || ''}`
+  ) ? 'free' : 'pro';
   const { error } = await supabase
     .from('practical_resources')
-    .update({ ...values, updated_at: new Date().toISOString() })
+    .update({
+      ...values,
+      access_level: enforcedAccessLevel,
+      external_url: enforcedAccessLevel === 'pro' ? null : undefined,
+      updated_at: new Date().toISOString()
+    })
     .eq('id', id);
   if (error) throw error;
 }
