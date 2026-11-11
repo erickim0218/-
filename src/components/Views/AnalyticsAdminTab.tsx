@@ -506,13 +506,23 @@ export const AnalyticsAdminTab: React.FC = () => {
                   선택 기간을 {activeTrend.intervalLabel} 단위로 나눠 새로 발생한 수치를 표시합니다. 점에 마우스를 올리면 정확한 구간을 확인할 수 있습니다.
                 </p>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-right">
+              <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap">
+                <div className="min-w-[190px] flex-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-right sm:flex-none">
                   <div className="text-[10px] font-bold text-zinc-500">가장 많이 증가한 구간</div>
                   <div className="mt-0.5 text-xs font-black text-white">
                     {peakPoint ? `${peakPoint.fullLabel} · +${peakPoint.value}` : '집계 데이터 없음'}
                   </div>
                 </div>
+                <button
+                  type="button"
+                  onClick={fetchAnalyticsData}
+                  disabled={isLoading}
+                  className="inline-flex min-h-[42px] items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3.5 py-2.5 text-xs font-black text-white transition hover:border-zinc-500 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+                  aria-label="그래프와 통계 새로고침"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-[#FFD600]' : 'text-zinc-400'}`} />
+                  <span>{isLoading ? '업데이트 중' : '새로고침'}</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => setExpandedMetric(null)}
@@ -524,6 +534,9 @@ export const AnalyticsAdminTab: React.FC = () => {
               </div>
             </div>
             <div className="mt-5 border-t border-zinc-800 pt-4">
+              <div className="mb-2 flex justify-end text-[10px] text-zinc-600">
+                마지막 업데이트: {lastUpdated || '방금 전'}
+              </div>
               <AnalyticsTrendChart points={activeTrend.points} color={metricMeta[expandedMetric].color} />
             </div>
           </div>
