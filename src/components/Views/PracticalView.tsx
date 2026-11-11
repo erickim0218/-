@@ -29,6 +29,7 @@ import {
   getPracticalResourceDownloadName,
   getPracticalResourceDisplayName,
   getPracticalResourcePreviewUrl,
+  isComplimentaryPracticalResource,
   PRACTICAL_RESOURCE_BUCKET,
   PRACTICAL_CATEGORY_LABELS,
   PracticalResource,
@@ -61,13 +62,7 @@ const tabItems: Array<{
 ];
 
 function isClassOnlyResource(resource: PracticalResource) {
-  if (resource.access_level === 'pro') return true;
-  const normalizedTitle = resource.title.toLowerCase().replace(/[\s_-]/g, '');
-  return Boolean(
-    resource.file_name?.toLowerCase().endsWith('.docx')
-    && (normalizedTitle.includes('realneeds') || normalizedTitle.includes('리얼니즈'))
-    && normalizedTitle.includes('이력서')
-  );
+  return !isComplimentaryPracticalResource(resource);
 }
 
 const PaidContentLock: React.FC<{
@@ -124,7 +119,7 @@ const ResourceCard: React.FC<{
               {resourceGroup === 'practical' ? '실전자료' : '필수자료'}
             </span>
             <span className={`rounded-md px-3 py-1.5 text-[10px] font-black ${isClassOnly ? 'border border-[#FFD600]/30 bg-[#FFD600]/10 text-[#FFD600]' : 'bg-emerald-500/10 text-emerald-300'}`}>
-              {isClassOnly ? '프로·부트캠프 전용' : '무료 공개'}
+              {isClassOnly ? '클래스·부트캠프 전용' : '무료 공개'}
             </span>
             <span className="rounded-md bg-white/10 px-3 py-1.5 text-[10px] font-bold text-zinc-300">{PRACTICAL_CATEGORY_LABELS[resource.category]}</span>
           </div>
@@ -150,7 +145,7 @@ const ResourceCard: React.FC<{
           ) : null}
           <button type="button" onClick={() => (isLocked ? onUpgrade() : isClaimed ? onOpenLibrary() : onDownload(resource))} disabled={isDownloading} className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-xs font-black transition disabled:cursor-not-allowed ${isClaimed ? 'border border-emerald-400/25 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/15' : isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : resourceGroup === 'practical' ? 'bg-[#FFD600] text-black hover:bg-yellow-300' : 'bg-white text-black hover:bg-zinc-200'} ${isDownloading ? 'opacity-60' : ''}`}>
             {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : isClaimed ? <Download className="h-4 w-4" /> : isLocked ? <Lock className="h-4 w-4" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
-            {isDownloading ? '준비 중...' : isClaimed ? '내 콘텐츠에서 다시 받기' : isLocked ? '프로 멤버십으로 이용하기' : resource.external_url ? '자료 열기' : '무료 다운로드'}
+            {isDownloading ? '준비 중...' : isClaimed ? '내 콘텐츠에서 다시 받기' : isLocked ? '클래스·부트캠프에서 이용하기' : resource.external_url ? '자료 열기' : '무료 다운로드'}
           </button>
         </div>
       </div>
@@ -497,8 +492,8 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
           </span>
           <h1 className="mt-5 text-3xl font-black tracking-tight text-white sm:text-5xl">리포지셔닝 실전활용</h1>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-zinc-400 sm:text-base">
-            자기설득서와 완벽통제면접은 모든 회원에게 무료로 공개합니다.<br className="hidden sm:block" />{' '}
-            나머지 실전자료는 프로 멤버십과 부트캠프 수강생이 이용할 수 있습니다.
+            자기설득서·완벽통제면접·취업 STP 전략은 모든 회원에게 무료로 공개합니다.<br className="hidden sm:block" />{' '}
+            나머지 실전자료는 클래스와 부트캠프 수강생만 이용할 수 있습니다.
           </p>
 
           <div className="mt-9 grid grid-cols-2 gap-2 rounded-2xl border border-zinc-800 bg-[#09090B] p-2 sm:inline-grid sm:min-w-[560px]">
@@ -530,7 +525,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
                 <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">RESOURCE LIBRARY</span>
                 <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">리포지셔닝 자료 다운로드</h2>
                 <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-zinc-500">
-                  무료 핵심자료와 프로·부트캠프 전용 실전자료를 한곳에서 확인하세요.
+                  무료 핵심자료 3종과 클래스·부트캠프 전용 실전자료를 한곳에서 확인하세요.
                 </p>
               </div>
 
@@ -612,8 +607,8 @@ export const PracticalView: React.FC<PracticalViewProps> = ({
               <PaidContentLock
                 title={buildingBookTab === 'persuasion' ? '자기설득서 Building Up Book' : '면접통제 Building Up Book'}
                 description={buildingBookTab === 'persuasion'
-                  ? '기업의 질문 의도를 확인하고, 주장·근거·어필의 구조로 나를 채용해야 할 이유를 직접 정리하는 프로·부트캠프 전용 워크북입니다.'
-                  : '자기소개부터 약점 질문과 역질문까지, 면접에서 보여줄 핵심 메시지를 한 흐름으로 정리하는 프로·부트캠프 전용 워크북입니다.'}
+                  ? '기업의 질문 의도를 확인하고, 주장·근거·어필의 구조로 나를 채용해야 할 이유를 직접 정리하는 클래스·부트캠프 전용 워크북입니다.'
+                  : '자기소개부터 약점 질문과 역질문까지, 면접에서 보여줄 핵심 메시지를 한 흐름으로 정리하는 클래스·부트캠프 전용 워크북입니다.'}
                 onTabChange={onTabChange}
               />
             )}
