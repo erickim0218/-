@@ -6,6 +6,7 @@ import {
   ClaimedPracticalResource,
   fetchMyClaimedPracticalResources,
   getPracticalResourceDisplayName,
+  isComplimentaryPracticalResource,
   redownloadPracticalResource
 } from '../../lib/practicalResources';
 
@@ -29,6 +30,7 @@ export const MyLmsView: React.FC<MyLmsViewProps> = ({
   const [isLoadingResources, setIsLoadingResources] = useState(false);
   const [resourceLoadError, setResourceLoadError] = useState('');
   const [downloadingResourceId, setDownloadingResourceId] = useState('');
+  const canUseClassResources = Boolean(user.isAdmin) || currentTier === 'PRO' || currentTier === 'BOOTCAMP';
 
   const loadClaimedResources = async () => {
     setIsLoadingResources(true);
@@ -49,6 +51,11 @@ export const MyLmsView: React.FC<MyLmsViewProps> = ({
   }, [currentTier]);
 
   const handleRedownload = async ({ resource }: ClaimedPracticalResource) => {
+    if (!isComplimentaryPracticalResource(resource) && !canUseClassResources) {
+      window.alert('이 실전자료는 클래스 또는 부트캠프 수강생만 이용할 수 있습니다.');
+      onTabChange('classes');
+      return;
+    }
     setDownloadingResourceId(resource.id);
     try {
       await redownloadPracticalResource(resource);
@@ -230,11 +237,14 @@ export const MyLmsView: React.FC<MyLmsViewProps> = ({
               {claimedResources.map((claim) => {
                 const { resource } = claim;
                 const isDownloading = downloadingResourceId === resource.id;
+                const isLocked = !isComplimentaryPracticalResource(resource) && !canUseClassResources;
                 return (
                   <article key={resource.id} className="flex flex-col gap-4 rounded-2xl border border-[#27272A] bg-[#18181C] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2 text-[10px] font-black text-emerald-300">
-                        <span className="rounded-md bg-emerald-400/10 px-2 py-1">신청 완료</span>
+                      <div className={`flex items-center gap-2 text-[10px] font-black ${isLocked ? 'text-[#FFD600]' : 'text-emerald-300'}`}>
+                        <span className={`rounded-md px-2 py-1 ${isLocked ? 'bg-[#FFD600]/10' : 'bg-emerald-400/10'}`}>
+                          {isLocked ? '클래스·부트캠프 전용' : '신청 완료'}
+                        </span>
                         <span className="text-zinc-500">
                           {new Date(claim.claimedAt).toLocaleDateString('ko-KR')} 받음
                         </span>
@@ -246,12 +256,12 @@ export const MyLmsView: React.FC<MyLmsViewProps> = ({
                     </div>
                     <button
                       type="button"
-                      onClick={() => void handleRedownload(claim)}
+                      onClick={() => isLocked ? onTabChange('classes') : void handleRedownload(claim)}
                       disabled={isDownloading}
-                      className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#FFD600] px-5 text-xs font-black text-black transition hover:bg-yellow-300 disabled:cursor-wait disabled:opacity-60"
+                      className={`inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl px-5 text-xs font-black transition disabled:cursor-wait disabled:opacity-60 ${isLocked ? 'border border-[#FFD600]/35 bg-[#FFD600]/5 text-[#FFD600] hover:bg-[#FFD600]/10' : 'bg-[#FFD600] text-black hover:bg-yellow-300'}`}
                     >
-                      {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
-                      {isDownloading ? '준비 중...' : resource.external_url ? '자료 다시 열기' : '다시 다운로드'}
+                      {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : isLocked ? <BookOpen className="h-4 w-4" /> : resource.external_url ? <ExternalLink className="h-4 w-4" /> : <Download className="h-4 w-4" />}
+                      {isDownloading ? '준비 중...' : isLocked ? '수강 후 이용하기' : resource.external_url ? '자료 다시 열기' : '다시 다운로드'}
                     </button>
                   </article>
                 );
