@@ -38,7 +38,10 @@ function normalizeResourceTitle(fileName: string) {
 
 function isComplimentaryResourceName(value: string) {
   const normalized = value.normalize('NFC').replace(/[\s_-]/g, '').toLowerCase();
-  return normalized.includes('자기설득서') || normalized.includes('완벽통제면접');
+  return normalized.includes('자기설득서')
+    || normalized.includes('완벽통제면접')
+    || normalized.includes('취업stp')
+    || normalized.includes('stp전략');
 }
 
 type ResourcePreset = {
@@ -80,7 +83,7 @@ function getResourcePreset(fileName: string): ResourcePreset | null {
       title: '취업 STP 전략: 나에게 맞는 이직 방향 찾기',
       description: '같은 직무라도 연차와 경험에 따라 기업이 원하는 사람은 달라집니다. 취업시장을 나누고, 목표를 선택하고, 나만의 위치를 정하는 STP 관점으로 이직 방향을 점검해보세요.',
       category: 'job_change',
-      accessLevel: 'pro',
+      accessLevel: 'free',
       resourceGroup: 'essential',
       sortOrder: 30
     };
@@ -287,7 +290,7 @@ export const PracticalResourcesAdmin: React.FC = () => {
       return;
     }
     if (accessLevel === 'pro' && !file) {
-      setError('프로·부트캠프 전용 자료는 권한 보호를 위해 파일로 업로드해 주세요.');
+      setError('클래스·부트캠프 전용 자료는 권한 보호를 위해 파일로 업로드해 주세요.');
       return;
     }
     if (file && file.size > MAX_FILE_SIZE) {
@@ -395,7 +398,7 @@ export const PracticalResourcesAdmin: React.FC = () => {
           <span className="text-xs font-black tracking-[0.18em] text-[#FFD600]">PRACTICAL LIBRARY</span>
           <h2 className="text-xl font-black text-white">실전활용 자료 등록</h2>
           <p className="text-xs leading-relaxed text-zinc-400">
-            자기설득서와 완벽통제면접만 무료로 공개하며, 나머지 자료는 프로·부트캠프 전용으로 운영합니다.
+            자기설득서·완벽통제면접·취업 STP 전략만 무료로 공개하며, 나머지는 클래스·부트캠프 전용으로 운영합니다.
           </p>
         </div>
 
@@ -500,7 +503,7 @@ export const PracticalResourcesAdmin: React.FC = () => {
                     : 'border-zinc-700 bg-zinc-950 text-zinc-500'
                 }`}
               >
-                프로·부트캠프 전용
+                클래스·부트캠프 전용
               </button>
             </div>
           </fieldset>
@@ -627,7 +630,7 @@ export const PracticalResourcesAdmin: React.FC = () => {
                       ? 'bg-emerald-500/15 text-emerald-300'
                       : 'bg-[#FFD600]/10 text-[#FFD600]'
                   }`}>
-                    {resource.access_level === 'free' ? '무료 공개' : '프로·부트캠프 전용'}
+                    {resource.access_level === 'free' ? '무료 공개' : '클래스·부트캠프 전용'}
                   </span>
                   <span className="text-[11px] font-bold text-zinc-500">
                     {PRACTICAL_CATEGORY_LABELS[resource.category]}
@@ -669,11 +672,11 @@ export const PracticalResourcesAdmin: React.FC = () => {
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           <div className="flex items-start gap-3 rounded-xl bg-emerald-500/5 p-4 text-xs text-zinc-400">
             <Users className="h-4 w-4 shrink-0 text-emerald-400" />
-            <span><strong className="text-emerald-300">무료 공개</strong> 자료는 로그인한 일반 회원도 내려받을 수 있습니다.</span>
+            <span><strong className="text-emerald-300">무료 공개</strong>는 자기설득서·완벽통제면접·취업 STP 전략 3종만 적용됩니다.</span>
           </div>
           <div className="flex items-start gap-3 rounded-xl bg-[#FFD600]/5 p-4 text-xs text-zinc-400">
             <LockKeyhole className="h-4 w-4 shrink-0 text-[#FFD600]" />
-            <span><strong className="text-[#FFD600]">프로·부트캠프 전용</strong> 자료는 활성 프로 멤버십과 부트캠프 회원에게만 열립니다.</span>
+            <span><strong className="text-[#FFD600]">클래스·부트캠프 전용</strong> 자료는 활성 클래스 이용권과 부트캠프 회원에게만 열립니다.</span>
           </div>
         </div>
       </div>
