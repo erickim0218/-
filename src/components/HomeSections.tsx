@@ -380,11 +380,11 @@ export const FeaturedCoursesSection: React.FC<{
               <div className="space-y-2 pt-2 border-t border-[#1F1F24]">
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>자기설득서·완벽통제면접 무료 공개</span>
+                  <span>자기설득서·완벽통제면접·취업 STP 무료 공개</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>나머지 실전자료는 프로 전용</span>
+                  <span>나머지 실전자료는 클래스·부트캠프 전용</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
