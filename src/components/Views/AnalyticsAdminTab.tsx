@@ -151,7 +151,8 @@ function buildTrendPoints(
 const AnalyticsTrendChart: React.FC<{
   points: TrendPoint[];
   color: string;
-}> = ({ points, color }) => {
+  unit: string;
+}> = ({ points, color, unit }) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const width = 920;
   const height = 250;
@@ -267,7 +268,7 @@ const AnalyticsTrendChart: React.FC<{
               {activePoint.fullLabel}
             </text>
             <text x={tooltipX + 14} y={tooltipY + 42} fill={color} fontSize="17" fontWeight="700">
-              {activePoint.value.toLocaleString('ko-KR')}회
+              {activePoint.value.toLocaleString('ko-KR')}{unit}
             </text>
           </g>
         )}
@@ -620,7 +621,11 @@ export const AnalyticsAdminTab: React.FC = () => {
               <div className="mb-2 flex justify-end text-[10px] text-zinc-600">
                 마지막 업데이트: {lastUpdated || '방금 전'}
               </div>
-              <AnalyticsTrendChart points={activeTrend.points} color={metricMeta[expandedMetric].color} />
+              <AnalyticsTrendChart
+                points={activeTrend.points}
+                color={metricMeta[expandedMetric].color}
+                unit={expandedMetric === 'uniqueVisitors' ? '명' : '회'}
+              />
             </div>
           </div>
         )}
