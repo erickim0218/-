@@ -152,6 +152,7 @@ const AnalyticsTrendChart: React.FC<{
   points: TrendPoint[];
   color: string;
 }> = ({ points, color }) => {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const width = 920;
   const height = 250;
   const padding = { top: 24, right: 20, bottom: 48, left: 44 };
@@ -163,6 +164,30 @@ const AnalyticsTrendChart: React.FC<{
   const linePoints = points.map((point, index) => `${xFor(index)},${yFor(point.value)}`).join(' ');
   const areaPoints = `${padding.left},${padding.top + chartHeight} ${linePoints} ${padding.left + chartWidth},${padding.top + chartHeight}`;
   const labelStep = Math.max(1, Math.ceil(points.length / 6));
+  const activePoint = activeIndex === null ? null : points[activeIndex];
+  const activeX = activeIndex === null ? 0 : xFor(activeIndex);
+  const activeY = activePoint ? yFor(activePoint.value) : 0;
+  const tooltipWidth = 260;
+  const tooltipHeight = 54;
+  const tooltipX = Math.min(
+    width - padding.right - tooltipWidth,
+    Math.max(padding.left, activeX - tooltipWidth / 2)
+  );
+  const tooltipY = activeY > padding.top + tooltipHeight + 14
+    ? activeY - tooltipHeight - 14
+    : activeY + 14;
+
+  const handlePointerMove = (event: React.PointerEvent<SVGRectElement>) => {
+    if (event.pointerType === 'touch' || points.length === 0) return;
+    const svg = event.currentTarget.ownerSVGElement;
+    if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    const viewBoxX = ((event.clientX - rect.left) / rect.width) * width;
+    const rawIndex = points.length <= 1
+      ? 0
+      : Math.round(((viewBoxX - padding.left) / chartWidth) * (points.length - 1));
+    setActiveIndex(Math.min(points.length - 1, Math.max(0, rawIndex)));
+  };
 
   return (
     <div className="w-full overflow-x-auto">
@@ -178,16 +203,74 @@ const AnalyticsTrendChart: React.FC<{
         })}
         <polygon points={areaPoints} fill={color} opacity="0.08" />
         <polyline points={linePoints} fill="none" stroke={color} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
+        <rect
+          x={padding.left}
+          y={padding.top}
+          width={chartWidth}
+          height={chartHeight}
+          fill="transparent"
+          onPointerMove={handlePointerMove}
+          onPointerLeave={() => setActiveIndex(null)}
+          style={{ cursor: 'crosshair' }}
+        />
         {points.map((point, index) => (
           <g key={`${point.fullLabel}-${index}`}>
-            <circle cx={xFor(index)} cy={yFor(point.value)} r="5" fill="#121216" stroke={color} strokeWidth="3">
-              <title>{`${point.fullLabel}: +${point.value}`}</title>
-            </circle>
+            <circle
+              cx={xFor(index)}
+              cy={yFor(point.value)}
+              r="12"
+              fill="transparent"
+              onPointerEnter={() => setActiveIndex(index)}
+              onPointerDown={(event) => {
+                event.preventDefault();
+                setActiveIndex(index);
+              }}
+              style={{ cursor: 'pointer' }}
+            />
+            <circle
+              cx={xFor(index)}
+              cy={yFor(point.value)}
+              r={activeIndex === index ? 7 : 5}
+              fill="#121216"
+              stroke={color}
+              strokeWidth="3"
+              pointerEvents="none"
+            />
             {(index % labelStep === 0 || index === points.length - 1) && (
               <text x={xFor(index)} y={height - 16} textAnchor="middle" fill="#A1A1AA" fontSize="11">{point.label}</text>
             )}
           </g>
         ))}
+        {activePoint && (
+          <g pointerEvents="none">
+            <line
+              x1={activeX}
+              x2={activeX}
+              y1={padding.top}
+              y2={padding.top + chartHeight}
+              stroke={color}
+              strokeWidth="1.5"
+              opacity="0.55"
+              strokeDasharray="4 5"
+            />
+            <rect
+              x={tooltipX}
+              y={tooltipY}
+              width={tooltipWidth}
+              height={tooltipHeight}
+              rx="10"
+              fill="#09090B"
+              stroke={color}
+              strokeWidth="1.5"
+            />
+            <text x={tooltipX + 14} y={tooltipY + 21} fill="#A1A1AA" fontSize="11">
+              {activePoint.fullLabel}
+            </text>
+            <text x={tooltipX + 14} y={tooltipY + 42} fill={color} fontSize="17" fontWeight="700">
+              {activePoint.value.toLocaleString('ko-KR')}회
+            </text>
+          </g>
+        )}
       </svg>
     </div>
   );
