@@ -299,14 +299,23 @@ export const AIBootcampBrandStory: React.FC = () => (
           </h2>
         </div>
 
-        <figure className="mx-auto mt-12 h-[310px] max-w-5xl overflow-hidden rounded-2xl border border-zinc-700 bg-[#111A28] shadow-[0_26px_80px_rgba(0,0,0,0.42)] sm:h-auto">
+        <figure className="mx-auto mt-12 max-w-5xl overflow-hidden rounded-2xl border border-zinc-700 bg-[#111A28] shadow-[0_26px_80px_rgba(0,0,0,0.42)]">
           <img
             src={strategyPyramidImg}
             alt="일반적인 취업전략 위에 AI를 활용한 취업전략을 쌓고, 최종적으로 남들이 따라 할 수 없는 나만의 이야기로 전략을 완성하는 3단계 피라미드"
             loading="lazy"
             decoding="async"
-            className="block h-full w-auto max-w-none -translate-x-[41%] sm:h-auto sm:w-full sm:max-w-full sm:translate-x-0"
+            className="hidden h-auto w-full sm:block"
           />
+          <div className="h-[310px] overflow-hidden sm:hidden">
+            <img
+              src={strategyPyramidImg}
+              alt="나만의 이야기로 완성하는 취업 전략 피라미드"
+              loading="lazy"
+              decoding="async"
+              className="block h-full w-auto max-w-none -translate-x-[41%]"
+            />
+          </div>
         </figure>
 
         <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-[#FFD600]/40 bg-[#FFD600]/10 px-6 py-5 text-center">
