@@ -12,12 +12,6 @@ import {
 import { BRAND_INFO, REPOSITIONING_EXAMPLES, CASE_STUDIES, REVIEWS } from '../data/mockData';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
 import { trackAnalyticsEvent } from '../lib/analytics';
-import {
-  BOOTCAMP_ANALYTICS_COHORT,
-  BOOTCAMP_DEADLINE,
-  BOOTCAMP_RECRUITMENT_START
-} from '../config/bootcampCampaign';
-import { WinterSnowfall } from './WinterCampDecor';
 
 interface HomeSectionsProps {
   onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
@@ -26,10 +20,7 @@ interface HomeSectionsProps {
 }
 
 const isBootcampRecruitmentExpired = () =>
-  Date.now() >= BOOTCAMP_DEADLINE;
-
-const isBootcampRecruitmentStarted = () =>
-  Date.now() >= BOOTCAMP_RECRUITMENT_START;
+  Date.now() >= new Date('2026-10-23T21:00:00+09:00').getTime();
 
 /* 1. Hero Section - Ultra Clean & Direct */
 export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeatures }) => {
@@ -50,8 +41,7 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
     }
   }, [siteFeatures]);
 
-  const isBootcampOpen = isBootcampEnabled && isBootcampRecruitmentStarted() && !isBootcampRecruitmentExpired();
-  const isBootcampBeforeOpen = !isBootcampRecruitmentStarted();
+  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentExpired();
 
   return (
     <section className="relative bg-[#09090B] text-white pt-16 pb-20 md:py-24 border-b border-[#1A1A1E] overflow-hidden">
@@ -135,15 +125,15 @@ export const HeroSection: React.FC<HomeSectionsProps> = ({ onTabChange, siteFeat
               trackAnalyticsEvent({
                 eventName: 'bootcamp_click',
                 buttonLocation: 'home_bootcamp_cta',
-                bootcampCohort: BOOTCAMP_ANALYTICS_COHORT
+                bootcampCohort: 9
               });
               onTabChange('bootcamp');
             }}
-            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 border border-sky-300 bg-sky-400 hover:bg-sky-300 text-[#082538] font-black text-sm sm:text-base rounded-xl transition flex items-center justify-center gap-2 shadow-[0_12px_30px_rgba(14,165,233,0.22)] cursor-pointer"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-sm sm:text-base rounded-xl transition flex items-center justify-center gap-2 shadow-lg cursor-pointer"
           >
-            <Sparkles className="w-4 h-4 text-[#082538] shrink-0" />
-            <span>{isBootcampOpen ? '윈터캠프 신청하기' : isBootcampBeforeOpen ? '윈터캠프 11월 13일 모집 시작' : '모집 마감 (다음 모집 예약)'}</span>
-            <ArrowRight className="w-4 h-4 text-[#082538] shrink-0" />
+            <Sparkles className="w-4 h-4 text-[#09090B] shrink-0" />
+            <span>{isBootcampOpen ? '부트캠프 9기 신청하기' : '모집 마감 (다음 기수 예약)'}</span>
+            <ArrowRight className="w-4 h-4 text-[#09090B] shrink-0" />
           </button>
         </div>
 
@@ -209,8 +199,7 @@ export const FeaturedCoursesSection: React.FC<{
     };
   }, []);
 
-  const isBootcampOpen = isBootcampEnabled && isBootcampRecruitmentStarted() && !isBootcampRecruitmentExpired();
-  const isBootcampBeforeOpen = !isBootcampRecruitmentStarted();
+  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentExpired();
 
   return (
     <section className="py-20 bg-[#0C0C0F] text-white border-b border-[#1A1A1E]">
@@ -230,25 +219,24 @@ export const FeaturedCoursesSection: React.FC<{
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* Card 1: Live Bootcamp */}
-          <div className="winter-camp-theme bg-[linear-gradient(145deg,#071C2D_0%,#0B3954_100%)] border border-sky-300/30 rounded-2xl p-6 flex flex-col justify-between space-y-6 relative overflow-hidden shadow-xl shadow-sky-950/20">
-            <WinterSnowfall className="opacity-70" />
+          <div className="bg-[#121216] border border-[#FFD600]/40 rounded-2xl p-6 flex flex-col justify-between space-y-6 relative overflow-hidden">
             <div className={`absolute top-0 right-0 font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-widest ${
-              isBootcampOpen ? 'bg-sky-300 text-sky-950' : 'bg-slate-600 text-white'
+              isBootcampOpen ? 'bg-[#FFD600] text-[#09090B]' : 'bg-rose-600 text-white'
             }`}>
-              {isBootcampOpen ? '모집중 (선착순 5명)' : isBootcampBeforeOpen ? '11월 13일 모집 시작' : '모집 마감'}
+              {isBootcampOpen ? '모집중 (선착순 5명)' : '모집 마감'}
             </div>
 
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <span className="p-2 rounded-xl bg-sky-300/10 text-sky-300">
+                <span className="p-2 rounded-xl bg-[#FFD600]/10 text-[#FFD600]">
                   <Zap className="w-5 h-5" />
                 </span>
-                <span className="text-xs font-bold text-sky-300 tracking-wider uppercase">REPOSITIONING WINTER CAMP</span>
+                <span className="text-xs font-bold text-[#FFD600] tracking-wider uppercase">BOOTCAMP 9기</span>
               </div>
 
               <div>
-                <h3 className="text-xl font-black text-white">리포지셔닝 윈터캠프</h3>
-                <p className="text-xs text-sky-300 font-bold pt-1">
+                <h3 className="text-xl font-black text-white">리포지셔닝 부트캠프</h3>
+                <p className="text-xs text-[#FFD600] font-bold pt-1">
                   🔥 1기~8기 연속 전회 완판 릴레이!
                 </p>
                 <p className="text-xs text-zinc-400 pt-2 leading-relaxed">
@@ -258,23 +246,23 @@ export const FeaturedCoursesSection: React.FC<{
 
               <div className="space-y-2 pt-2 border-t border-[#1F1F24]">
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
-                  <Check className="w-4 h-4 text-sky-300" />
-                  <span>1주차: 취업 및 자소서 리포지셔닝</span>
+                  <Check className="w-4 h-4 text-[#FFD600]" />
+                  <span>1주차: 취업시장 & 자소서 리포지셔닝 특강</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
-                  <Check className="w-4 h-4 text-sky-300" />
-                  <span>2주차: 면접 리포지셔닝</span>
+                  <Check className="w-4 h-4 text-[#FFD600]" />
+                  <span>2주차: 우수 과제 리뷰 & 면접통제 특강</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
-                  <Check className="w-4 h-4 text-sky-300" />
-                  <span>3주차: 이직 리포지셔닝</span>
+                  <Check className="w-4 h-4 text-[#FFD600]" />
+                  <span>3주차: 이직 STP 전략 특강 & 1:1 3회 컨설팅</span>
                 </div>
               </div>
             </div>
 
             <button
               onClick={() => onTabChange('bootcamp')}
-              className="w-full py-3.5 bg-sky-400 hover:bg-sky-300 text-sky-950 font-black text-sm rounded-xl transition flex items-center justify-center gap-1.5 shadow-lg shadow-sky-950/20"
+              className="w-full py-3.5 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-sm rounded-xl transition flex items-center justify-center gap-1.5 shadow-lg"
             >
               부트캠프 커리큘럼 상세보기
               <ChevronRight className="w-4 h-4" />
@@ -661,19 +649,17 @@ export const BootcampCurriculumPreview: React.FC<{
   onTabChange: (tab: string) => void;
 }> = ({ onTabChange }) => {
   return (
-    <section className="winter-camp-theme relative overflow-hidden py-20 bg-[#071C2D] text-white border-b border-sky-900/40">
-      <WinterSnowfall className="opacity-50" />
+    <section className="py-20 bg-[#0C0C0F] text-white border-b border-[#1A1A1E]">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="text-center space-y-3">
-          <span className="px-3 py-1 bg-sky-300/10 border border-sky-300/30 text-sky-300 text-xs font-black rounded-full uppercase">
-            ❄ WINTER CAMP CURRICULUM
+          <span className="px-3 py-1 bg-[#FFD600]/10 border border-[#FFD600]/30 text-[#FFD600] text-xs font-black rounded-full uppercase">
+            🔥 BOOTCAMP CURRICULUM
           </span>
           <h2 className="text-2xl sm:text-4xl font-black text-white">
-            기획자 J의 리포지셔닝 윈터캠프 3주 과정
+            기획자 J의 리포지셔닝 부트캠프 3주 과정
           </h2>
           <p className="text-xs sm:text-sm text-zinc-400 max-w-lg mx-auto">
-            리포지셔닝 윈터캠프와 함께하는 3주,<br />
-            이 세상 어디에도 없는 최적의 취업 전략으로 온전히 결과만 거둬가세요.
+            3주 동안 배우고 적용하고 점검하며, 스스로 합격 전략을 설계하는 리포지셔너로 성장하는 1:1 밀착 과정
           </p>
         </div>
 
@@ -681,61 +667,44 @@ export const BootcampCurriculumPreview: React.FC<{
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-6 bg-[#121216] border border-[#27272A] rounded-2xl space-y-3 relative overflow-hidden">
             <span className="px-2.5 py-1 bg-[#FFD600] text-[#09090B] font-black text-xs rounded">
-              1주차
+              1주차 (4시간)
             </span>
             <h3 className="font-extrabold text-base text-white pt-1">
-              취업 및 자소서 리포지셔닝
+              취업시장 & 자소서 리포지셔닝
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              자기설득서의 이해와 적용
+              취업시장 특강 + 자소서 리포지셔닝 특강 및 1:1 1차 개별 컨설팅 (자기설득서 과제)
             </p>
-            <p className="text-xs font-bold leading-relaxed text-zinc-200">
-              당신이 알고 있던 취업 공식은 잘못되었습니다.<br />
-              내가 상대 기업에 왜 필요한가를 설득하는 설계법
-            </p>
-            <p className="text-xs font-black text-sky-300">강의 후 1:1 밀착 리포지셔닝 컨설팅</p>
           </div>
 
           <div className="p-6 bg-[#121216] border border-[#27272A] rounded-2xl space-y-3 relative overflow-hidden">
             <span className="px-2.5 py-1 bg-[#FFD600] text-[#09090B] font-black text-xs rounded">
-              2주차
+              2주차 (2시간)
             </span>
             <h3 className="font-extrabold text-base text-white pt-1">
-              면접 리포지셔닝
+              우수 과제 리뷰 & 면접 리포지셔닝
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              완벽통제면접의 이해와 적용 특강
+              면접통제 특강 + 1:1 2차 개별 컨설팅 (면접통제 Building-Up Book 과제)
             </p>
-            <p className="text-xs font-bold leading-relaxed text-zinc-200">
-              면접, 통제할 것인가 통제당할 것인가.<br />
-              철저하게 내가 주도권을 갖는 면접 방법론
-            </p>
-            <p className="text-xs font-black text-sky-300">강의 후 1:1 밀착 리포지셔닝 컨설팅</p>
           </div>
 
           <div className="p-6 bg-[#121216] border border-[#27272A] rounded-2xl space-y-3 relative overflow-hidden">
             <span className="px-2.5 py-1 bg-[#FFD600] text-[#09090B] font-black text-xs rounded">
-              3주차
+              3주차 (1시간 30분)
             </span>
             <h3 className="font-extrabold text-base text-white pt-1">
-              이직 리포지셔닝
+              이직 STP 전략 & 합격 케어
             </h3>
-            <ul className="space-y-1 text-xs leading-relaxed text-zinc-400">
-              <li>취업 STP 전략 특강</li>
-              <li>REAL NEEDS 이력서 특강</li>
-              <li>완벽설득포트폴리오 특강</li>
-            </ul>
-            <p className="text-xs font-bold leading-relaxed text-zinc-200">
-              이력서와 포트폴리오는 모두 설득의 도구입니다.<br />
-              가장 날카롭게 설득하는 무기를 만들어드립니다.
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              이직 STP전략 특강 + 1:1 3차 개별 컨설팅 + 자소서 3회 합격용 첨삭 & 상시 피드백
             </p>
-            <p className="text-xs font-black text-sky-300">강의 후 1:1 밀착 리포지셔닝 컨설팅</p>
           </div>
         </div>
 
         <div className="p-6 bg-[#18181C] border border-[#FFD600]/30 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="space-y-1">
-            <span className="text-[#FFD600] font-black text-sm block">리포지셔닝 윈터캠프 · 현재 모집 중 · 11월 20일(금) 오후 9시 마감 · 선착순 5명</span>
+            <span className="text-[#FFD600] font-black text-sm block">리포지셔닝 부트캠프 9기 모집 안내 · 10월 23일(금) 오후 9시 마감 · 선착순 5명</span>
             <p className="text-xs text-zinc-300">1회차 컨설팅 만족 불발 시 24시간 이내 전액 환불 보장</p>
           </div>
           <button
@@ -773,8 +742,7 @@ export const FinalConversionSection: React.FC<{
     }
   }, [siteFeatures]);
 
-  const isBootcampOpen = isBootcampEnabled && isBootcampRecruitmentStarted() && !isBootcampRecruitmentExpired();
-  const isBootcampBeforeOpen = !isBootcampRecruitmentStarted();
+  const isBootcampOpen = isBootcampEnabled && !isBootcampRecruitmentExpired();
 
   return (
     <section className="py-24 bg-[#09090B] text-white text-center border-t border-[#1A1A1E]">
@@ -842,15 +810,15 @@ export const FinalConversionSection: React.FC<{
               trackAnalyticsEvent({
                 eventName: 'bootcamp_click',
                 buttonLocation: 'home_bootcamp_cta',
-                bootcampCohort: BOOTCAMP_ANALYTICS_COHORT
+                bootcampCohort: 9
               });
               onTabChange('bootcamp');
             }}
-            className="w-full sm:w-auto px-8 py-4 border border-sky-300 bg-sky-400 hover:bg-sky-300 text-[#082538] font-black text-base rounded-xl transition flex items-center justify-center gap-2 shadow-[0_12px_30px_rgba(14,165,233,0.22)] cursor-pointer"
+            className="w-full sm:w-auto px-8 py-4 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-base rounded-xl transition flex items-center justify-center gap-2 shadow-lg cursor-pointer"
           >
-            <Sparkles className="w-5 h-5 text-[#082538] shrink-0" />
-            <span>{isBootcampOpen ? '윈터캠프 신청하기' : isBootcampBeforeOpen ? '윈터캠프 11월 13일 모집 시작' : '모집 마감 (다음 모집 예약)'}</span>
-            <ArrowRight className="w-5 h-5 text-[#082538] shrink-0" />
+            <Sparkles className="w-5 h-5 text-[#09090B] shrink-0" />
+            <span>{isBootcampOpen ? '부트캠프 9기 신청하기' : '모집 마감 (다음 기수 예약)'}</span>
+            <ArrowRight className="w-5 h-5 text-[#09090B] shrink-0" />
           </button>
         </div>
       </div>

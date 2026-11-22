@@ -38,7 +38,6 @@ import { RevenueAdminTab } from './RevenueAdminTab';
 import { ReviewAdminTab } from './ReviewAdminTab';
 import { PracticalResourcesAdmin } from './PracticalResourcesAdmin';
 import { EmailCampaignAdmin } from './EmailCampaignAdmin';
-import { BOOTCAMP_COHORT_KEY } from '../../config/bootcampCampaign';
 
 interface AdminViewProps {
   onTabChange: (tab: string) => void;
@@ -271,7 +270,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
     setAssignGrantType('paid');
     setAssignSaleDate(getKoreaTodayDate());
     setAssignMemo('');
-    setAssignCohort(defaultCohort || (defaultTier === 'bootcamp' ? BOOTCAMP_COHORT_KEY : ''));
+    setAssignCohort(defaultCohort || '');
     setAssignExpireMode('1month');
     setAssignCustomExpireDate('');
     setAssignError('');
@@ -292,9 +291,6 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
 
   const handleAssignTierChange = (newTier: 'free' | 'pro' | 'bootcamp') => {
     setAssignTier(newTier);
-    if (newTier === 'bootcamp' && !assignCohort.trim()) {
-      setAssignCohort(BOOTCAMP_COHORT_KEY);
-    }
     if (newTier === 'pro') {
       setAssignExpireMode('1month');
     }
@@ -1508,7 +1504,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onTabChange }) => {
                     type="text"
                     value={assignCohort}
                     onChange={(e) => setAssignCohort(e.target.value)}
-                    placeholder="예: 윈터캠프"
+                    placeholder="예: 9기"
                     className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-indigo-400"
                   />
                 </div>

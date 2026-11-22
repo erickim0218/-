@@ -4,13 +4,6 @@ import { supabase } from '../lib/supabase';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
 import { trackAnalyticsEvent } from '../lib/analytics';
 import { MemberTier } from '../types';
-import {
-  BOOTCAMP_ANALYTICS_COHORT,
-  BOOTCAMP_CAPACITY,
-  BOOTCAMP_COHORT_KEY,
-  BOOTCAMP_DEADLINE,
-  BOOTCAMP_RECRUITMENT_START
-} from '../config/bootcampCampaign';
 
 interface BootcampBottomBarProps {
   currentTab: string;
@@ -46,7 +39,7 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
           .from('user_access')
           .select('user_id', { count: 'exact', head: true })
           .eq('membership_tier', 'bootcamp')
-          .eq('bootcamp_cohort', BOOTCAMP_COHORT_KEY);
+          .eq('bootcamp_cohort', '9기');
 
         if (!error && count !== null && count !== undefined) {
           setConfirmedCount(count);
@@ -71,16 +64,15 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
     return null;
   }
 
-  const totalCapacity = BOOTCAMP_CAPACITY;
+  const totalCapacity = 5;
   const remainingSpots = Math.max(0, totalCapacity - confirmedCount);
-  const isBeforeOpen = Date.now() < BOOTCAMP_RECRUITMENT_START;
-  const isTimeExpired = Date.now() >= BOOTCAMP_DEADLINE;
+  const isTimeExpired = Date.now() >= new Date('2026-10-23T21:00:00+09:00').getTime();
   const isCountFull = confirmedCount >= totalCapacity;
-  const isClosed = !isBootcampEnabled || isBeforeOpen || isTimeExpired || isCountFull;
+  const isClosed = !isBootcampEnabled || isTimeExpired || isCountFull;
   const isBootcampOpen = !isClosed;
 
   return (
-    <div className="winter-camp-theme fixed bottom-0 left-0 right-0 z-40 bg-[#08243A]/95 backdrop-blur-md border-t border-sky-300/20 text-white py-2.5 px-3 sm:py-3 sm:px-4 shadow-2xl transition-all pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#121216]/95 backdrop-blur-md border-t border-zinc-800 text-white py-2.5 px-3 sm:py-3 sm:px-4 shadow-2xl transition-all pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
         
         {/* Mobile View (< 640px) */}
@@ -95,13 +87,13 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
                 className="text-zinc-300 font-medium"
                 style={{ whiteSpace: 'nowrap', wordBreak: 'keep-all', flexShrink: 0 }}
               >
-                윈터캠프 실시간 모집인원:
+                부트캠프 9기 실시간 모집인원:
               </span>
               <span
                 className="text-white font-black"
                 style={{ whiteSpace: 'nowrap', wordBreak: 'keep-all', flexShrink: 0 }}
               >
-                <strong className="text-sky-300">{confirmedCount}</strong> / {totalCapacity}명
+                <strong className="text-[#FFD600]">{confirmedCount}</strong> / {totalCapacity}명
               </span>
             </div>
           </div>
@@ -114,31 +106,31 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
                 trackAnalyticsEvent({
                   eventName: 'bootcamp_click',
                   buttonLocation: 'bottom_fixed_inquiry',
-                  bootcampCohort: BOOTCAMP_ANALYTICS_COHORT
+                  bootcampCohort: 9
                 });
                 onTabChange('bootcamp');
               }}
-              className="px-3 py-1.5 bg-sky-400 hover:bg-sky-300 text-sky-950 font-black text-xs rounded-xl transition shadow flex items-center justify-center min-h-[34px] whitespace-nowrap cursor-pointer"
+              className="px-3 py-1.5 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-xs rounded-xl transition shadow flex items-center justify-center min-h-[34px] whitespace-nowrap cursor-pointer"
             >
-              <span>{isBootcampOpen ? '윈터캠프 신청하기' : isBeforeOpen ? '11월 13일 모집 시작' : '다음 모집 예약 문의'}</span>
+              <span>{isBootcampOpen ? '부트캠프 9기 신청하기' : '다음 기수 예약 문의'}</span>
             </button>
           </div>
         </div>
 
         {/* Desktop & Tablet View (>= 640px) */}
         <div className="hidden sm:flex items-center gap-3 overflow-hidden">
-          <span className="px-2.5 py-1 bg-sky-200 text-sky-950 font-black text-xs rounded-lg shrink-0">
-            {isBootcampOpen ? 'WINTER CAMP' : isBeforeOpen ? '모집 예정' : '모집 마감'}
+          <span className="px-2.5 py-1 bg-[#FFD600] text-[#09090B] font-black text-xs rounded-lg shrink-0">
+            {isBootcampOpen ? 'BOOTCAMP 9기' : '9기 모집 마감'}
           </span>
           <div className="flex items-center gap-2 text-xs sm:text-sm font-bold truncate">
             <span
               className="text-zinc-200"
               style={{ whiteSpace: 'nowrap', wordBreak: 'keep-all', flexShrink: 0 }}
             >
-              윈터캠프 실시간 모집인원:
+              부트캠프 9기 실시간 모집인원:
             </span>
             <span
-              className="text-sky-300"
+              className="text-[#FFD600]"
               style={{ whiteSpace: 'nowrap', wordBreak: 'keep-all', flexShrink: 0 }}
             >
               {confirmedCount} / {totalCapacity}명
@@ -164,14 +156,14 @@ export const BootcampBottomBar: React.FC<BootcampBottomBarProps> = ({
               trackAnalyticsEvent({
                 eventName: 'bootcamp_click',
                 buttonLocation: 'bottom_fixed_inquiry',
-                bootcampCohort: BOOTCAMP_ANALYTICS_COHORT
+                bootcampCohort: 9
               });
               onTabChange('bootcamp');
             }}
-            className="px-4 py-2 bg-sky-400 hover:bg-sky-300 text-sky-950 font-black text-xs sm:text-sm rounded-xl transition shadow-lg shadow-sky-950/20 flex items-center gap-1.5 cursor-pointer"
+            className="px-4 py-2 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-xs sm:text-sm rounded-xl transition shadow-lg flex items-center gap-1.5 cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />
-            <span>{isBootcampOpen ? '윈터캠프 신청하기' : isBeforeOpen ? '11월 13일 모집 시작' : '다음 모집 예약 문의'}</span>
+            <span>{isBootcampOpen ? '부트캠프 9기 신청하기' : '다음 기수 예약 문의'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>

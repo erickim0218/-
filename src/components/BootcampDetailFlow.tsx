@@ -20,20 +20,11 @@ import { BootcampReviewsSection } from './BootcampReviewsSection';
 import { UserReviewsSection } from './UserReviewsSection';
 import { RocketInfographic } from './RocketInfographic';
 import { BootcampScheduleCalendar } from './BootcampScheduleCalendar';
-import { WinterCampIllustration, WinterSnowfall } from './WinterCampDecor';
 import standardRocketImg from '../assets/images/standard_rocket_launch_1788079504479.jpg';
 import { BootcampReview } from '../data/bootcampReviews';
 import { supabase } from '../lib/supabase';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
 import { trackInquiryClickAndOpen } from '../lib/analytics';
-import {
-  BOOTCAMP_CAPACITY,
-  BOOTCAMP_COHORT_KEY,
-  BOOTCAMP_DEADLINE,
-  BOOTCAMP_DEADLINE_LABEL,
-  BOOTCAMP_PUBLIC_NAME,
-  BOOTCAMP_RECRUITMENT_START
-} from '../config/bootcampCampaign';
 
 interface BootcampDetailFlowProps {
   onTabChange?: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
@@ -61,7 +52,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
     trackInquiryClickAndOpen(location, 'https://open.kakao.com/o/sEgVEi0h');
   };
 
-  // 윈터캠프 실시간 확정 수강생 수 관리
+  // 9기 실시간 확정 수강생 수 관리
   const [confirmedCount, setConfirmedCount] = useState<number>(0);
   const [isBootcampEnabled, setIsBootcampEnabled] = useState<boolean>(true);
 
@@ -73,12 +64,12 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
     }
   };
 
-  // 2026년 11월 20일(금) 오후 9시(21:00) 마감 카운트다운 (Asia/Seoul timezone)
+  // 2026년 10월 23일(금) 오후 9시(21:00) 마감 카운트다운 (Asia/Seoul timezone)
   const [timeLeft, setTimeLeft] = useState(() => calculateRemainingTime());
 
   function calculateRemainingTime() {
     const now = new Date();
-    const target = new Date(BOOTCAMP_DEADLINE);
+    const target = new Date('2026-10-23T21:00:00+09:00');
     const diff = Math.max(0, target.getTime() - now.getTime());
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
@@ -87,7 +78,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
     return { days, hours, minutes, seconds };
   }
 
-  // 윈터캠프 모집 통계 조회 (홈·부트캠프 경로에서만 실행, 반복 경고 방지)
+  // 9기 부트캠프 모집 통계 조회 (홈·부트캠프 경로에서만 실행, 반복 경고 방지)
   const hasWarnedStatsRef = React.useRef(false);
   const fetchStats = async () => {
     const pathname = window.location.pathname.replace(/\/+$/, '') || '/';
@@ -102,7 +93,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
         .from('user_access')
         .select('user_id', { count: 'exact', head: true })
         .eq('membership_tier', 'bootcamp')
-        .eq('bootcamp_cohort', BOOTCAMP_COHORT_KEY);
+        .eq('bootcamp_cohort', '9기');
 
       if (!error && count !== null && count !== undefined) {
         setConfirmedCount(count);
@@ -172,12 +163,10 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
     };
   }, []);
 
-  const totalCapacity = BOOTCAMP_CAPACITY;
-  const isBeforeOpen = Date.now() < BOOTCAMP_RECRUITMENT_START;
-  const isTimeExpired = Date.now() >= BOOTCAMP_DEADLINE;
+  const totalCapacity = 5;
+  const isTimeExpired = Date.now() >= new Date('2026-10-23T21:00:00+09:00').getTime();
   const isCountFull = confirmedCount >= totalCapacity;
-  const isClosed = !isBootcampEnabled || isBeforeOpen || isTimeExpired || isCountFull;
-  const closedInquiryLabel = isBeforeOpen ? '💬 윈터캠프 사전 문의' : '💬 다음 모집 예약 문의';
+  const isClosed = !isBootcampEnabled || isTimeExpired || isCountFull;
   const displayCount = Math.min(totalCapacity, Math.max(0, confirmedCount));
   const percent = Math.min(100, Math.round((displayCount / totalCapacity) * 100));
   const remainingSlots = Math.max(0, totalCapacity - displayCount);
@@ -207,62 +196,56 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
   };
 
   return (
-    <div className="winter-camp-theme w-full bg-[#EAF7FD] text-zinc-100 font-sans leading-relaxed selection:bg-sky-200 selection:text-sky-950 pb-24">
+    <div className="w-full bg-[#09090B] text-zinc-100 font-sans leading-relaxed selection:bg-[#FFD600] selection:text-[#09090B] pb-24">
 
       {/* 메인 히어로 헤더 */}
       <section className="pt-2 sm:pt-4 pb-10 px-4 max-w-4xl mx-auto">
-        <div className="bg-[linear-gradient(145deg,#FFFFFF_0%,#F4FBFF_52%,#DDF4FF_100%)] border border-sky-200 rounded-[2rem] p-6 sm:p-10 space-y-6 shadow-[0_24px_70px_rgba(14,116,144,0.18)] relative overflow-hidden">
-          <WinterSnowfall />
-          <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-sky-200/60 blur-3xl" />
-          <WinterCampIllustration className="pointer-events-none absolute -bottom-4 -right-2 hidden w-64 opacity-100 sm:block md:w-80" />
+        <div className="bg-[#121216] border border-zinc-800/90 rounded-3xl p-6 sm:p-10 space-y-6 shadow-2xl relative overflow-hidden">
           
           {/* 상단 프로그램 배지 */}
-          <div className="relative z-10 flex items-center gap-2">
+          <div className="flex items-center gap-2">
               {isClosed ? (
-                <span className="px-3 py-1.5 text-xs font-black rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-                  {isBeforeOpen ? 'REPOSITIONING WINTER CAMP · 모집 예정' : 'REPOSITIONING WINTER CAMP · 모집 마감'}
+                <span className="px-2.5 py-1 text-xs font-black rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                  REPOSITIONING BOOTCAMP 9기 · 모집 마감
                 </span>
               ) : (
-                <span className="px-3 py-1.5 text-xs font-black rounded-full bg-sky-100 text-sky-800 border border-sky-200 shadow-sm">
-                  REPOSITIONING WINTER CAMP · 모집 중
+                <span className="px-2.5 py-1 text-xs font-black rounded-lg bg-[#FFD600]/20 text-[#FFD600] border border-[#FFD600]/40">
+                  REPOSITIONING BOOTCAMP 9기 · 모집 중
                 </span>
               )}
           </div>
 
-          <div className="relative z-10 sm:max-w-[68%]">
+          <div>
             <div>
-              <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-950 leading-tight">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
                 <span className="block">기획자J의</span>
-                <span className="block text-sky-700">{BOOTCAMP_PUBLIC_NAME}</span>
+                <span className="block text-[#FFD600]">리포지셔닝 부트캠프</span>
               </h1>
-              <p className="mt-5 max-w-3xl text-base sm:text-xl font-black text-slate-800 tracking-tight leading-snug">
-                이번 겨울, 3주 동안 취업·이직의 방향을 끝냅니다.
-              </p>
-              <p className="mt-2 text-xs sm:text-sm font-semibold text-slate-500">
-                매주 일요일 집중 강의 · 1:1 밀착 컨설팅 · 상시 피드백
+              <p className="mt-5 max-w-3xl text-base sm:text-xl font-black text-zinc-200 tracking-tight leading-snug">
+                단 3주, 당신을 취업·이직 최정예 리포지셔너로 만들어드립니다.
               </p>
             </div>
           </div>
 
           {/* 핵심 지표 */}
-          <div className="relative z-10 grid grid-cols-3 gap-1.5 sm:mr-[30%] sm:gap-3 bg-white/80 p-3 sm:p-4 rounded-2xl border border-sky-200 text-center backdrop-blur-sm shadow-sm">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-3 bg-[#18181C] p-3 sm:p-4 rounded-2xl border border-zinc-800 text-center">
             <div className="min-w-0 p-1">
-              <span className="text-[10px] sm:text-[11px] text-slate-500 block mb-1 leading-snug">누적 수강인원</span>
-              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-sky-700">128명</span>
+              <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">누적 수강인원</span>
+              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">128명</span>
             </div>
-            <div className="min-w-0 p-1 border-x border-sky-200">
-              <span className="text-[10px] sm:text-[11px] text-slate-500 block mb-1 leading-snug">수강 만족도</span>
-              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-sky-700">99.8%</span>
+            <div className="min-w-0 p-1 border-x border-zinc-800">
+              <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">수강 만족도</span>
+              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">99.8%</span>
             </div>
             <div className="min-w-0 p-1">
-              <span className="text-[10px] sm:text-[11px] text-slate-500 block mb-1 leading-snug">서류 합격률 평균</span>
-              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-sky-700">78.7%</span>
+              <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">서류 합격률 평균</span>
+              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">78.7%</span>
             </div>
           </div>
 
-          <div className="relative z-10 pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-sky-200">
-            <div className="flex items-center gap-2 text-xs text-slate-600">
-              <ShieldCheck className="w-4 h-4 text-sky-600 shrink-0" />
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-zinc-800/80">
+            <div className="flex items-center gap-2 text-xs text-zinc-400">
+              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>1회 차 컨설팅 후 만족하지 않을 경우 24시간 이내 전액 환불 가능</span>
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto">
@@ -271,7 +254,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleInquiryClick}
-                className="w-full sm:w-auto px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-black text-sm rounded-xl transition shadow-lg shadow-sky-900/15 flex items-center justify-center gap-2 shrink-0 transform active:scale-95"
+                className="w-full sm:w-auto px-6 py-3 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-sm rounded-xl transition shadow-lg flex items-center justify-center gap-2 shrink-0 transform active:scale-95"
               >
                 <span>💬 문의하기</span>
               </a>
@@ -468,26 +451,34 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
           </div>
         </section>
 
-        {/* 2. 기존 로켓 비주얼 */}
+        {/* 2. 로켓 섹션 (선명하고 또렷한 로켓 비주얼 카드) */}
         <section className="p-6 sm:p-10 border-b border-zinc-200 bg-slate-50">
           <div className="max-w-4xl mx-auto rounded-2xl overflow-hidden border border-zinc-200 bg-white shadow-xl relative">
+            
+            {/* 로켓 이미지 배너 - 100% 명확하고 또렷한 로켓 그래픽 */}
             <div className="relative w-full h-[400px] sm:h-[520px] md:h-[620px] bg-zinc-950 flex items-center justify-center overflow-hidden">
               <img
                 src={standardRocketImg}
-                alt="리포지셔닝 윈터캠프 로켓"
+                alt="리포지셔닝 부트캠프 로켓"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-contain sm:object-cover object-center brightness-105 contrast-105 opacity-100"
               />
+              
+              {/* 상하단 텍스트 가독성용 은은한 그라데이션 오버레이 (로켓 본체는 100% 선명하게 보임) */}
               <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/85 via-transparent to-zinc-950/30 pointer-events-none" />
+              
+              {/* 상단 뱃지 */}
               <div className="absolute top-6 left-6 right-6 sm:top-8 sm:left-8 z-10">
                 <div className="inline-flex items-center gap-2 bg-[#FFD600] text-zinc-950 px-4 py-1.5 rounded-full font-black text-xs sm:text-sm shadow-xl">
                   <Rocket className="w-4 h-4 fill-current text-zinc-950" />
-                  <span>리포지셔닝 윈터캠프란?</span>
+                  <span>리포지셔닝 부트캠프란?</span>
                 </div>
               </div>
+
+              {/* 메인 타이틀 */}
               <div className="absolute bottom-6 left-6 right-6 sm:bottom-8 sm:left-8 sm:right-8 space-y-2 z-10">
                 <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight drop-shadow-xl">
-                  리포지셔닝 윈터캠프는 <span className="text-[#FFD600]">로켓</span>입니다.
+                  리포지셔닝 부트캠프는 <span className="text-[#FFD600]">로켓</span>입니다.
                 </h2>
               </div>
             </div>
@@ -532,7 +523,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
 
               {/* 하단 기획자J 서명 */}
               <div className="pt-4 border-t border-zinc-200 flex items-center justify-between text-xs sm:text-sm text-zinc-500">
-                <span className="font-semibold text-zinc-800">리포지셔닝 윈터캠프 총괄 기획자J</span>
+                <span className="font-semibold text-zinc-800">리포지셔닝 부트캠프 총괄 기획자J</span>
                 <span className="text-amber-800 font-bold">합격을 향한 전략 리포지셔닝</span>
               </div>
 
@@ -544,7 +535,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
         {/* 로켓 궤도 인포그래픽 & 주차별 주요 일정 (이미지 원본 100% 반영) */}
         <RocketInfographic />
 
-        {/* 2026년 11월·12월 일정 & 1~3주차 상세 커리큘럼 */}
+        {/* 2026년 10월·11월 일정 & 1~3주차 상세 커리큘럼 */}
         <BootcampScheduleCalendar />
 
         {/* 부트캠프 참여자 공통 자료실 혜택 */}
@@ -607,7 +598,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               최적의 <span className="text-amber-800">수강 플랜</span>을 선택해 주세요
             </h2>
             <p className="text-xs sm:text-sm text-zinc-600">
-              결과로 증명하는 기획자J의 리포지셔닝 윈터캠프 · 겨울 3주 집중반 (선착순 5명)
+              결과로 증명하는 기획자J의 리포지셔닝 부트캠프 9기 (선착순 5명 마감)
             </p>
           </div>
 
@@ -659,7 +650,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   onClick={handleInquiryClick}
                   className="w-full py-3 font-black text-xs rounded-xl bg-[#FFD600] hover:bg-[#ffe033] text-zinc-950 shadow-md text-center transition flex items-center justify-center gap-1.5"
                 >
-                  <span>{closedInquiryLabel}</span>
+                  <span>💬 다음 기수 예약 문의</span>
                 </a>
               ) : (
                 <button
@@ -710,7 +701,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   onClick={handleInquiryClick}
                   className="w-full py-3 font-black text-xs rounded-xl bg-[#FFD600] hover:bg-[#ffe033] text-zinc-950 shadow-md text-center transition flex items-center justify-center gap-1.5"
                 >
-                  <span>{closedInquiryLabel}</span>
+                  <span>💬 다음 기수 예약 문의</span>
                 </a>
               ) : (
                 <button
@@ -775,7 +766,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   onClick={handleInquiryClick}
                   className="w-full py-3 font-black text-xs rounded-xl bg-[#FFD600] hover:bg-[#ffe033] text-zinc-950 shadow-md text-center transition flex items-center justify-center gap-1.5"
                 >
-                  <span>{closedInquiryLabel}</span>
+                  <span>💬 다음 기수 예약 문의</span>
                 </a>
               ) : (
                 <button
@@ -858,7 +849,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   className="text-zinc-400 font-medium"
                   style={{ whiteSpace: 'nowrap', wordBreak: 'keep-all', flexShrink: 0 }}
                 >
-                  윈터캠프 실시간 모집인원:
+                  부트캠프 9기 실시간 모집인원:
                 </span>
                 <span
                   className="text-white font-black"
@@ -888,7 +879,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
             <div className="flex items-center justify-between gap-2 pt-0.5">
               <span className="text-zinc-400 text-[11px] font-medium shrink-0">
                 {isClosed ? (
-                  <span className="text-zinc-400">{isBeforeOpen ? '11월 13일 모집 시작' : '다음 모집 예약 문의 가능'}</span>
+                  <span className="text-zinc-400">다음 기수 예약 문의 가능</span>
                 ) : (
                   <>
                     남은 시간 <span className="text-[#FFD600] font-mono font-bold">D-{timeLeft.days} {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}</span>
@@ -923,9 +914,9 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
             {isClosed ? (
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-rose-400 font-black">리포지셔닝 윈터캠프</span>
+                  <span className="text-xs text-rose-400 font-black">부트캠프 9기</span>
                   <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-rose-500/20 border-rose-500/30 text-rose-400">
-                    {isBeforeOpen ? '11월 13일 모집 시작' : '윈터캠프 모집 마감'}
+                    9기 모집 마감
                   </span>
                 </div>
                 <span className="text-xs text-zinc-400 font-medium">
@@ -944,7 +935,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                       className="text-zinc-400 text-xs font-medium"
                       style={{ whiteSpace: 'nowrap', wordBreak: 'keep-all', flexShrink: 0 }}
                     >
-                      윈터캠프 실시간 모집인원:
+                      부트캠프 9기 실시간 모집인원:
                     </span>
                     <span
                       className="text-white text-sm font-black"
@@ -964,7 +955,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   </span>
                 </div>
                 <span className="text-xs text-zinc-400 font-medium mt-0.5 block">
-                  {BOOTCAMP_DEADLINE_LABEL} · 남은 시간 <span className="text-[#FFD600] font-mono font-bold">{timeLeft.days}일 {timeLeft.hours}시간 {timeLeft.minutes}분 {timeLeft.seconds}초</span>
+                  10월 23일(금) 오후 9시 마감 · 남은 시간 <span className="text-[#FFD600] font-mono font-bold">{timeLeft.days}일 {timeLeft.hours}시간 {timeLeft.minutes}분 {timeLeft.seconds}초</span>
                 </span>
               </div>
             )}
@@ -977,7 +968,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 className="hidden md:flex px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-[#FFD600] border border-zinc-700 font-bold text-xs rounded-xl transition items-center justify-center gap-1.5 min-h-[42px]"
               >
                 <Calendar className="w-3.5 h-3.5" />
-                <span>11월·12월 일정표</span>
+                <span>10월·11월 일정표</span>
               </a>
             )}
             <a
@@ -987,7 +978,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               onClick={(e) => handleInquiryClick(e, 'kakao_inquiry')}
               className="px-5 py-2.5 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-xs rounded-xl transition shadow-lg flex items-center justify-center gap-1.5 min-h-[42px] whitespace-nowrap"
             >
-              <span>{isClosed ? closedInquiryLabel : '💬 신청 문의'}</span>
+              <span>{isClosed ? '💬 다음 기수 예약 문의' : '💬 신청 문의'}</span>
             </a>
             <a
               href="https://litt.ly/j_positioning/sale/7eqv5tA"

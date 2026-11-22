@@ -15,7 +15,7 @@ export const BootcampOverviewSummary: React.FC<BootcampOverviewSummaryProps> = (
     {
       id: 1,
       tag: '01 / 부트캠프 개요',
-      title: '기획자 J의 리포지셔닝 윈터캠프',
+      title: '기획자 J의 1:1 리포지셔닝 부트캠프 9기',
       subtitle: '단순 자소서 첨삭이 아닌, 당신의 커리어 가치를 3배 높이는 설득 프로세스',
       badge: '1~8기 전기수 전석 매진 기록',
       stats: [
@@ -55,9 +55,9 @@ export const BootcampOverviewSummary: React.FC<BootcampOverviewSummaryProps> = (
       subtitle: '주차별 명확한 목표로 단단한 합격 무기를 장착합니다',
       badge: '3주 완성 체계적 프로세스',
       stats: [
-        { label: '1주차', value: '취업·자소서 리포지셔닝', desc: '자기설득서의 이해와 적용' },
-        { label: '2주차', value: '면접 리포지셔닝', desc: '완벽통제면접의 이해와 적용' },
-        { label: '3주차', value: '이직 리포지셔닝', desc: '취업 STP·이력서·포트폴리오 특강' },
+        { label: '1주차', value: '직무 재정의', desc: '5Why & 기획자적 관점 재설정' },
+        { label: '2주차', value: '자기설득서', desc: '주장-근거-어필 템플릿 완성' },
+        { label: '3주차', value: '1:1 피드백', desc: '밀착 첨삭 & 면접 연결 전략' },
       ],
       highlights: [
         '주차별 실전 과제 제출 및 기획자 J의 1:1 맞춤 피드백',
@@ -95,7 +95,7 @@ export const BootcampOverviewSummary: React.FC<BootcampOverviewSummaryProps> = (
   };
 
   return (
-    <div className="winter-camp-theme w-full max-w-5xl mx-auto px-4 mb-12">
+    <div className="w-full max-w-5xl mx-auto px-4 mb-12">
       {/* 장표 헤더 */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 pb-4 border-b border-zinc-800">
         <div className="flex items-center gap-3">
@@ -109,7 +109,7 @@ export const BootcampOverviewSummary: React.FC<BootcampOverviewSummaryProps> = (
               </span>
               <span className="text-xs text-zinc-400">부트캠프 핵심 요약 장표</span>
             </div>
-            <h3 className="text-lg font-bold text-white">기획자 J 리포지셔닝 윈터캠프 요약</h3>
+            <h3 className="text-lg font-bold text-white">기획자 J 1:1 리포지셔닝 부트캠프 요약</h3>
           </div>
         </div>
 
