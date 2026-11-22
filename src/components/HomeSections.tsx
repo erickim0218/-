@@ -231,31 +231,31 @@ export const FeaturedCoursesSection: React.FC<{
                 <span className="p-2 rounded-xl bg-[#FFD600]/10 text-[#FFD600]">
                   <Zap className="w-5 h-5" />
                 </span>
-                <span className="text-xs font-bold text-[#FFD600] tracking-wider uppercase">BOOTCAMP 9기</span>
+                <span className="text-xs font-bold text-[#FFD600] tracking-wider uppercase">AI ERA BOOTCAMP</span>
               </div>
 
               <div>
-                <h3 className="text-xl font-black text-white">리포지셔닝 부트캠프</h3>
+                <h3 className="text-xl font-black text-white">AI를 이기는 리포지셔닝 부트캠프</h3>
                 <p className="text-xs text-[#FFD600] font-bold pt-1">
                   🔥 1기~8기 연속 전회 완판 릴레이!
                 </p>
                 <p className="text-xs text-zinc-400 pt-2 leading-relaxed">
-                  3주 특강 + 1:1 라이브 피드백 3회 + 실전 빌딩업 과제로 나만의 포지셔닝 완비
+                  AI가 대신 만들 수 없는 나만의 판단과 성과를 찾아, 서류와 면접에서 증명할 전략으로 완성합니다.
                 </p>
               </div>
 
               <div className="space-y-2 pt-2 border-t border-[#1F1F24]">
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>1주차: 취업시장 & 자소서 리포지셔닝 특강</span>
+                  <span>1주차: REAL NEEDS와 ‘왜 나인가’ 정의</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>2주차: 우수 과제 리뷰 & 면접통제 특강</span>
+                  <span>2주차: 자기설득서와 완벽통제면접 설계</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300">
                   <Check className="w-4 h-4 text-[#FFD600]" />
-                  <span>3주차: 이직 STP 전략 특강 & 1:1 3회 컨설팅</span>
+                  <span>3주차: 취업 STP·이력서·포트폴리오 연결</span>
                 </div>
               </div>
             </div>
@@ -656,10 +656,10 @@ export const BootcampCurriculumPreview: React.FC<{
             🔥 BOOTCAMP CURRICULUM
           </span>
           <h2 className="text-2xl sm:text-4xl font-black text-white">
-            기획자 J의 리포지셔닝 부트캠프 3주 과정
+            AI를 이기는 리포지셔닝 부트캠프 3주 과정
           </h2>
           <p className="text-xs sm:text-sm text-zinc-400 max-w-lg mx-auto">
-            3주 동안 배우고 적용하고 점검하며, 스스로 합격 전략을 설계하는 리포지셔너로 성장하는 1:1 밀착 과정
+            스펙을 다시 읽고, 나만 말할 수 있는 스토리로 만들어, 기업이 선택할 이유까지 설계하는 1:1 밀착 과정
           </p>
         </div>
 
@@ -670,10 +670,10 @@ export const BootcampCurriculumPreview: React.FC<{
               1주차 (4시간)
             </span>
             <h3 className="font-extrabold text-base text-white pt-1">
-              취업시장 & 자소서 리포지셔닝
+              REAL NEEDS와 ‘왜 나인가’ 정의
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              취업시장 특강 + 자소서 리포지셔닝 특강 및 1:1 1차 개별 컨설팅 (자기설득서 과제)
+              기업의 필요와 나의 경험을 분석하고, 1:1 컨설팅과 자기설득서 과제로 핵심 주장을 정리합니다.
             </p>
           </div>
 
@@ -682,10 +682,10 @@ export const BootcampCurriculumPreview: React.FC<{
               2주차 (2시간)
             </span>
             <h3 className="font-extrabold text-base text-white pt-1">
-              우수 과제 리뷰 & 면접 리포지셔닝
+              자기설득서와 핵심 스토리 설계
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              면접통제 특강 + 1:1 2차 개별 컨설팅 (면접통제 Building-Up Book 과제)
+              주장–근거–어필 구조와 완벽통제면접 방법론을 1:1 컨설팅과 과제로 적용합니다.
             </p>
           </div>
 
@@ -694,10 +694,10 @@ export const BootcampCurriculumPreview: React.FC<{
               3주차 (1시간 30분)
             </span>
             <h3 className="font-extrabold text-base text-white pt-1">
-              이직 STP 전략 & 합격 케어
+              서류와 면접의 전략 연결
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              이직 STP전략 특강 + 1:1 3차 개별 컨설팅 + 자소서 3회 합격용 첨삭 & 상시 피드백
+              취업 STP·이력서·포트폴리오를 하나의 주장으로 연결하고 1:1 3차 컨설팅과 상시 피드백으로 점검합니다.
             </p>
           </div>
         </div>

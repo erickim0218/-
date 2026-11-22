@@ -13,7 +13,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
             <span>2026년 10월·11월 리포지셔닝 부트캠프 9기 공식 일정</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-zinc-950">
-            부트캠프 <span className="text-rose-600">모집 일정 & 10월·11월 캘린더</span>
+            3주 동안 <span className="text-rose-600">나를 뽑아야 할 이유를 완성합니다</span>
           </h2>
           <p className="text-xs sm:text-sm text-zinc-600 max-w-xl mx-auto leading-relaxed">
             <strong className="text-rose-600">10월 10일(토) 모집 시작 · 10월 23일(금) 오후 9시 마감</strong> 후,<br className="hidden sm:inline" />
@@ -273,10 +273,10 @@ export const BootcampScheduleCalendar: React.FC = () => {
               <span>커리큘럼 세부 진행 계획</span>
             </div>
             <h3 className="text-2xl sm:text-3xl font-black text-zinc-950 tracking-tight">
-              1~3주차 <span className="text-rose-600">상세 특강 & 컨설팅 프로세스</span>
+              1~3주차 <span className="text-rose-600">전략 설계 & 밀착 컨설팅</span>
             </h3>
             <p className="text-xs sm:text-sm text-zinc-500">
-              특강 후 1:1 개별 컨설팅 및 Building Up Book 과제를 통해 실전 합격 무기를 완성합니다.
+              강의에서 관점을 배우고, 1:1 컨설팅과 Building Up Book 과제로 내 경험에 직접 적용합니다.
             </p>
           </div>
 
@@ -288,7 +288,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
                 <span className="text-2xl leading-none">🎯</span>
                 <span className="text-rose-600 font-black tracking-tight">1주차</span>
                 <span className="font-bold">
-                  취업 시장 특강 및 자소서 리포지셔닝 특강 4시간(오전 9시~오후 1시)
+                  기업의 REAL NEEDS와 나의 경험 분석 4시간(오전 9시~오후 1시)
                 </span>
               </div>
 
@@ -297,7 +297,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
                   + 특강 이후 1:1 개별 컨설팅 진행(순서 공지 예정, 오후 2시 이후 진행)
                 </div>
                 <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
-                  + 자기설득서 Building Up Book 기반 1주차 과제 수행
+                  + ‘왜 나인가’를 정의하고 자기설득서 Building Up Book 과제 수행
                 </div>
               </div>
             </div>
@@ -308,7 +308,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
                 <span className="text-2xl leading-none">🎯</span>
                 <span className="text-rose-600 font-black tracking-tight">2주차</span>
                 <span className="font-bold">
-                  우수 과제 리뷰 및 면접 리포지셔닝 특강 2시간(오전 9시~오전 11시)
+                  자기설득서와 완벽통제면접 설계 2시간(오전 9시~오전 11시)
                 </span>
               </div>
 
@@ -317,7 +317,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
                   + 특강 이후 1:1 2차 개별 컨설팅 진행(1주차 동일 순서)
                 </div>
                 <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
-                  + 면접통제 Building Up Book 기반 2주차 과제 수행
+                  + 주장–근거–어필 구조와 면접통제 Building Up Book 과제 수행
                 </div>
               </div>
             </div>
@@ -328,7 +328,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
                 <span className="text-2xl leading-none">🎯</span>
                 <span className="text-rose-600 font-black tracking-tight">3주차</span>
                 <span className="font-bold">
-                  취업 STP전략 특강 1시간 (오전 9시~오전 10시)
+                  취업 STP·이력서·포트폴리오 연결 1시간(오전 9시~오전 10시)
                 </span>
               </div>
 
@@ -337,7 +337,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
                   + 특강 이후 1:1 3차 개별 컨설팅 진행
                 </div>
                 <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
-                  + 자소서 3회 첨삭권(1회당 최대 3문항) 및 프리미엄 상시 피드백 안내
+                  + 서류의 주장을 면접에서 증명하도록 연결하고, 자소서 3회 첨삭권(1회당 최대 3문항) 및 프리미엄 상시 피드백 안내
                 </div>
               </div>
             </div>

@@ -32,41 +32,41 @@ function getRemainingTime(now: number) {
 const variants = [
   {
     id: 'bootcamp_popup_1',
-    badge: '리포지셔닝 부트캠프 9기',
-    title: <>단 3주,<br /><span className="text-[#B38F00]">최정예 취업·이직 리포지셔너</span>로 만들어드립니다.</>,
-    body: <>기업의 니즈를 찾고 내 경험을 다시 해석해,<br />이력서·자소서·면접을 하나의 합격 논리로 완성합니다.</>,
-    cta: '9기 모집 확인하기'
+    badge: 'AI를 이기는 리포지셔닝 부트캠프',
+    title: <>모두가 AI로 쓴다면,<br /><span className="text-[#B38F00]">무엇으로 선택받을까요?</span></>,
+    body: <>당신의 경험에서 당신만의 판단과 성과를 찾아,<br />기업이 선택할 이유로 설계합니다.</>,
+    cta: '부트캠프 자세히 보기'
   },
   {
     id: 'bootcamp_popup_2',
-    badge: '리포지셔닝 부트캠프 9기',
-    title: <>아직도<br /><span className="text-[#B38F00]">혼자 준비하세요?</span></>,
-    body: <>기획자 J와 3주간 방향을 바로잡고,<br />과제와 밀착 피드백으로 실제 지원 결과물을 완성합니다.</>,
-    cta: '9기 모집 확인하기'
+    badge: 'AI를 이기는 리포지셔닝 부트캠프',
+    title: <>그럴듯한 문장보다<br /><span className="text-[#B38F00]">나를 뽑아야 할 이유</span></>,
+    body: <>서류에서는 주장하고 면접에서는 증명할 수 있도록,<br />3주 동안 당신만의 전략을 완성합니다.</>,
+    cta: '3주 과정 확인하기'
   },
   {
     id: 'bootcamp_popup_3',
-    badge: '리포지셔닝 부트캠프 9기',
-    title: <>떨어질 때마다<br /><span className="text-[#B38F00]">자소서만 고치세요?</span></>,
-    body: <>문장 몇 줄을 고치는 과정이 아닙니다.<br />기업이 나를 선택할 이유부터 다시 세웁니다.</>,
-    cta: '합격의 방향 바꾸기'
+    badge: 'AI를 이기는 리포지셔닝 부트캠프',
+    title: <>스펙은 바꾸지 않습니다.<br /><span className="text-[#B38F00]">읽히는 방식을 바꿉니다.</span></>,
+    body: <>이미 가진 경험을 브랜드와 스토리로 만들고,<br />기업의 REAL NEEDS에 맞는 전략으로 연결합니다.</>,
+    cta: '리포지셔닝 시작하기'
   },
   {
     id: 'bootcamp_popup_4',
-    badge: '리포지셔닝 부트캠프 9기',
-    title: <>수많은 후기가 증명한<br /><span className="text-[#B38F00]">3주의 리포지셔닝</span></>,
+    badge: 'AI를 이기는 리포지셔닝 부트캠프',
+    title: <>AI는 도구입니다.<br /><span className="text-[#B38F00]">전략은 당신에게서 나옵니다.</span></>,
     metric: '쓰레드 팔로워 1만 · 부트캠프 만족도 98.6%',
     body: <>혼자서는 보이지 않던 강점을 찾고,<br />서류와 면접에서 통하는 전략으로 바꿉니다.</>,
     cta: '부트캠프 후기 및 상세내용 확인하기'
   },
   {
     id: 'bootcamp_popup_5',
-    badge: '리포지셔닝 부트캠프 9기',
-    title: <>단 3주, 취업·이직 정예 리포지셔너로 만들어드립니다.</>,
-    body: <>전략 없이 지원하지 않도록, 기업의 니즈를 읽고 경험을 설득력 있게 보여주는 방법을 완성합니다.</>,
-    cta: '부트캠프 9기 자세히 보기',
+    badge: 'AI를 이기는 리포지셔닝 부트캠프',
+    title: <>기업이 당신을 선택할 이유를 만듭니다.</>,
+    body: <>스펙을 다시 읽고, 나만 말할 수 있는 스토리와 직접 증명할 전략을 완성합니다.</>,
+    cta: '부트캠프 자세히 보기',
     image: bootcampKnightKeyVisual,
-    imageAlt: '갑옷을 입은 기사와 단 3주 취업·이직 정예 리포지셔너 메시지가 담긴 리포지셔닝 부트캠프 9기 광고'
+    imageAlt: 'AI를 이기는 리포지셔닝 부트캠프 안내 포스터'
   }
 ] as const;
 
@@ -254,7 +254,7 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
         className="fixed inset-0 z-[120] flex items-center justify-center bg-black/55 px-3 py-16 backdrop-blur-[2px] sm:px-8 sm:py-20"
         role="dialog"
         aria-modal="true"
-        aria-label="리포지셔닝 부트캠프 9기 포스터 광고"
+        aria-label="AI를 이기는 리포지셔닝 부트캠프 포스터 광고"
       >
         <div className="relative w-full max-w-[1080px]">
           <button
@@ -270,7 +270,7 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
             type="button"
             onClick={openBootcamp}
             className="block w-full overflow-hidden bg-[#101923] text-left shadow-[0_30px_100px_rgba(0,0,0,0.62)] ring-1 ring-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD600]"
-            aria-label="리포지셔닝 부트캠프 9기 자세히 보기"
+            aria-label="AI를 이기는 리포지셔닝 부트캠프 자세히 보기"
           >
             <img
               src={variant.image}
@@ -295,7 +295,7 @@ export const BootcampCampaignPopup: React.FC<BootcampCampaignPopupProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-end justify-center bg-black/35 px-3 pb-3 pt-20 sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-label="리포지셔닝 부트캠프 9기 안내">
+    <div className="fixed inset-0 z-[120] flex items-end justify-center bg-black/35 px-3 pb-3 pt-20 sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-label="AI를 이기는 리포지셔닝 부트캠프 안내">
       <div className="relative max-h-[calc(100dvh-1.5rem)] w-full max-w-[560px] overflow-y-auto rounded-2xl border border-black/10 bg-white shadow-[0_30px_100px_rgba(0,0,0,0.48)] ring-1 ring-white/70">
         <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#FFD600]/20 blur-3xl" />
         <button

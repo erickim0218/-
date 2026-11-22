@@ -20,6 +20,7 @@ import { BootcampReviewsSection } from './BootcampReviewsSection';
 import { UserReviewsSection } from './UserReviewsSection';
 import { RocketInfographic } from './RocketInfographic';
 import { BootcampScheduleCalendar } from './BootcampScheduleCalendar';
+import { AIBootcampBrandStory } from './AIBootcampBrandStory';
 import standardRocketImg from '../assets/images/standard_rocket_launch_1788079504479.jpg';
 import { BootcampReview } from '../data/bootcampReviews';
 import { supabase } from '../lib/supabase';
@@ -206,29 +207,34 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
           <div className="flex items-center gap-2">
               {isClosed ? (
                 <span className="px-2.5 py-1 text-xs font-black rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30">
-                  REPOSITIONING BOOTCAMP 9기 · 모집 마감
+                  REPOSITIONING BOOTCAMP · 모집 마감
                 </span>
               ) : (
                 <span className="px-2.5 py-1 text-xs font-black rounded-lg bg-[#FFD600]/20 text-[#FFD600] border border-[#FFD600]/40">
-                  REPOSITIONING BOOTCAMP 9기 · 모집 중
+                  REPOSITIONING BOOTCAMP · 모집 중
                 </span>
               )}
           </div>
 
           <div>
             <div>
-              <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
-                <span className="block">기획자J의</span>
-                <span className="block text-[#FFD600]">리포지셔닝 부트캠프</span>
+              <p className="text-sm font-black tracking-[0.14em] text-[#FFD600]">기획자J의 3주 밀착 과정</p>
+              <h1 className="mt-3 max-w-3xl text-3xl sm:text-5xl md:text-6xl font-black tracking-[-0.05em] text-white leading-[1.08]">
+                AI를 이기는<br />
+                <span className="text-[#FFD600]">리포지셔닝 부트캠프</span>
               </h1>
-              <p className="mt-5 max-w-3xl text-base sm:text-xl font-black text-zinc-200 tracking-tight leading-snug">
-                단 3주, 당신을 취업·이직 최정예 리포지셔너로 만들어드립니다.
+              <p className="mt-6 max-w-3xl text-lg sm:text-2xl font-black text-white tracking-tight leading-snug">
+                모두가 AI로 그럴듯한 지원서를 쓰는 시대.<br />
+                <span className="text-zinc-400">그럴듯함만으로는 더 이상 선택받기 어렵습니다.</span>
+              </p>
+              <p className="mt-5 border-l-4 border-[#FFD600] pl-4 text-base sm:text-xl font-black text-zinc-200">
+                스펙은 바꾸지 않습니다. 읽히는 방식을 바꿉니다.
               </p>
             </div>
           </div>
 
           {/* 핵심 지표 */}
-          <div className="grid grid-cols-3 gap-1.5 sm:gap-3 bg-[#18181C] p-3 sm:p-4 rounded-2xl border border-zinc-800 text-center">
+          {false && <div className="grid grid-cols-3 gap-1.5 sm:gap-3 bg-[#18181C] p-3 sm:p-4 rounded-2xl border border-zinc-800 text-center">
             <div className="min-w-0 p-1">
               <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">누적 수강인원</span>
               <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">128명</span>
@@ -241,7 +247,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">서류 합격률 평균</span>
               <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">78.7%</span>
             </div>
-          </div>
+          </div>}
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-zinc-800/80">
             <div className="flex items-center gap-2 text-xs text-zinc-400">
@@ -256,17 +262,15 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 onClick={handleInquiryClick}
                 className="w-full sm:w-auto px-6 py-3 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-sm rounded-xl transition shadow-lg flex items-center justify-center gap-2 shrink-0 transform active:scale-95"
               >
-                <span>💬 문의하기</span>
+                <span>{isClosed ? '다음 기수 상담하기' : '신청 상담하기'}</span>
               </a>
-              <a
-                href="https://litt.ly/j_positioning/sale/7eqv5tA"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={scrollToPricing}
                 className="w-full sm:w-auto px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-sm rounded-xl transition shadow-lg flex items-center justify-center gap-2 shrink-0 transform active:scale-95"
               >
-                <span>⭐ 수강생 리얼후기보기</span>
-                <ExternalLink className="w-4 h-4 text-zinc-400" />
-              </a>
+                <span>{isClosed ? '프로그램 구성 확인하기' : '수강 신청 확인하기'}</span>
+              </button>
             </div>
           </div>
 
@@ -278,8 +282,10 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
         <SlidingReviewsMarquee />
       </section>
 
+      <AIBootcampBrandStory />
+
       {/* 임팩트 브랜드 배너 (레드 모션 실루엣 & 흑백 구도 - 풀 width) */}
-      <div className="w-full overflow-hidden mt-4 mb-0">
+      <div className="hidden w-full overflow-hidden mt-4 mb-0">
         
         {/* 레드 모션 섹션 */}
         <section className="relative w-full min-h-[380px] sm:min-h-[440px] bg-[#8B0000] flex flex-col items-center justify-center p-6 sm:p-12 text-center overflow-hidden">
@@ -371,7 +377,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
       <main className="w-full bg-white text-zinc-900 overflow-hidden min-h-screen">
         
         {/* 1. 타겟 진단 */}
-        <section className="p-8 sm:p-12 border-b border-zinc-200 bg-white space-y-8 pt-8 sm:pt-12">
+        <section className="hidden p-8 sm:p-12 border-b border-zinc-200 bg-white space-y-8 pt-8 sm:pt-12">
           <div className="text-center space-y-2 max-w-xl mx-auto">
             <span className="text-xs text-amber-800 bg-amber-100 font-bold px-3 py-1 rounded-full">
               수강 대상 진단
@@ -452,7 +458,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
         </section>
 
         {/* 2. 로켓 섹션 (선명하고 또렷한 로켓 비주얼 카드) */}
-        <section className="p-6 sm:p-10 border-b border-zinc-200 bg-slate-50">
+        <section className="hidden p-6 sm:p-10 border-b border-zinc-200 bg-slate-50">
           <div className="max-w-4xl mx-auto rounded-2xl overflow-hidden border border-zinc-200 bg-white shadow-xl relative">
             
             {/* 로켓 이미지 배너 - 100% 명확하고 또렷한 로켓 그래픽 */}
@@ -533,7 +539,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
         </section>
 
         {/* 로켓 궤도 인포그래픽 & 주차별 주요 일정 (이미지 원본 100% 반영) */}
-        <RocketInfographic />
+        <div className="hidden"><RocketInfographic /></div>
 
         {/* 2026년 10월·11월 일정 & 1~3주차 상세 커리큘럼 */}
         <BootcampScheduleCalendar />
@@ -799,13 +805,16 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
               <span>100% 안심 환불 보장 제도</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight">
-              1회 차 컨설팅 후 방향성에 만족하지 않으시면<br />
-              24시간 이내 요청 시 <span className="text-[#FFD600]">100% 전액 환불</span>해 드립니다.
+            <h2 className="text-2xl sm:text-4xl font-black text-white leading-tight">
+              AI가 쓴 멋진 문장이 아니라,<br />
+              <span className="text-[#FFD600]">나를 뽑아야 할 이유</span>를 완성합니다.
             </h2>
             <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
-              전략과 결과에 대한 압도적 자부심이 있기에 가능한 약속입니다.<br />
-              무의미한 서류 제출로 시간을 낭비하지 말고, 인사담당자의 머리에 각인될 메시지를 설계하세요.
+              서류에서는 분명하게 주장하고, 면접에서는 내 경험으로 직접 증명할 수 있어야 합니다.<br />
+              기업이 당신을 선택할 이유. 그것이 AI 시대에 당신만이 가질 수 있는 전략입니다.
+            </p>
+            <p className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-xs font-bold leading-6 text-emerald-200">
+              1회 차 컨설팅 후 방향성에 만족하지 않으시면 24시간 이내 요청 시 100% 전액 환불해 드립니다.
             </p>
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
               <a
