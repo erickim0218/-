@@ -101,13 +101,13 @@ export const BootcampReviewsSection: React.FC<BootcampReviewsSectionProps> = ({
         <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-800 border border-amber-500/20 text-xs font-bold">
             <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-            <span>수강생 생생 리얼 스토리</span>
+            <span>수강생이 직접 남긴 이야기</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-black text-zinc-900">
-            수강생 생생 리얼 후기
+            먼저 들은 사람들의 후기
           </h2>
           <p className="text-xs sm:text-sm text-zinc-600">
-            실제 부트캠프 수강생들이 입증하는 서류 합격률 70% 반전과 연봉 상승의 기록들입니다.
+            무엇을 배웠고, 지원 방식이 어떻게 달라졌는지 직접 확인해보세요.
           </p>
 
           {/* 평균 평점 요약 바 & 후기 작성 버튼 */}

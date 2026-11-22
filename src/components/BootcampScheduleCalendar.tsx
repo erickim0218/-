@@ -4,16 +4,17 @@ import { Calendar as CalendarIcon, Flame, AlertCircle, Sparkles, CheckCircle2 } 
 export const BootcampScheduleCalendar: React.FC = () => {
   return (
     <section id="bootcamp-schedule" className="p-6 sm:p-12 border-b border-zinc-200 bg-white text-zinc-900 scroll-mt-10">
-      <div className="max-w-4xl mx-auto space-y-12">
+      <div className="max-w-4xl mx-auto flex flex-col gap-12">
         
         {/* 상단 섹션 헤더 */}
-        <div className="text-center space-y-3">
+        <div className="order-1 text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-rose-50 text-rose-800 border border-rose-200 rounded-full text-xs font-bold shadow-sm">
             <CalendarIcon className="w-3.5 h-3.5 text-rose-600" />
-            <span>2026년 10월·11월 리포지셔닝 부트캠프 9기 공식 일정</span>
+            <span>리포지셔닝 부트캠프 3주 과정</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-zinc-950">
-            3주 동안 <span className="text-rose-600">나를 뽑아야 할 이유를 완성합니다</span>
+            듣고 끝나는 강의가 아닙니다.<br />
+            <span className="text-rose-600">매주 내 서류와 면접에 적용합니다.</span>
           </h2>
           <p className="text-xs sm:text-sm text-zinc-600 max-w-xl mx-auto leading-relaxed">
             <strong className="text-rose-600">10월 10일(토) 모집 시작 · 10월 23일(금) 오후 9시 마감</strong> 후,<br className="hidden sm:inline" />
@@ -24,7 +25,7 @@ export const BootcampScheduleCalendar: React.FC = () => {
         {/* ========================================================================= */}
         {/* 1. 2026년 10월·11월 달력 */}
         {/* ========================================================================= */}
-        <div className="rounded-2xl border-2 border-zinc-900 bg-white overflow-hidden shadow-2xl">
+        <div className="order-3 rounded-2xl border-2 border-zinc-900 bg-white overflow-hidden shadow-2xl">
           
           {/* 달력 상단 바 */}
           <div className="bg-white border-b border-zinc-200 px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -265,18 +266,18 @@ export const BootcampScheduleCalendar: React.FC = () => {
         {/* ========================================================================= */}
         {/* 2. 주차별 상세 본문 카드 */}
         {/* ========================================================================= */}
-        <div className="space-y-6 pt-4">
+        <div className="order-2 space-y-6 pt-4">
           
           <div className="text-center space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-100 text-zinc-800 rounded-full text-xs font-bold">
               <Sparkles className="w-3.5 h-3.5 text-rose-600" />
-              <span>커리큘럼 세부 진행 계획</span>
+              <span>주차별로 배우고 만드는 것</span>
             </div>
             <h3 className="text-2xl sm:text-3xl font-black text-zinc-950 tracking-tight">
-              1~3주차 <span className="text-rose-600">전략 설계 & 밀착 컨설팅</span>
+              강의 → 과제 → <span className="text-rose-600">1:1 컨설팅</span>
             </h3>
             <p className="text-xs sm:text-sm text-zinc-500">
-              강의에서 관점을 배우고, 1:1 컨설팅과 Building Up Book 과제로 내 경험에 직접 적용합니다.
+              배우고, 직접 써보고, 막힌 부분은 1:1로 바로잡습니다.
             </p>
           </div>
 
@@ -294,10 +295,10 @@ export const BootcampScheduleCalendar: React.FC = () => {
 
               <div className="flex flex-col items-center space-y-2.5 pt-1 text-xs sm:text-sm font-semibold text-zinc-900">
                 <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
-                  + 특강 이후 1:1 개별 컨설팅 진행(순서 공지 예정, 오후 2시 이후 진행)
+                  + 강의 후 1:1 컨설팅 진행(순서 공지 예정, 오후 2시 이후)
                 </div>
                 <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
-                  + ‘왜 나인가’를 정의하고 자기설득서 Building Up Book 과제 수행
+                  + 기업이 나를 뽑아야 할 이유를 정리하고 자기설득서 과제 수행
                 </div>
               </div>
             </div>
@@ -314,10 +315,10 @@ export const BootcampScheduleCalendar: React.FC = () => {
 
               <div className="flex flex-col items-center space-y-2.5 pt-1 text-xs sm:text-sm font-semibold text-zinc-900">
                 <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
-                  + 특강 이후 1:1 2차 개별 컨설팅 진행(1주차 동일 순서)
+                  + 강의 후 1:1 2차 컨설팅 진행(1주차와 같은 순서)
                 </div>
                 <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
-                  + 주장–근거–어필 구조와 면접통제 Building Up Book 과제 수행
+                  + 주장–근거–어필 구조로 자소서를 쓰고, 면접 답변까지 연결
                 </div>
               </div>
             </div>
@@ -334,10 +335,10 @@ export const BootcampScheduleCalendar: React.FC = () => {
 
               <div className="flex flex-col items-center space-y-2.5 pt-1 text-xs sm:text-sm font-semibold text-zinc-900">
                 <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
-                  + 특강 이후 1:1 3차 개별 컨설팅 진행
+                  + 강의 후 1:1 3차 컨설팅 진행
                 </div>
                 <div className="w-fit max-w-full bg-[#FDE2E4] px-3.5 py-1.5 rounded-md leading-relaxed text-center mx-auto">
-                  + 서류의 주장을 면접에서 증명하도록 연결하고, 자소서 3회 첨삭권(1회당 최대 3문항) 및 프리미엄 상시 피드백 안내
+                  + 서류의 주장을 면접에서 증명하도록 연결하고, 자소서 첨삭과 상시 피드백 진행
                 </div>
               </div>
             </div>

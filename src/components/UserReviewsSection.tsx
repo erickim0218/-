@@ -246,13 +246,13 @@ export const UserReviewsSection: React.FC<UserReviewsSectionProps> = ({ onTabCha
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 text-amber-700 border border-amber-500/20 text-xs font-bold rounded-full mb-3">
             <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-            <span>실제 수강생 검증된 후기</span>
+            <span>수강생이 직접 작성한 후기</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-zinc-900 tracking-tight">
             수강생 후기
           </h2>
           <p className="text-sm text-zinc-600 mt-1">
-            직접 경험한 리포지셔닝의 변화를 남겨주세요.
+            실제로 겪은 변화와 아쉬웠던 점을 남겨주세요.
           </p>
         </div>
 
@@ -278,7 +278,7 @@ export const UserReviewsSection: React.FC<UserReviewsSectionProps> = ({ onTabCha
             <MessageSquareQuote className="w-10 h-10 text-[#FFD600] mx-auto opacity-80" />
             <h3 className="text-lg font-bold text-white">수강생 후기를 작성하시려면 로그인이 필요합니다.</h3>
             <p className="text-xs text-zinc-400 max-w-md mx-auto">
-              로그인 후 리포지셔닝 부트캠프를 통해 경험한 성과와 변화를 직접 공유해보세요.
+              로그인 후 부트캠프에서 직접 겪은 내용을 남길 수 있습니다.
             </p>
             <button
               onClick={() => {

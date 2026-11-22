@@ -134,11 +134,11 @@ export const SlidingReviewsMarquee: React.FC = () => {
             <MessageSquareQuote className="w-5 h-5 text-[#FFD600]" />
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[#FFD600] font-bold">실시간 수강 후기</span>
-                <span className="text-xs text-zinc-400">· 수강생 서류 합격 입증</span>
+                <span className="text-xs text-[#FFD600] font-bold">수강생 후기</span>
+                <span className="text-xs text-zinc-400">· 직접 겪은 변화</span>
               </div>
               <h3 className="text-base font-bold text-white">
-                실제 수강생 생생 리뷰
+                먼저 들은 사람들은 이렇게 말했습니다
               </h3>
             </div>
           </div>

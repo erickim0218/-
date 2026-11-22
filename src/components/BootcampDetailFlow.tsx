@@ -199,88 +199,100 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
   return (
     <div className="w-full bg-[#09090B] text-zinc-100 font-sans leading-relaxed selection:bg-[#FFD600] selection:text-[#09090B] pb-24">
 
-      {/* 메인 히어로 헤더 */}
-      <section className="pt-2 sm:pt-4 pb-10 px-4 max-w-4xl mx-auto">
-        <div className="bg-[#121216] border border-zinc-800/90 rounded-3xl p-6 sm:p-10 space-y-6 shadow-2xl relative overflow-hidden">
-          
-          {/* 상단 프로그램 배지 */}
-          <div className="flex items-center gap-2">
-              {isClosed ? (
-                <span className="px-2.5 py-1 text-xs font-black rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30">
-                  REPOSITIONING BOOTCAMP · 모집 마감
+      {/* 첫 화면: 핵심 약속, 운영 방식, CTA를 한 번에 보여준다. */}
+      <section className="mx-auto max-w-6xl px-4 pb-10 pt-3 sm:pt-6">
+        <div className="overflow-hidden rounded-3xl border border-zinc-800/90 bg-[#121216] shadow-2xl">
+          <div className="grid lg:grid-cols-[1.3fr_0.7fr]">
+            <div className="p-6 sm:p-10 lg:p-12">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-lg border border-[#FFD600]/40 bg-[#FFD600]/15 px-2.5 py-1 text-xs font-black text-[#FFD600]">
+                  기획자J의 3주 밀착 과정
                 </span>
-              ) : (
-                <span className="px-2.5 py-1 text-xs font-black rounded-lg bg-[#FFD600]/20 text-[#FFD600] border border-[#FFD600]/40">
-                  REPOSITIONING BOOTCAMP · 모집 중
+                <span className={`rounded-lg border px-2.5 py-1 text-xs font-black ${isClosed ? 'border-rose-500/30 bg-rose-500/20 text-rose-400' : 'border-emerald-500/30 bg-emerald-500/15 text-emerald-300'}`}>
+                  {isClosed ? '현재 모집 마감' : '현재 모집 중'}
                 </span>
-              )}
-          </div>
+              </div>
 
-          <div>
-            <div>
-              <p className="text-sm font-black tracking-[0.14em] text-[#FFD600]">기획자J의 3주 밀착 과정</p>
-              <h1 className="mt-3 max-w-3xl text-3xl sm:text-5xl md:text-6xl font-black tracking-[-0.05em] text-white leading-[1.08]">
+              <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[1.08] tracking-[-0.055em] text-white sm:text-6xl">
                 AI를 이기는<br />
                 <span className="text-[#FFD600]">리포지셔닝 부트캠프</span>
               </h1>
-              <p className="mt-6 max-w-3xl text-lg sm:text-2xl font-black text-white tracking-tight leading-snug">
+              <p className="mt-6 max-w-3xl text-lg font-black leading-snug tracking-tight text-white sm:text-2xl">
                 모두가 AI로 그럴듯한 지원서를 쓰는 시대.<br />
                 <span className="text-zinc-400">그럴듯함만으로는 더 이상 선택받기 어렵습니다.</span>
               </p>
-              <p className="mt-5 border-l-4 border-[#FFD600] pl-4 text-base sm:text-xl font-black text-zinc-200">
+              <p className="mt-5 border-l-4 border-[#FFD600] pl-4 text-base font-black text-zinc-200 sm:text-xl">
                 스펙은 바꾸지 않습니다. 읽히는 방식을 바꿉니다.
               </p>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <a
+                  href="https://open.kakao.com/o/sEgVEi0h"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleInquiryClick}
+                  className="flex w-full items-center justify-center rounded-xl bg-[#FFD600] px-7 py-4 text-base font-black text-[#09090B] shadow-lg transition hover:bg-[#ffe033] active:scale-95 sm:w-auto"
+                >
+                  {isClosed ? '다음 기수 상담하기' : '내 상황 상담하기'}
+                </a>
+                <button
+                  type="button"
+                  onClick={scrollToPricing}
+                  className="flex w-full items-center justify-center rounded-xl bg-zinc-800 px-7 py-4 text-base font-bold text-white shadow-lg transition hover:bg-zinc-700 active:scale-95 sm:w-auto"
+                >
+                  프로그램과 수강료 보기
+                </button>
+              </div>
+
+              <div className="mt-6 flex items-start gap-2 text-xs leading-5 text-zinc-400">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                <span>1회 차 컨설팅 후 방향이 맞지 않다고 판단되면 24시간 안에 전액 환불을 요청할 수 있습니다.</span>
+              </div>
             </div>
+
+            <aside className="border-t border-zinc-800 bg-[#0D0D10] p-6 sm:p-8 lg:border-l lg:border-t-0 lg:p-10">
+              <p className="text-sm font-black tracking-[0.12em] text-[#FFD600]">이 과정에서 함께하는 것</p>
+              <ul className="mt-5 space-y-4">
+                {[
+                  ['3주 라이브 특강', 'REAL NEEDS부터 자소서·면접·이직 전략까지'],
+                  ['주차별 1:1 컨설팅', '배운 내용을 내 경험과 지원 기업에 바로 적용'],
+                  ['과제와 상시 피드백', '혼자 막히는 구간을 그대로 두지 않도록 점검'],
+                  ['프로자료 전체 제공', '이력서·포트폴리오·실전 프롬프트까지']
+                ].map(([title, description]) => (
+                  <li key={title} className="flex gap-3">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#FFD600]" />
+                    <div>
+                      <p className="text-sm font-black text-white">{title}</p>
+                      <p className="mt-1 text-xs leading-5 text-zinc-400">{description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-7 border-t border-zinc-800 pt-6">
+                <p className="text-sm font-bold leading-6 text-zinc-200">
+                  “GPT에 의존하지 않고 스스로 생각하는 법을 배웠습니다.”
+                </p>
+                <p className="mt-2 text-xs font-bold text-zinc-500">실제 수강생 후기 중</p>
+              </div>
+            </aside>
           </div>
-
-          {/* 핵심 지표 */}
-          {false && <div className="grid grid-cols-3 gap-1.5 sm:gap-3 bg-[#18181C] p-3 sm:p-4 rounded-2xl border border-zinc-800 text-center">
-            <div className="min-w-0 p-1">
-              <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">누적 수강인원</span>
-              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">128명</span>
-            </div>
-            <div className="min-w-0 p-1 border-x border-zinc-800">
-              <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">수강 만족도</span>
-              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">99.8%</span>
-            </div>
-            <div className="min-w-0 p-1">
-              <span className="text-[10px] sm:text-[11px] text-zinc-400 block mb-1 leading-snug">서류 합격률 평균</span>
-              <span className="block whitespace-nowrap text-[clamp(1.25rem,6.4vw,1.875rem)] leading-none font-black tabular-nums text-[#FFD600]">78.7%</span>
-            </div>
-          </div>}
-
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-zinc-800/80">
-            <div className="flex items-center gap-2 text-xs text-zinc-400">
-              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>1회 차 컨설팅 후 만족하지 않을 경우 24시간 이내 전액 환불 가능</span>
-            </div>
-            <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto">
-              <a
-                href="https://open.kakao.com/o/sEgVEi0h"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleInquiryClick}
-                className="w-full sm:w-auto px-6 py-3 bg-[#FFD600] hover:bg-[#ffe033] text-[#09090B] font-black text-sm rounded-xl transition shadow-lg flex items-center justify-center gap-2 shrink-0 transform active:scale-95"
-              >
-                <span>{isClosed ? '다음 기수 상담하기' : '신청 상담하기'}</span>
-              </a>
-              <button
-                type="button"
-                onClick={scrollToPricing}
-                className="w-full sm:w-auto px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-sm rounded-xl transition shadow-lg flex items-center justify-center gap-2 shrink-0 transform active:scale-95"
-              >
-                <span>{isClosed ? '프로그램 구성 확인하기' : '수강 신청 확인하기'}</span>
-              </button>
-            </div>
-          </div>
-
         </div>
       </section>
 
-      <AIBootcampBrandStory />
+      <nav className="sticky top-0 z-30 border-y border-zinc-800 bg-[#0B0B0E]/95 px-4 py-3 backdrop-blur" aria-label="부트캠프 상세 바로가기">
+        <div className="mx-auto flex max-w-5xl gap-2 overflow-x-auto text-sm font-bold text-zinc-300 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <a href="#why-repositioning" className="shrink-0 rounded-full border border-zinc-700 px-4 py-2 hover:border-[#FFD600] hover:text-white">왜 리포지셔닝인가</a>
+          <a href="#bootcamp-schedule" className="shrink-0 rounded-full border border-zinc-700 px-4 py-2 hover:border-[#FFD600] hover:text-white">3주 과정</a>
+          <a href="#bootcamp-reviews" className="shrink-0 rounded-full border border-zinc-700 px-4 py-2 hover:border-[#FFD600] hover:text-white">수강 후기</a>
+          <a href="#pricing-plans" className="shrink-0 rounded-full border border-[#FFD600]/50 bg-[#FFD600]/10 px-4 py-2 text-[#FFD600]">수강료·신청</a>
+        </div>
+      </nav>
+
+      <div id="why-repositioning" className="scroll-mt-16"><AIBootcampBrandStory /></div>
 
       {/* 핵심 메시지를 이해한 뒤 실제 수강 후기로 신뢰를 확인하도록 배치 */}
-      <section className="py-4 bg-[#0B0B0E]">
+      <section id="bootcamp-reviews" className="scroll-mt-16 bg-[#0B0B0E] py-4">
         <SlidingReviewsMarquee />
       </section>
 
@@ -549,20 +561,20 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
           <div className="max-w-5xl mx-auto space-y-8">
             <div className="text-center space-y-3">
               <span className="inline-flex items-center rounded-full border border-sky-300/40 bg-sky-300/10 px-4 py-1.5 text-xs font-black text-sky-200">
-                모든 부트캠프 참여자 공통 혜택
+                수강생 전용 자료실
               </span>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                캠프에 참여하는 순간,<br className="sm:hidden" /> 자료실이 전부 열립니다.
+                수강을 시작하면,<br className="sm:hidden" /> 자료실도 전부 열립니다.
               </h2>
               <p className="mx-auto max-w-2xl text-sm sm:text-base leading-relaxed text-slate-300">
-                무료 핵심자료는 물론 잠겨 있던 프로자료와 실전 프롬프트까지 모두 이용할 수 있습니다.
+                강의에서 끝내지 않도록, 실제 지원에 필요한 자료와 프롬프트까지 함께 드립니다.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 sm:p-6 space-y-3">
-                <p className="text-xs font-black text-sky-300">01. 핵심자료</p>
-                <h3 className="text-lg font-black">기본부터 다시 잡는 자료</h3>
+                <p className="text-xs font-black text-sky-300">01. 기본 자료</p>
+                <h3 className="text-lg font-black">자소서와 면접의 기준</h3>
                 <ul className="space-y-2 text-sm text-slate-200">
                   <li className="flex gap-2"><Check className="w-4 h-4 mt-0.5 shrink-0 text-sky-300" />자기설득서</li>
                   <li className="flex gap-2"><Check className="w-4 h-4 mt-0.5 shrink-0 text-sky-300" />완벽통제면접</li>
@@ -571,7 +583,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
 
               <div className="rounded-2xl border border-sky-300/40 bg-sky-300/[0.09] p-5 sm:p-6 space-y-3 md:scale-[1.02]">
                 <p className="text-xs font-black text-sky-300">02. 프로자료 전체</p>
-                <h3 className="text-lg font-black">바로 적용하는 실전자료</h3>
+                <h3 className="text-lg font-black">지원할 때 바로 쓰는 자료</h3>
                 <ul className="space-y-2 text-sm text-slate-100">
                   <li className="flex gap-2"><Check className="w-4 h-4 mt-0.5 shrink-0 text-sky-300" />취업 STP 전략</li>
                   <li className="flex gap-2"><Check className="w-4 h-4 mt-0.5 shrink-0 text-sky-300" />REAL NEEDS 이력서 전략·예시·Word 템플릿</li>
@@ -581,16 +593,38 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
 
               <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 sm:p-6 space-y-3">
                 <p className="text-xs font-black text-sky-300">03. 실전 프롬프트</p>
-                <h3 className="text-lg font-black">자료를 내 것으로 만드는 도구</h3>
+                <h3 className="text-lg font-black">내 기업과 직무에 맞춰 쓰는 법</h3>
                 <p className="text-sm leading-relaxed text-slate-200">
-                  프로자료를 내 지원 기업과 직무에 맞게 적용할 수 있는 실전 프롬프트도 함께 제공합니다.
+                  프로자료를 내 지원 기업과 직무에 맞춰 적용할 수 있는 프롬프트를 함께 드립니다.
                 </p>
               </div>
             </div>
 
             <p className="text-center text-xs sm:text-sm font-bold text-sky-200">
-              별도 결제 없이, 부트캠프 수강 권한으로 자료실의 모든 자료를 열람할 수 있습니다.
+              별도 결제 없이 자료실의 모든 자료를 열람할 수 있습니다.
             </p>
+          </div>
+        </section>
+
+        <section className="border-b border-zinc-200 bg-white px-6 py-14 sm:px-12 sm:py-20">
+          <div className="mx-auto max-w-5xl">
+            <div className="text-center">
+              <p className="text-sm font-black tracking-[0.16em] text-amber-700">수강생이 직접 말한 변화</p>
+              <h2 className="mt-3 text-2xl font-black tracking-tight text-zinc-950 sm:text-4xl">배운 내용을 혼자서도 꺼내 쓸 수 있게 됩니다.</h2>
+            </div>
+            <div className="mt-9 grid gap-4 md:grid-cols-3">
+              {[
+                'GPT에 의존하지 않고 스스로 생각하는 연습이 됐습니다.',
+                '자소서를 어떤 사고 과정과 구조로 써야 하는지 알게 됐습니다.',
+                '제 글의 문제를 이해하고, 스스로 글을 설계하는 힘이 생겼습니다.'
+              ].map((quote) => (
+                <blockquote key={quote} className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 text-base font-bold leading-7 text-zinc-800">
+                  “{quote}”
+                  <footer className="mt-4 text-xs font-bold text-zinc-500">실제 수강생 후기 중</footer>
+                </blockquote>
+              ))}
+            </div>
+            <p className="mt-5 text-center text-xs text-zinc-500">개인의 준비 상황과 실행 정도에 따라 결과는 달라질 수 있습니다.</p>
           </div>
         </section>
 
@@ -598,13 +632,13 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
         <section id="pricing-plans" className="p-8 sm:p-12 border-b border-zinc-200 bg-slate-50 space-y-8 scroll-mt-6">
           <div className="text-center space-y-2 max-w-xl mx-auto">
             <span className="text-xs text-amber-800 bg-amber-100 font-bold px-3 py-1 rounded-full">
-              수강 신청 플랜
+              수강 방법
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-zinc-900 tracking-tight">
-              최적의 <span className="text-amber-800">수강 플랜</span>을 선택해 주세요
+              필요한 도움만큼 선택하세요.
             </h2>
             <p className="text-xs sm:text-sm text-zinc-600">
-              결과로 증명하는 기획자J의 리포지셔닝 부트캠프 9기 (선착순 5명 마감)
+              세 플랜 모두 3주 특강과 리포지셔닝 방법론을 포함합니다. 차이는 1:1로 함께 다듬는 범위입니다.
             </p>
           </div>
 
@@ -614,7 +648,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-black text-zinc-900">코어 플랜</h3>
-                  <p className="text-xs text-zinc-500">밀착 진단형</p>
+                  <p className="text-xs text-zinc-500">방향을 잡고 직접 완성하는 분</p>
                 </div>
                 <div>
                   <span className="text-xs text-zinc-400 line-through block">350,000원</span>
@@ -673,7 +707,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-black text-zinc-900">프로 플랜</h3>
-                  <p className="text-xs text-amber-800 font-semibold">완성형 브랜딩 코스</p>
+                  <p className="text-xs text-amber-800 font-semibold">1:1로 서류까지 함께 완성하는 분</p>
                 </div>
                 <div>
                   <span className="text-xs text-zinc-400 line-through block">480,000원</span>
@@ -686,7 +720,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-amber-600 shrink-0" />
-                    <span className="font-bold text-zinc-900">1:1 개별 딥 컨설팅 3회 제공</span>
+                    <span className="font-bold text-zinc-900">1:1 컨설팅 3회</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-amber-600 shrink-0" />
@@ -694,7 +728,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-amber-600 shrink-0" />
-                    <span>상시 카카오톡 1:1 피드백 케어</span>
+                    <span>상시 카카오톡 1:1 피드백</span>
                   </li>
                 </ul>
               </div>
@@ -738,7 +772,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                       월 3명 한정
                     </span>
                   </div>
-                  <p className="text-xs text-zinc-500 font-medium mt-0.5">최종 합격 무제한 케어</p>
+                  <p className="text-xs text-zinc-500 font-medium mt-0.5">최종 합격까지 계속 점검받고 싶은 분</p>
                 </div>
                 <div>
                   <span className="text-xs text-zinc-400 line-through block">890,000원</span>
@@ -751,15 +785,15 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="font-bold text-zinc-900">시즌 무제한 1:1 컨설팅 케어</span>
+                    <span className="font-bold text-zinc-900">모집 시즌 동안 1:1 컨설팅 횟수 제한 없음</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>자소서 무제한 첨삭 & 면접 밀착 코칭</span>
+                    <span>자소서 횟수 제한 없는 첨삭 + 면접 점검</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>최종 합격 시까지 전담 매니징</span>
+                    <span>최종 합격까지 서류와 면접을 계속 점검</span>
                   </li>
                 </ul>
               </div>
@@ -788,6 +822,32 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
           </div>
         </section>
 
+        <section className="border-b border-zinc-200 bg-zinc-50 px-6 py-14 sm:px-12 sm:py-20">
+          <div className="mx-auto max-w-3xl">
+            <div className="text-center">
+              <p className="text-sm font-black tracking-[0.16em] text-amber-700">신청 전에 많이 묻는 질문</p>
+              <h2 className="mt-3 text-2xl font-black tracking-tight text-zinc-950 sm:text-4xl">결제 전에 확인하세요.</h2>
+            </div>
+            <div className="mt-9 space-y-3">
+              {[
+                ['AI를 쓰면 안 되는 과정인가요?', '아닙니다. 자료 조사와 초안에는 AI를 적극 활용합니다. 다만 최종 주장은 내 경험에서 찾고, 면접에서 직접 설명할 수 있게 만듭니다.'],
+                ['1:1 컨설팅에서는 무엇을 하나요?', '강의에서 배운 방법을 내 경험과 지원 기업에 적용합니다. 지원 방향, 자소서의 주장, 면접에서 증명할 근거를 주차별로 점검합니다.'],
+                ['강의만 듣고 끝나는 과정인가요?', '아닙니다. 매주 Building Up Book 과제를 수행하고, 1:1 컨설팅과 피드백을 거쳐 실제 지원에 쓸 결과물로 다듬습니다.'],
+                ['자료실은 별도 결제인가요?', '아닙니다. 부트캠프 수강생은 프로자료와 이력서·포트폴리오 자료, 실전 프롬프트까지 모두 열람할 수 있습니다.'],
+                ['지금 모집이 마감됐다면 어떻게 하나요?', '상세 내용은 그대로 확인할 수 있습니다. 카카오톡으로 문의하면 다음 기수 일정과 신청 방법을 안내해드립니다.']
+              ].map(([question, answer]) => (
+                <details key={question} className="group rounded-2xl border border-zinc-200 bg-white p-5 open:border-zinc-400">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-black text-zinc-950">
+                    {question}
+                    <span className="text-xl font-bold text-zinc-400 transition group-open:rotate-45">+</span>
+                  </summary>
+                  <p className="mt-4 border-t border-zinc-100 pt-4 text-sm leading-7 text-zinc-600">{answer}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* 7. 수강 후기 */}
         <section className="p-8 sm:p-12 border-b border-zinc-200 bg-white space-y-8">
           <BootcampReviewsSection reviews={reviews} onAddReview={onAddReview} />
@@ -806,15 +866,15 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               <span>100% 안심 환불 보장 제도</span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-black text-white leading-tight">
-              AI가 쓴 멋진 문장이 아니라,<br />
-              <span className="text-[#FFD600]">나를 뽑아야 할 이유</span>를 완성합니다.
+              서류에서는 주장하고,<br />
+              <span className="text-[#FFD600]">면접에서는 증명하세요.</span>
             </h2>
             <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
-              서류에서는 분명하게 주장하고, 면접에서는 내 경험으로 직접 증명할 수 있어야 합니다.<br />
-              기업이 당신을 선택할 이유. 그것이 AI 시대에 당신만이 가질 수 있는 전략입니다.
+              AI가 대신 써준 문장은 면접장에서 대신 답해주지 않습니다.<br />
+              내 경험으로 말할 수 있는 ‘왜 나인가’를 3주 동안 함께 만듭니다.
             </p>
             <p className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-xs font-bold leading-6 text-emerald-200">
-              1회 차 컨설팅 후 방향성에 만족하지 않으시면 24시간 이내 요청 시 100% 전액 환불해 드립니다.
+              1회 차 컨설팅 후 방향이 맞지 않다고 판단되면 24시간 안에 전액 환불을 요청할 수 있습니다.
             </p>
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
               <a
@@ -824,7 +884,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 onClick={handleInquiryClick}
                 className="w-full sm:w-auto px-8 py-4 bg-[#FFD600] hover:bg-[#ffe033] text-zinc-950 font-black text-base rounded-2xl transition shadow-xl transform active:scale-95 flex items-center justify-center gap-2"
               >
-                💬 문의하기
+                {isClosed ? '다음 기수 상담하기' : '내 상황 상담하기'}
               </a>
               <a
                 href="https://litt.ly/j_positioning/sale/7eqv5tA"
@@ -832,7 +892,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto px-8 py-4 bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-base rounded-2xl transition shadow-xl transform active:scale-95 flex items-center justify-center gap-2"
               >
-                <span>⭐ 수강생 리얼후기보기</span>
+                <span>수강 후기 더 보기</span>
                 <ExternalLink className="w-4 h-4 text-zinc-400" />
               </a>
             </div>
