@@ -16,6 +16,17 @@ import {
 import painPointImg from '../assets/images/bootcamp-story/pain-point.png';
 import beforeAfterImg from '../assets/images/bootcamp-story/before-after.png';
 import finalCtaImg from '../assets/images/bootcamp-story/final-cta.png';
+import aiToolsStrategyImg from '../assets/images/bootcamp-story/ai-tools-strategy.png';
+
+const RedUnderline: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
+  <span className={`relative inline-block ${className}`}>
+    <span className="relative z-10">{children}</span>
+    <span
+      aria-hidden="true"
+      className="absolute -bottom-1 left-[2%] h-[5px] w-[96%] -rotate-1 rounded-full bg-[#E63932] sm:h-[7px]"
+    />
+  </span>
+);
 
 const aiTasks = [
   '채용공고와 기업 정보 요약',
@@ -126,9 +137,9 @@ export const AIBootcampBrandStory: React.FC = () => (
     <section className="border-y border-zinc-800 bg-[#0B0B0E] px-5 py-16 text-white sm:px-10 sm:py-24">
       <div className="mx-auto max-w-5xl text-center">
         <p className="text-sm font-black tracking-[0.18em] text-[#FFD600]">WHY REPOSITIONING</p>
-        <h2 className="mx-auto mt-5 max-w-4xl text-3xl font-black leading-tight tracking-[-0.04em] sm:text-5xl sm:leading-[1.18]">
+        <h2 className="mx-auto mt-5 max-w-4xl text-3xl font-black leading-tight tracking-[-0.055em] sm:text-6xl sm:leading-[1.14]">
           AI로 쓰면 빨라집니다.<br />
-          <span className="text-[#FFD600]">문제는, 다 비슷해진다는 겁니다.</span>
+          <span className="mt-2 inline-block text-[#FFD600]">문제는, <RedUnderline className="text-white">다 비슷해진다는 것</RedUnderline>입니다.</span>
         </h2>
         <p className="mx-auto mt-7 max-w-3xl text-base font-medium leading-8 text-zinc-300 sm:text-xl sm:leading-9">
           공고를 분석하고 문장을 다듬는 일은 AI가 잘합니다.<br className="hidden sm:block" />
@@ -136,9 +147,9 @@ export const AIBootcampBrandStory: React.FC = () => (
         </p>
 
         <div className="mx-auto mt-10 max-w-3xl border-y border-zinc-700 py-8">
-          <p className="text-2xl font-black leading-snug text-white sm:text-4xl">
+          <p className="font-serif text-2xl font-black leading-snug text-white sm:text-4xl">
             스펙은 바꾸지 않습니다.<br />
-            <span className="text-[#FFD600]">읽히는 방식을 바꿉니다.</span>
+            <span className="font-sans text-[#FFD600]">읽히는 방식을 바꿉니다.</span>
           </p>
           <p className="mt-5 text-base leading-8 text-zinc-300 sm:text-lg">
             이미 해온 일에서 판단과 성과를 찾아<br className="hidden sm:block" />
@@ -152,8 +163,8 @@ export const AIBootcampBrandStory: React.FC = () => (
       <div className="mx-auto max-w-5xl">
         <div className="text-center">
           <p className="text-sm font-black tracking-[0.16em] text-amber-700">AI를 쓰지 말자는 이야기가 아닙니다</p>
-          <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
-            AI에게 맡길 일과<br className="sm:hidden" /> 내가 답할 일을 나눕니다.
+          <h2 className="mt-4 font-serif text-3xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
+            AI에게 맡길 일과<br className="sm:hidden" /> <span className="font-sans">내가 <RedUnderline>답할 일</RedUnderline>을 나눕니다.</span>
           </h2>
         </div>
 
@@ -229,9 +240,9 @@ export const AIBootcampBrandStory: React.FC = () => (
       <div className="relative mx-auto max-w-6xl">
         <div className="text-center">
           <p className="text-sm font-black tracking-[0.16em] text-[#FFD600]">AI는 도구입니다</p>
-          <h2 className="mx-auto mt-4 max-w-4xl text-3xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
+          <h2 className="mx-auto mt-4 max-w-5xl text-3xl font-black leading-[1.08] tracking-[-0.055em] sm:text-6xl">
             ChatGPT도, Gemini도, Claude도<br className="hidden sm:block" />
-            <span className="text-[#FFD600]">남들도 다 씁니다.</span>
+            <span className="mt-2 inline-block text-[#FFD600]">남들이 다 쓰는 도구입니다.</span>
           </h2>
           <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-zinc-300 sm:text-lg">
             모두가 쓸 수 있는 도구가 곧 나만의 전략이 될 수는 없습니다.<br className="hidden sm:block" />
@@ -239,7 +250,17 @@ export const AIBootcampBrandStory: React.FC = () => (
           </p>
         </div>
 
-        <div className="mx-auto mt-12 max-w-5xl overflow-hidden rounded-[2rem] border border-zinc-700 bg-zinc-950 shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
+        <figure className="mx-auto mt-10 max-w-4xl overflow-hidden rounded-2xl border border-zinc-700 bg-[#101820] shadow-[0_22px_70px_rgba(0,0,0,0.48)]">
+          <img
+            src={aiToolsStrategyImg}
+            alt="ChatGPT, Gemini, Claude는 누구나 쓰는 도구이며 결과를 만드는 차별화는 취업 리포지셔닝 전략이라는 설명"
+            loading="lazy"
+            decoding="async"
+            className="block h-auto w-full"
+          />
+        </figure>
+
+        <div className="mx-auto mt-8 max-w-5xl overflow-hidden rounded-[2rem] border border-zinc-700 bg-zinc-950 shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
           <div className="relative px-5 pb-8 pt-10 sm:px-10 sm:pb-12 sm:pt-14">
             <div className="absolute left-1/2 top-[150px] h-40 w-px -translate-x-1/2 bg-gradient-to-b from-[#FFD600] to-zinc-700 sm:top-[170px] sm:h-44" />
 
@@ -287,9 +308,9 @@ export const AIBootcampBrandStory: React.FC = () => (
           </div>
         </div>
 
-        <p className="mx-auto mt-8 max-w-3xl text-center text-lg font-black leading-8 text-white sm:text-2xl">
+        <p className="mx-auto mt-8 max-w-3xl text-center font-serif text-lg font-black leading-8 text-white sm:text-2xl">
           AI를 많이 쓰는 사람이 아니라,<br className="sm:hidden" />
-          <span className="text-[#FFD600]">AI 위에서 방향을 정하는 사람</span>이 선택받습니다.
+          <span className="font-sans text-[#FFD600]">AI 위에서 <RedUnderline className="text-white">방향을 정하는 사람</RedUnderline></span>이 선택받습니다.
         </p>
       </div>
     </section>
@@ -298,9 +319,9 @@ export const AIBootcampBrandStory: React.FC = () => (
       <div className="mx-auto max-w-5xl">
         <div className="text-center">
           <p className="text-sm font-black tracking-[0.18em] text-[#FFD600]">취업 준비의 3단계</p>
-          <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
+          <h2 className="mt-4 font-serif text-3xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
             같은 도구를 쓴다면,<br />
-            <span className="text-[#FFD600]">결국 경험에서 차이가 납니다.</span>
+            <span className="font-sans text-[#FFD600]">결국 <RedUnderline className="text-white">경험</RedUnderline>에서 차이가 납니다.</span>
           </h2>
         </div>
 
@@ -348,7 +369,7 @@ export const AIBootcampBrandStory: React.FC = () => (
       <div className="mx-auto max-w-6xl">
         <div className="text-center">
           <p className="text-sm font-black tracking-[0.18em] text-amber-700">BRANDING → STORYTELLING → STRATEGY</p>
-          <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] sm:text-5xl">경험을 전략으로 바꾸는 순서</h2>
+          <h2 className="mt-4 font-serif text-3xl font-black tracking-[-0.04em] sm:text-5xl">경험을 <RedUnderline className="font-sans">전략</RedUnderline>으로 바꾸는 순서</h2>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-zinc-600 sm:text-lg">
             세 가지를 따로 배우지 않습니다. 앞 단계에서 찾은 근거를 다음 단계로 이어, 하나의 지원 전략을 만듭니다.
           </p>
@@ -359,7 +380,7 @@ export const AIBootcampBrandStory: React.FC = () => (
             <React.Fragment key={step.label}>
               <article className="flex min-h-[310px] flex-col rounded-3xl border border-zinc-200 bg-white p-6 shadow-[0_14px_40px_rgba(0,0,0,0.06)] sm:p-7">
                 <p className="text-sm font-black tracking-[0.14em] text-amber-700">{step.label}</p>
-                <h3 className="mt-5 text-2xl font-black leading-tight text-zinc-950">{step.title}</h3>
+                <h3 className="mt-5 font-serif text-2xl font-black leading-tight text-zinc-950">{step.title}</h3>
                 <p className="mt-4 text-base leading-7 text-zinc-600">{step.description}</p>
                 <div className="mt-auto border-t border-zinc-200 pt-5">
                   <p className="text-sm font-black text-zinc-500">이 단계에서 정리되는 것</p>
@@ -405,9 +426,9 @@ export const AIBootcampBrandStory: React.FC = () => (
       <div className="mx-auto max-w-6xl">
         <div className="text-center">
           <p className="text-sm font-black tracking-[0.16em] text-amber-700">3주 후, 손에 남는 것</p>
-          <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
+          <h2 className="mt-4 font-serif text-3xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
             강의를 들었다는 기록이 아니라,<br />
-            <span className="text-amber-700">바로 써먹을 지원 전략이 남습니다.</span>
+            <span className="font-sans text-amber-700">바로 써먹을 <RedUnderline className="text-zinc-950">지원 전략</RedUnderline>이 남습니다.</span>
           </h2>
         </div>
 
