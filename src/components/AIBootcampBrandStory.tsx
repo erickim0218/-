@@ -5,9 +5,11 @@ import {
   Bot,
   BriefcaseBusiness,
   Check,
+  Crown,
   FileText,
   MessageSquareText,
   Search,
+  Sparkles,
   Target,
   UserRoundCheck
 } from 'lucide-react';
@@ -22,6 +24,27 @@ const humanEvidence = [
   '왜 그 선택을 했는지',
   '내가 실제로 무엇을 바꿨는지',
   '그 결과 무엇이 달라졌는지'
+];
+
+const aiTools = [
+  {
+    name: 'ChatGPT',
+    role: '초안 · 요약',
+    mark: '◎',
+    markClass: 'bg-emerald-400/15 text-emerald-300 border-emerald-300/30'
+  },
+  {
+    name: 'Gemini',
+    role: '탐색 · 정리',
+    mark: '✦',
+    markClass: 'bg-blue-400/15 text-blue-300 border-blue-300/30'
+  },
+  {
+    name: 'Claude',
+    role: '문장 · 검토',
+    mark: '✳',
+    markClass: 'bg-orange-400/15 text-orange-300 border-orange-300/30'
+  }
 ];
 
 const pyramidSteps = [
@@ -180,6 +203,80 @@ export const AIBootcampBrandStory: React.FC = () => (
 
         <p className="mx-auto mt-8 max-w-3xl border-l-4 border-[#FFD600] bg-zinc-950 px-6 py-5 text-base font-black leading-7 text-white sm:text-xl">
           면접관이 확인하는 건 잘 쓴 문장이 아닙니다. 그 문장을 내 경험으로 설명할 수 있는 사람인지 봅니다.
+        </p>
+      </div>
+    </section>
+
+    <section className="relative overflow-hidden border-b border-zinc-800 bg-[#0B0B0E] px-5 py-16 text-white sm:px-10 sm:py-24">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-30"
+        style={{ backgroundImage: 'radial-gradient(circle at center, rgba(255,214,0,0.16) 0, transparent 42%), radial-gradient(rgba(255,255,255,0.13) 1px, transparent 1px)', backgroundSize: 'auto, 28px 28px' }}
+      />
+
+      <div className="relative mx-auto max-w-6xl">
+        <div className="text-center">
+          <p className="text-sm font-black tracking-[0.16em] text-[#FFD600]">AI는 도구입니다</p>
+          <h2 className="mx-auto mt-4 max-w-4xl text-3xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
+            ChatGPT도, Gemini도, Claude도<br className="hidden sm:block" />
+            <span className="text-[#FFD600]">남들도 다 씁니다.</span>
+          </h2>
+          <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-zinc-300 sm:text-lg">
+            모두가 쓸 수 있는 도구가 곧 나만의 전략이 될 수는 없습니다.<br className="hidden sm:block" />
+            도구 위에서 무엇을 말할지 결정하는 사람이 되어야 합니다.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-12 max-w-5xl overflow-hidden rounded-[2rem] border border-zinc-700 bg-zinc-950 shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
+          <div className="relative px-5 pb-8 pt-10 sm:px-10 sm:pb-12 sm:pt-14">
+            <div className="absolute left-1/2 top-[150px] h-40 w-px -translate-x-1/2 bg-gradient-to-b from-[#FFD600] to-zinc-700 sm:top-[170px] sm:h-44" />
+
+            <div className="relative z-10 mx-auto flex w-fit flex-col items-center text-center">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#FFD600]/50 bg-[#FFD600]/10 px-4 py-2 text-sm font-black text-[#FFD600]">
+                <Crown className="h-4 w-4" />
+                전략의 주도권
+              </div>
+              <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-[#FFD600] bg-[#FFD600] text-zinc-950 shadow-[0_0_0_12px_rgba(255,214,0,0.08),0_0_60px_rgba(255,214,0,0.22)] sm:h-28 sm:w-28">
+                <UserRoundCheck className="h-11 w-11 sm:h-13 sm:w-13" />
+              </div>
+              <h3 className="mt-5 text-2xl font-black sm:text-3xl">당신의 경험</h3>
+              <p className="mt-1 text-base font-bold text-zinc-400">판단 · 행동 · 성과</p>
+            </div>
+
+            <div className="relative z-10 mt-16 grid gap-3 sm:mt-20 sm:grid-cols-3 sm:gap-4">
+              {aiTools.map((tool) => (
+                <article key={tool.name} className="flex items-center gap-4 rounded-2xl border border-zinc-700 bg-zinc-900/95 p-4 shadow-xl sm:flex-col sm:justify-center sm:p-6 sm:text-center">
+                  <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border text-2xl font-black ${tool.markClass}`} aria-hidden="true">
+                    {tool.mark}
+                  </span>
+                  <div>
+                    <h4 className="text-lg font-black text-white">{tool.name}</h4>
+                    <p className="mt-1 text-sm font-bold text-zinc-400">{tool.role}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="relative z-10 mx-auto mt-5 flex w-fit items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-bold text-zinc-400">
+              <Sparkles className="h-4 w-4" />
+              누구나 쓸 수 있는 공통 도구
+            </div>
+          </div>
+
+          <div className="grid border-t border-zinc-700 sm:grid-cols-2">
+            <div className="border-b border-zinc-700 p-6 sm:border-b-0 sm:border-r sm:p-8">
+              <p className="text-sm font-black text-zinc-500">AI가 만들어주는 것</p>
+              <p className="mt-2 text-xl font-black text-zinc-200 sm:text-2xl">그럴듯한 문장</p>
+            </div>
+            <div className="bg-[#FFD600] p-6 text-zinc-950 sm:p-8">
+              <p className="text-sm font-black opacity-65">내가 만들어야 하는 것</p>
+              <p className="mt-2 text-xl font-black sm:text-2xl">기업이 나를 선택할 이유</p>
+            </div>
+          </div>
+        </div>
+
+        <p className="mx-auto mt-8 max-w-3xl text-center text-lg font-black leading-8 text-white sm:text-2xl">
+          AI를 많이 쓰는 사람이 아니라,<br className="sm:hidden" />
+          <span className="text-[#FFD600]">AI 위에서 방향을 정하는 사람</span>이 선택받습니다.
         </p>
       </div>
     </section>
