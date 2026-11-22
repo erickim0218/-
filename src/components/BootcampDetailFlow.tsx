@@ -22,6 +22,7 @@ import { RocketInfographic } from './RocketInfographic';
 import { BootcampScheduleCalendar } from './BootcampScheduleCalendar';
 import { AIBootcampBrandStory } from './AIBootcampBrandStory';
 import standardRocketImg from '../assets/images/standard_rocket_launch_1788079504479.jpg';
+import bootcampHeroImg from '../assets/images/bootcamp-story/hero.png';
 import { BootcampReview } from '../data/bootcampReviews';
 import { supabase } from '../lib/supabase';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
@@ -250,31 +251,14 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
               </div>
             </div>
 
-            <aside className="border-t border-zinc-800 bg-[#0D0D10] p-6 sm:p-8 lg:border-l lg:border-t-0 lg:p-10">
-              <p className="text-sm font-black tracking-[0.12em] text-[#FFD600]">이 과정에서 함께하는 것</p>
-              <ul className="mt-5 space-y-4">
-                {[
-                  ['3주 라이브 특강', 'REAL NEEDS부터 자소서·면접·이직 전략까지'],
-                  ['주차별 1:1 컨설팅', '배운 내용을 내 경험과 지원 기업에 바로 적용'],
-                  ['과제와 상시 피드백', '혼자 막히는 구간을 그대로 두지 않도록 점검'],
-                  ['프로자료 전체 제공', '이력서·포트폴리오·실전 프롬프트까지']
-                ].map(([title, description]) => (
-                  <li key={title} className="flex gap-3">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#FFD600]" />
-                    <div>
-                      <p className="text-sm font-black text-white">{title}</p>
-                      <p className="mt-1 text-xs leading-5 text-zinc-400">{description}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-7 border-t border-zinc-800 pt-6">
-                <p className="text-sm font-bold leading-6 text-zinc-200">
-                  “GPT에 의존하지 않고 스스로 생각하는 법을 배웠습니다.”
-                </p>
-                <p className="mt-2 text-xs font-bold text-zinc-500">실제 수강생 후기 중</p>
-              </div>
+            <aside className="flex items-center border-t border-zinc-800 bg-[#0D0D10] p-4 sm:p-6 lg:border-l lg:border-t-0">
+              <img
+                src={bootcampHeroImg}
+                alt="AI도 대신할 수 없는 당신만의 취업전략. 모두가 AI로 준비하는 시대, 이제는 다른 전략이 합격을 만듭니다."
+                loading="eager"
+                decoding="sync"
+                className="block h-auto w-full rounded-2xl border border-white/10 shadow-[0_24px_70px_rgba(0,0,0,0.45)]"
+              />
             </aside>
           </div>
         </div>
