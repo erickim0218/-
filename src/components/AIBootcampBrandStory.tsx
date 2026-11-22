@@ -17,13 +17,14 @@ import painPointImg from '../assets/images/bootcamp-story/pain-point.png';
 import beforeAfterImg from '../assets/images/bootcamp-story/before-after.png';
 import finalCtaImg from '../assets/images/bootcamp-story/final-cta.png';
 import aiToolsStrategyImg from '../assets/images/bootcamp-story/ai-tools-strategy.png';
+import strategyPyramidImg from '../assets/images/bootcamp-story/strategy-pyramid.png';
 
 const RedUnderline: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
-  <span className={`relative inline-block ${className}`}>
+  <span className={`relative isolate inline-block ${className}`}>
     <span className="relative z-10">{children}</span>
     <span
       aria-hidden="true"
-      className="absolute -bottom-1 left-[2%] h-[5px] w-[96%] -rotate-1 rounded-full bg-[#E63932] sm:h-[7px]"
+      className="absolute -bottom-[0.12em] left-[2%] z-0 h-[0.14em] w-[96%] rounded-full bg-[#E63932]"
     />
   </span>
 );
@@ -58,33 +59,6 @@ const aiTools = [
     role: '문장 · 검토',
     mark: '✳',
     markClass: 'bg-orange-400/15 text-orange-300 border-orange-300/30'
-  }
-];
-
-const pyramidSteps = [
-  {
-    number: '03',
-    eyebrow: '차이를 만드는 단계',
-    title: '나만의 선택 이유',
-    description: '내 경험에서 판단과 성과를 꺼내, 서류에서 주장하고 면접에서 증명할 전략으로 만듭니다.',
-    desktopClass: 'w-[58%] border-[#FFD600] bg-[#FFD600] text-zinc-950',
-    mobileClass: 'border-[#FFD600] bg-[#FFD600] text-zinc-950'
-  },
-  {
-    number: '02',
-    eyebrow: '속도를 높이는 단계',
-    title: 'AI를 활용한 취업 준비',
-    description: '분석하고 쓰고 연습하는 시간은 줄어듭니다. 다만 같은 도구를 쓰는 사람과 결과도 비슷해질 수 있습니다.',
-    desktopClass: 'w-[79%] border-zinc-700 bg-zinc-800 text-white',
-    mobileClass: 'border-zinc-700 bg-zinc-900 text-white'
-  },
-  {
-    number: '01',
-    eyebrow: '기본 단계',
-    title: '일반적인 취업 준비',
-    description: '스펙을 정리하고 공고를 찾고, 이력서·자소서·면접을 준비합니다.',
-    desktopClass: 'w-full border-zinc-300 bg-zinc-100 text-zinc-950',
-    mobileClass: 'border-zinc-300 bg-zinc-100 text-zinc-950'
   }
 ];
 
@@ -325,36 +299,15 @@ export const AIBootcampBrandStory: React.FC = () => (
           </h2>
         </div>
 
-        <div className="mx-auto mt-12 hidden max-w-4xl flex-col items-center gap-2 md:flex">
-          {pyramidSteps.map((step, index) => (
-            <article
-              key={step.title}
-              className={`${step.desktopClass} flex min-h-[145px] items-center justify-center border px-16 py-7 text-center shadow-2xl`}
-              style={{ clipPath: index === 0 ? 'polygon(20% 0, 80% 0, 100% 100%, 0 100%)' : 'polygon(12% 0, 88% 0, 100% 100%, 0 100%)' }}
-            >
-              <div className="max-w-2xl">
-                <p className="text-sm font-black opacity-65">{step.eyebrow}</p>
-                <h3 className="mt-1 text-2xl font-black">{step.title}</h3>
-                <p className="mx-auto mt-2 max-w-xl text-base font-medium leading-6 opacity-80">{step.description}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <div className="mt-10 grid gap-3 md:hidden">
-          {pyramidSteps.map((step) => (
-            <article key={step.title} className={`rounded-2xl border p-5 ${step.mobileClass}`}>
-              <div className="flex items-start gap-4">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-current text-sm font-black opacity-70">{step.number}</span>
-                <div>
-                  <p className="text-sm font-black opacity-65">{step.eyebrow}</p>
-                  <h3 className="mt-1 text-xl font-black">{step.title}</h3>
-                  <p className="mt-2 text-base font-medium leading-7 opacity-80">{step.description}</p>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+        <figure className="mx-auto mt-12 max-w-5xl overflow-hidden rounded-2xl border border-zinc-700 bg-[#111A28] shadow-[0_26px_80px_rgba(0,0,0,0.42)]">
+          <img
+            src={strategyPyramidImg}
+            alt="일반적인 취업전략 위에 AI를 활용한 취업전략을 쌓고, 최종적으로 남들이 따라 할 수 없는 나만의 이야기로 전략을 완성하는 3단계 피라미드"
+            loading="lazy"
+            decoding="async"
+            className="block h-auto w-full"
+          />
+        </figure>
 
         <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-[#FFD600]/40 bg-[#FFD600]/10 px-6 py-5 text-center">
           <p className="text-base font-black leading-7 text-white sm:text-xl">
