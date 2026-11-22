@@ -277,12 +277,12 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
         </div>
       </section>
 
-      {/* 수강 후기 슬라이더 */}
-      <section className="py-4">
+      <AIBootcampBrandStory />
+
+      {/* 핵심 메시지를 이해한 뒤 실제 수강 후기로 신뢰를 확인하도록 배치 */}
+      <section className="py-4 bg-[#0B0B0E]">
         <SlidingReviewsMarquee />
       </section>
-
-      <AIBootcampBrandStory />
 
       {/* 임팩트 브랜드 배너 (레드 모션 실루엣 & 흑백 구도 - 풀 width) */}
       <div className="hidden w-full overflow-hidden mt-4 mb-0">
