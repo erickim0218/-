@@ -299,21 +299,30 @@ export const AIBootcampBrandStory: React.FC = () => (
           </h2>
         </div>
 
-        <figure className="mx-auto mt-12 max-w-5xl overflow-hidden rounded-2xl border border-zinc-700 bg-[#111A28] shadow-[0_26px_80px_rgba(0,0,0,0.42)]">
+        <figure className="mx-auto mt-12 max-w-5xl rounded-2xl border border-zinc-700 bg-[#111A28] shadow-[0_26px_80px_rgba(0,0,0,0.42)]">
           <img
             src={strategyPyramidImg}
             alt="일반적인 취업전략 위에 AI를 활용한 취업전략을 쌓고, 최종적으로 남들이 따라 할 수 없는 나만의 이야기로 전략을 완성하는 3단계 피라미드"
             loading="lazy"
             decoding="async"
-            className="hidden h-auto w-full sm:block"
+            className="hidden h-auto w-full rounded-2xl sm:block"
           />
-          <div className="h-[310px] overflow-hidden sm:hidden">
+
+          <div className="sm:hidden">
+            <figcaption className="border-b border-zinc-700 px-5 py-5 text-left">
+              <p className="text-lg font-black leading-7 text-white">
+                전략은 결국 <span className="text-[#FFD600]">나만의 이야기</span>에서 완성됩니다.
+              </p>
+              <p className="mt-2 text-sm font-medium leading-6 text-zinc-300">
+                AI는 준비 속도를 높여주지만, 남들이 따라 할 수 없는 판단과 성과는 당신의 경험에 있습니다.
+              </p>
+            </figcaption>
             <img
               src={strategyPyramidImg}
-              alt="나만의 이야기로 완성하는 취업 전략 피라미드"
+              alt="전략이 나만의 이야기에서 완성되는 취업 준비 3단계 피라미드"
               loading="lazy"
               decoding="async"
-              className="block h-full w-auto max-w-none -translate-x-[41%]"
+              className="block h-auto w-full rounded-b-2xl"
             />
           </div>
         </figure>
