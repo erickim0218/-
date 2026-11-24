@@ -17,7 +17,7 @@ import painPointImg from '../assets/images/bootcamp-story/pain-point.png';
 import beforeAfterImg from '../assets/images/bootcamp-story/before-after.png';
 import finalCtaImg from '../assets/images/bootcamp-story/final-cta.png';
 import aiToolsStrategyImg from '../assets/images/bootcamp-story/ai-tools-strategy.png';
-import strategyPyramidImg from '../assets/images/bootcamp-story/strategy-pyramid.png';
+import strategyPyramidImg from '../assets/images/bootcamp-story/strategy-pyramid-v2.webp';
 
 const RedUnderline: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
   <span className={`relative isolate inline-block ${className}`}>
