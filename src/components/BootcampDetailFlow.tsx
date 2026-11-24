@@ -23,7 +23,7 @@ import { BootcampScheduleCalendar } from './BootcampScheduleCalendar';
 import { AIBootcampBrandStory } from './AIBootcampBrandStory';
 import standardRocketImg from '../assets/images/standard_rocket_launch_1788079504479.jpg';
 import bootcampHeroImg from '../assets/images/bootcamp-story/hero-visual.webp';
-import { BootcampReview } from '../data/bootcampReviews';
+import { BOOTCAMP_REVIEWS, BootcampReview } from '../data/bootcampReviews';
 import { supabase } from '../lib/supabase';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
 import { trackInquiryClickAndOpen } from '../lib/analytics';
@@ -172,6 +172,10 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
   const displayCount = Math.min(totalCapacity, Math.max(0, confirmedCount));
   const percent = Math.min(100, Math.round((displayCount / totalCapacity) * 100));
   const remainingSlots = Math.max(0, totalCapacity - displayCount);
+  const reviewSource = reviews?.length ? reviews : BOOTCAMP_REVIEWS;
+  const featuredReviews = ['1', '19', '13']
+    .map((id) => reviewSource.find((review) => review.id === id))
+    .filter((review): review is BootcampReview => Boolean(review));
 
   const handleSubmitApplication = (e: React.FormEvent) => {
     e.preventDefault();
@@ -200,25 +204,31 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
   return (
     <div className="w-full bg-[#09090B] text-zinc-100 font-sans leading-relaxed selection:bg-[#FFD600] selection:text-[#09090B] pb-24">
 
-      {/* 첫 화면: 강한 브랜드 이미지와 핵심 약속, CTA를 한 번에 보여준다. */}
-      <section className="mx-auto max-w-6xl px-4 pb-10 pt-3 sm:pt-6">
-        <div className="relative overflow-hidden rounded-[2rem] border border-zinc-700/80 bg-[#0D0E12] shadow-[0_32px_90px_rgba(0,0,0,0.52)]">
-          <div className="relative h-[230px] overflow-hidden border-b border-zinc-800 lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[48%] lg:border-b-0 lg:border-l">
-            <img
-              src={bootcampHeroImg}
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 h-full w-full object-contain object-right lg:object-cover lg:object-center"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0E12] via-transparent to-black/5 lg:bg-gradient-to-r lg:from-[#0D0E12] lg:via-[#0D0E12]/25 lg:to-transparent" />
-            <div className="absolute inset-x-5 bottom-5 lg:inset-x-8 lg:bottom-8">
-              <p className="inline-flex max-w-[64%] border-l-4 border-[#FFD600] bg-black/55 px-3 py-2 text-xs font-black leading-5 text-white backdrop-blur-sm lg:max-w-none lg:px-4 lg:py-3 lg:text-base lg:leading-6">
-                모두가 같은 도구를 쓸 때,<br />결과를 가르는 건 결국 전략입니다.
-              </p>
+      {/* 첫 화면: 모바일에서는 상품 정보가 먼저 읽히고, PC에서는 상품 이미지와 정보를 나란히 보여준다. */}
+      <section className="mx-auto max-w-6xl px-4 pb-9 pt-3 sm:pt-6">
+        <div className="overflow-hidden rounded-[1.75rem] border border-zinc-700/80 bg-[#0D0E12] shadow-[0_28px_80px_rgba(0,0,0,0.48)]">
+          <div className="grid lg:grid-cols-[0.84fr_1.16fr]">
+            <div className="order-2 px-5 pb-6 lg:order-1 lg:p-8 lg:pr-0">
+              <figure className="relative mx-auto h-[148px] max-w-xl overflow-hidden rounded-2xl border border-zinc-700 bg-[#10131A] shadow-[0_18px_55px_rgba(0,0,0,0.45)] sm:h-[210px] lg:h-full lg:min-h-[500px] lg:rounded-[1.5rem]">
+                <img
+                  src={bootcampHeroImg}
+                  alt="산 정상에서 리포지셔닝 부트캠프 깃발을 든 사람"
+                  className="h-full w-full object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-transparent lg:bg-gradient-to-t lg:from-black/75 lg:via-transparent lg:to-black/5" />
+                <figcaption className="absolute inset-x-4 bottom-4 flex items-end justify-between gap-3 lg:inset-x-6 lg:bottom-6">
+                  <div>
+                    <p className="text-[11px] font-black tracking-[0.18em] text-[#FFD600] lg:text-sm">RE-POSITIONING BOOTCAMP</p>
+                    <p className="mt-1 text-base font-black leading-tight text-white lg:text-2xl">AI가 대신할 수 없는<br />당신만의 취업 전략</p>
+                  </div>
+                  <span className="shrink-0 rounded-full border border-white/25 bg-black/45 px-3 py-1.5 text-[10px] font-bold text-white backdrop-blur lg:text-xs">
+                    3주 밀착 과정
+                  </span>
+                </figcaption>
+              </figure>
             </div>
-          </div>
 
-          <div className="relative z-10 p-6 sm:p-10 lg:flex lg:min-h-[620px] lg:w-[58%] lg:flex-col lg:justify-center lg:p-12">
+            <div className="order-1 p-6 sm:p-10 lg:order-2 lg:flex lg:min-h-[560px] lg:flex-col lg:justify-center lg:p-12">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-lg border border-[#FFD600]/40 bg-[#FFD600]/15 px-2.5 py-1 text-xs font-black text-[#FFD600]">
                   기획자J의 3주 밀착 과정
@@ -228,21 +238,19 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 </span>
               </div>
 
-              <h1 className="mt-6 max-w-3xl text-[2.65rem] font-black leading-[1.03] tracking-[-0.06em] text-white sm:text-6xl lg:text-[4.25rem]">
-                <span className="relative z-10 inline-block after:absolute after:-bottom-1 after:left-0 after:-z-10 after:h-[7px] after:w-full after:rounded-full after:bg-[#ED3833]">
-                  AI를 이기는
-                </span><br />
+              <h1 className="mt-5 max-w-3xl text-[2.45rem] font-black leading-[1.04] tracking-[-0.055em] text-white sm:text-6xl lg:text-[4rem]">
+                <span>AI를 이기는</span><br />
                 <span className="text-[#FFD600]">리포지셔닝 부트캠프</span>
               </h1>
-              <p className="mt-7 max-w-2xl text-lg font-black leading-snug tracking-tight text-white sm:text-2xl">
+              <p className="mt-5 max-w-2xl text-base font-black leading-snug tracking-tight text-white sm:text-xl lg:text-2xl">
                 모두가 AI로 그럴듯한 지원서를 쓰는 시대.<br />
                 <span className="text-zinc-400">그럴듯함만으로는 더 이상 선택받기 어렵습니다.</span>
               </p>
-              <p className="mt-5 border-l-4 border-[#FFD600] pl-4 text-base font-black text-zinc-200 sm:text-xl">
+              <p className="mt-4 border-l-4 border-[#FFD600] pl-4 text-sm font-black text-zinc-200 sm:text-lg">
                 스펙은 바꾸지 않습니다. 읽히는 방식을 바꿉니다.
               </p>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <a
                   href="https://open.kakao.com/o/sEgVEi0h"
                   target="_blank"
@@ -261,22 +269,22 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 </button>
               </div>
 
-              <div className="mt-6 flex items-start gap-2 text-xs leading-5 text-zinc-400">
+              <div className="mt-5 flex items-start gap-2 text-xs leading-5 text-zinc-400">
                 <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
                 <span>1회 차 컨설팅 후 방향이 맞지 않다고 판단되면 24시간 안에 전액 환불을 요청할 수 있습니다.</span>
               </div>
+            </div>
           </div>
 
-          <aside className="relative z-10 border-t border-zinc-800 bg-black/35 px-6 py-7 backdrop-blur-sm sm:px-10 lg:px-12">
-            <p className="text-sm font-black tracking-[0.12em] text-[#FFD600]">3주 동안 함께 완성합니다</p>
-            <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <aside className="border-t border-zinc-800 bg-black/35 px-5 py-6 sm:px-10 lg:px-12">
+            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 ['3주 라이브 특강', 'REAL NEEDS부터 자소서·면접·이직 전략까지'],
                 ['주차별 1:1 컨설팅', '내 경험과 지원 기업에 바로 적용'],
                 ['과제와 상시 피드백', '막히는 구간을 그대로 두지 않도록 점검'],
                 ['프로자료 전체 제공', '이력서·포트폴리오·실전 프롬프트까지']
               ].map(([title, description]) => (
-                <li key={title} className="flex gap-3 rounded-2xl border border-zinc-800 bg-zinc-950/65 p-4">
+                <li key={title} className="flex gap-3 rounded-xl border border-zinc-800 bg-zinc-950/65 p-3.5">
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#FFD600]" />
                   <div>
                     <p className="text-sm font-black text-white">{title}</p>
@@ -285,9 +293,18 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
                 </li>
               ))}
             </ul>
-            <p className="mt-5 text-sm font-bold leading-6 text-zinc-300">
-              “GPT에 의존하지 않고 스스로 생각하는 법을 배웠습니다.” <span className="text-xs text-zinc-500">— 실제 수강생 후기 중</span>
-            </p>
+            <div className="mt-5 border-t border-zinc-800 pt-5">
+              <p className="text-xs font-black tracking-[0.14em] text-zinc-500">실제 수강생 결과</p>
+              <div className="mt-3 flex snap-x gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-3 lg:overflow-visible">
+                {featuredReviews.map((review) => (
+                  <article key={review.id} className="min-w-[84%] snap-start rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 sm:min-w-[56%] lg:min-w-0">
+                    <div className="flex items-center gap-1 text-[#FFB800]" aria-label="별점 5점">★★★★★</div>
+                    <p className="mt-2 text-sm font-black leading-5 text-white">“{review.title}”</p>
+                    <p className="mt-2 text-[11px] font-bold text-zinc-500">구매자 인증 · {review.author}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
           </aside>
         </div>
       </section>
