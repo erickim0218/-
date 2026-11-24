@@ -236,7 +236,7 @@ export const AIBootcampBrandStory: React.FC = () => (
 
         <div className="mx-auto mt-8 max-w-5xl overflow-hidden rounded-[2rem] border border-zinc-700 bg-zinc-950 shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
           <div className="relative px-5 pb-8 pt-10 sm:px-10 sm:pb-12 sm:pt-14">
-            <div className="absolute left-1/2 top-[150px] h-40 w-px -translate-x-1/2 bg-gradient-to-b from-[#FFD600] to-zinc-700 sm:top-[170px] sm:h-44" />
+            <div className="absolute left-1/2 top-[150px] h-40 w-px -translate-x-1/2 bg-gradient-to-b from-zinc-600 via-zinc-700 to-transparent opacity-70 sm:top-[170px] sm:h-44" />
 
             <div className="relative z-10 mx-auto flex w-fit flex-col items-center text-center">
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#FFD600]/50 bg-[#FFD600]/10 px-4 py-2 text-sm font-black text-[#FFD600]">
@@ -246,8 +246,10 @@ export const AIBootcampBrandStory: React.FC = () => (
               <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-[#FFD600] bg-[#FFD600] text-zinc-950 shadow-[0_0_0_12px_rgba(255,214,0,0.08),0_0_60px_rgba(255,214,0,0.22)] sm:h-28 sm:w-28">
                 <UserRoundCheck className="h-11 w-11 sm:h-13 sm:w-13" />
               </div>
-              <h3 className="mt-5 text-2xl font-black sm:text-3xl">당신의 경험</h3>
-              <p className="mt-1 text-base font-bold text-zinc-400">판단 · 행동 · 성과</p>
+              <div className="relative mt-5 rounded-2xl bg-zinc-950/95 px-7 py-3 shadow-[0_0_30px_20px_rgba(9,9,11,0.96)]">
+                <h3 className="text-2xl font-black drop-shadow-[0_3px_12px_rgba(0,0,0,0.95)] sm:text-3xl">당신의 경험</h3>
+                <p className="mt-1 text-base font-bold text-zinc-400 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">판단 · 행동 · 성과</p>
+              </div>
             </div>
 
             <div className="relative z-10 mt-16 grid gap-3 sm:mt-20 sm:grid-cols-3 sm:gap-4">
