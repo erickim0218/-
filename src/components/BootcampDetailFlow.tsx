@@ -23,6 +23,7 @@ import { BootcampScheduleCalendar } from './BootcampScheduleCalendar';
 import { AIBootcampBrandStory } from './AIBootcampBrandStory';
 import standardRocketImg from '../assets/images/standard_rocket_launch_1788079504479.jpg';
 import bootcampCoverImg from '../assets/images/bootcamp-story/bootcamp-cover.webp';
+import bootcampCoverMobileImg from '../assets/images/bootcamp-story/bootcamp-cover-mobile.webp';
 import consultingPreviewVideo from '../assets/videos/one-to-one-consulting-preview.mp4';
 import consultingPreviewPoster from '../assets/images/bootcamp-story/consulting-preview-poster.jpg';
 import { BOOTCAMP_REVIEWS, BootcampReview } from '../data/bootcampReviews';
@@ -206,15 +207,19 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
   return (
     <div className="w-full bg-[#09090B] text-zinc-100 font-sans leading-relaxed selection:bg-[#FFD600] selection:text-[#09090B] pb-24">
 
-      {/* 첫 화면: 완성된 표지 이미지를 원본 비율 그대로 보여줘 모바일 잘림을 방지한다. */}
+      {/* 첫 화면: PC와 모바일에서 각각 읽히도록 같은 표지를 기기별 비율로 제공한다. */}
       <section className="mx-auto max-w-7xl pb-9 pt-0 sm:px-4 sm:pt-5">
         <div className="overflow-hidden border-y border-zinc-800 bg-[#0D0E12] shadow-[0_24px_70px_rgba(0,0,0,0.42)] sm:rounded-[1.75rem] sm:border">
           <h1 className="sr-only">AI를 이기는 리포지셔닝 부트캠프</h1>
-          <img
-            src={bootcampCoverImg}
-            alt="AI를 이기는 리포지셔닝 부트캠프. 모두가 AI로 그럴듯한 지원서를 쓰는 시대, 스펙은 바꾸지 않고 읽히는 방식을 바꾸는 기획자J의 3주 밀착 과정"
-            className="block h-auto w-full"
-          />
+          <picture className="block w-full">
+            <source media="(max-width: 639px)" srcSet={bootcampCoverMobileImg} />
+            <img
+              src={bootcampCoverImg}
+              alt="AI를 이기는 리포지셔닝 부트캠프. 모두가 AI로 그럴듯한 지원서를 쓰는 시대, 스펙은 바꾸지 않고 읽히는 방식을 바꾸는 기획자J의 3주 밀착 과정"
+              className="block h-auto w-full"
+              fetchPriority="high"
+            />
+          </picture>
 
           <div className="border-t border-zinc-800 bg-[#0D0E12] px-4 py-5 sm:px-7 sm:py-6">
             <div className="mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-center">
