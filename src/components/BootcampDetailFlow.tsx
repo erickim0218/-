@@ -23,7 +23,7 @@ import { BootcampScheduleCalendar } from './BootcampScheduleCalendar';
 import { AIBootcampBrandStory } from './AIBootcampBrandStory';
 import standardRocketImg from '../assets/images/standard_rocket_launch_1788079504479.jpg';
 import bootcampCoverImg from '../assets/images/bootcamp-story/bootcamp-cover.webp';
-import bootcampCoverMobileImg from '../assets/images/bootcamp-story/bootcamp-cover-mobile.webp';
+import bootcampCoverMobileImg from '../assets/images/bootcamp-story/bootcamp-cover-mobile.jpeg';
 import consultingPreviewVideo from '../assets/videos/one-to-one-consulting-preview.mp4';
 import consultingPreviewPoster from '../assets/images/bootcamp-story/consulting-preview-poster.jpg';
 import { BOOTCAMP_REVIEWS, BootcampReview } from '../data/bootcampReviews';
