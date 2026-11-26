@@ -140,13 +140,13 @@ interface BootcampReviewsShowcaseProps {
 export const BootcampReviewsShowcase: React.FC<BootcampReviewsShowcaseProps> = ({ reviews }) => {
   const reviewSource = reviews?.length ? reviews : BOOTCAMP_REVIEWS;
   const [activeFilter, setActiveFilter] = useState<ReviewFilter>('전체');
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [visibleCount, setVisibleCount] = useState(3);
   const [selectedReview, setSelectedReview] = useState<BootcampReview | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
   const hasTrackedView = useRef(false);
 
   const featured = useMemo(
-    () => ['5', '6'].map((id) => reviewSource.find((review) => review.id === id)).filter((review): review is BootcampReview => Boolean(review)),
+    () => ['5'].map((id) => reviewSource.find((review) => review.id === id)).filter((review): review is BootcampReview => Boolean(review)),
     [reviewSource]
   );
 
@@ -188,7 +188,7 @@ export const BootcampReviewsShowcase: React.FC<BootcampReviewsShowcaseProps> = (
 
   const selectFilter = (filter: ReviewFilter) => {
     setActiveFilter(filter);
-    setVisibleCount(4);
+    setVisibleCount(3);
     void trackAnalyticsEvent({ eventName: 'bootcamp_review_filter', buttonLocation: filter, bootcampCohort: 9 });
   };
 

@@ -140,17 +140,17 @@ export const BootcampCoreSections: React.FC = () => {
           <div className="mt-14 border-t border-zinc-800 pt-12">
             <p className="text-sm font-black text-[#FFD600]">접근법의 차이</p>
             <h3 className="mt-3 text-3xl font-black leading-tight text-white sm:text-4xl">잘 쓰는 것과<br />선택받는 것은 다릅니다.</h3>
-            <div className="mt-7 grid gap-4 md:grid-cols-2">
-              <article className="rounded-2xl border border-zinc-800 bg-[#111114] p-5 sm:p-7">
+            <div className="mt-7 grid grid-cols-2 gap-3 sm:gap-4">
+              <article className="rounded-2xl border border-zinc-800 bg-[#111114] p-4 sm:p-7">
                 <p className="text-sm font-black text-zinc-400">문장 첨삭 중심 접근</p>
-                <dl className="mt-5 space-y-4 text-sm">
-                  {[['출발점', '작성된 자기소개서'], ['경험', '경험 정리'], ['자소서', '문장 완성도'], ['면접', '예상 답변 준비'], ['목표', '현재 지원서 개선']].map(([term, value]) => <div key={term} className="grid grid-cols-[4.5rem_1fr] gap-3 border-t border-zinc-800 pt-4"><dt className="font-bold text-zinc-600">{term}</dt><dd className="font-bold text-zinc-300">{value}</dd></div>)}
+                <dl className="mt-4 space-y-3 text-sm">
+                  {[['출발점', '작성된 자기소개서'], ['경험', '경험 정리'], ['자소서', '문장 완성도'], ['면접', '예상 답변 준비'], ['목표', '현재 지원서 개선']].map(([term, value]) => <div key={term} className="border-t border-zinc-800 pt-3"><dt className="text-xs font-bold text-zinc-600">{term}</dt><dd className="mt-1 font-bold leading-5 text-zinc-300">{value}</dd></div>)}
                 </dl>
               </article>
-              <article className="rounded-2xl border border-[#FFD600]/35 bg-[#FFD600]/5 p-5 sm:p-7">
+              <article className="rounded-2xl border border-[#FFD600]/35 bg-[#FFD600]/5 p-4 sm:p-7">
                 <p className="text-sm font-black text-[#FFD600]">리포지셔닝</p>
-                <dl className="mt-5 space-y-4 text-sm">
-                  {[['출발점', '기업의 채용 니즈'], ['경험', '경험의 전략적 재해석'], ['자소서', '기업 설득 논리'], ['면접', '면접 흐름 설계'], ['목표', '스스로 활용할 지원 전략']].map(([term, value]) => <div key={term} className="grid grid-cols-[4.5rem_1fr] gap-3 border-t border-[#FFD600]/15 pt-4"><dt className="font-bold text-zinc-500">{term}</dt><dd className="font-black text-white">{value}</dd></div>)}
+                <dl className="mt-4 space-y-3 text-sm">
+                  {[['출발점', '기업의 채용 니즈'], ['경험', '경험의 전략적 재해석'], ['자소서', '기업 설득 논리'], ['면접', '면접 흐름 설계'], ['목표', '스스로 활용할 지원 전략']].map(([term, value]) => <div key={term} className="border-t border-[#FFD600]/15 pt-3"><dt className="text-xs font-bold text-zinc-500">{term}</dt><dd className="mt-1 font-black leading-5 text-white">{value}</dd></div>)}
                 </dl>
               </article>
             </div>
@@ -170,13 +170,13 @@ export const BootcampCoreSections: React.FC = () => {
           <p className="mt-5 max-w-3xl text-base leading-8 text-zinc-600 sm:text-lg">실제 개인 자료가 아닌 방법론 설명용 예시입니다. 경험을 과장하지 않고, 기업이 평가할 역량이 보이도록 전달 관점을 바꾸는 과정을 보여드립니다.</p>
           <div className="mt-10 grid gap-7 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <img src={beforeAfterImg} alt="경험 나열형 자기소개서를 기업 니즈와 연결된 설득형 자기소개서로 바꾸는 교육용 예시" className="h-auto w-full rounded-2xl border border-zinc-200" loading="lazy" />
-            <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
               {[
                 ['BEFORE', '경험을 시간 순서대로 나열하고 성실함을 주장합니다.'],
                 ['REPOSITIONING', '지원 기업이 필요로 하는 역량과 경험 속 행동을 연결합니다.'],
                 ['AFTER', '주장·근거·어필의 구조로 필요한 이유가 읽히게 만듭니다.'],
                 ['WHY', '평범한 경험에서도 기업이 평가할 행동과 역량이 선명해집니다.']
-              ].map(([label, copy]) => <div key={label} className="grid grid-cols-[6.5rem_1fr] gap-3 rounded-xl border border-zinc-200 p-4"><p className="text-xs font-black text-amber-700">{label}</p><p className="text-sm font-bold leading-6 text-zinc-700">{copy}</p></div>)}
+              ].map(([label, copy]) => <div key={label} className="rounded-xl border border-zinc-200 p-4"><p className="text-xs font-black text-amber-700">{label}</p><p className="mt-2 text-sm font-bold leading-6 text-zinc-700">{copy}</p></div>)}
             </div>
           </div>
           <p className="mt-9 text-center text-xl font-black">경험을 바꾸는 것이 아니라,<br /><span className="text-amber-700">경험이 읽히는 방식을 바꿉니다.</span></p>

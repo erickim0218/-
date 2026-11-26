@@ -161,7 +161,7 @@ export function BootcampResultsShowcase({ reviews = BOOTCAMP_REVIEWS }: { review
               <span className="text-sm font-bold text-zinc-400">{featured.profile}</span>
             </div>
             <h3 className="mt-5 text-2xl font-black leading-9 text-white sm:text-4xl sm:leading-tight">{featured.headline}</h3>
-            <div className="mt-7 grid gap-4 md:grid-cols-2">
+            <div className="mt-7 grid grid-cols-2 gap-3 sm:gap-4">
               <div className="rounded-xl border border-zinc-800 bg-[#0D0D10] p-5">
                 <p className="text-xs font-black tracking-[0.12em] text-zinc-500">BEFORE</p>
                 <ul className="mt-3 space-y-2 text-sm font-bold leading-6 text-zinc-300">{featured.before?.map((item) => <li key={item}>· {item}</li>)}</ul>
