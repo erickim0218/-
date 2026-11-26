@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Star, Sparkles, CheckCircle2, MessageSquareQuote, X } from 'lucide-react';
+import { Star, MessageSquareQuote, X } from 'lucide-react';
 import { BOOTCAMP_REVIEWS, BootcampReview } from '../data/bootcampReviews';
 
 export const SlidingReviewsMarquee: React.FC = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [selectedReview, setSelectedReview] = useState<BootcampReview | null>(null);
+  const ratedReviews = BOOTCAMP_REVIEWS.filter((review) => review.rating > 0);
+  const averageRating = ratedReviews.length
+    ? ratedReviews.reduce((sum, review) => sum + review.rating, 0) / ratedReviews.length
+    : null;
 
   const startPosRef = useRef<{ x: number; y: number } | null>(null);
   const hasMovedRef = useRef<boolean>(false);
@@ -127,14 +131,12 @@ export const SlidingReviewsMarquee: React.FC = () => {
             </div>
           </div>
 
-          {/* Rating summary */}
+          {/* 실제 후기 데이터 요약 */}
           <div className="flex items-center gap-2 text-xs text-white">
-            <div className="flex items-center text-[#FFD600]">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-3.5 h-3.5 fill-[#FFD600]" />
-              ))}
-            </div>
-            <span className="font-bold text-[#FFD600]">5.0 / 5.0</span>
+            <span className="font-bold text-[#FFD600]">후기 {BOOTCAMP_REVIEWS.length}건</span>
+            {averageRating !== null && (
+              <span className="text-zinc-300">· 후기 데이터 평균 {averageRating.toFixed(1)} / 5.0</span>
+            )}
             <span className="text-zinc-400 text-[11px]">(후기를 누르면 전체 내용이 열립니다)</span>
           </div>
         </div>
@@ -189,9 +191,7 @@ export const SlidingReviewsMarquee: React.FC = () => {
 
                 <div className="mt-3 pt-2 border-t border-zinc-800/80 flex items-center justify-between text-[10px] text-zinc-400">
                   <span className="font-mono font-bold text-zinc-300">{review.author}</span>
-                  <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400" /> 수강생 인증
-                  </span>
+                  <span className="font-semibold text-zinc-500">후기 원문</span>
                 </div>
               </div>
             ))}
@@ -227,7 +227,7 @@ export const SlidingReviewsMarquee: React.FC = () => {
                         <Star key={i} className="w-3 h-3 fill-[#FFD600]" />
                       ))}
                     </div>
-                    <span className="text-[10px] text-[#FFD600] font-bold">98.6% 수강만족</span>
+                    <span className="text-[10px] font-mono text-zinc-500">{review.date}</span>
                   </div>
 
                   {review.highlightTag && (
@@ -318,9 +318,7 @@ export const SlidingReviewsMarquee: React.FC = () => {
               <div className="flex items-center justify-between pt-1 text-xs text-zinc-400">
                 <div className="flex items-center gap-2">
                   <span className="font-mono font-bold text-zinc-200">{selectedReview.author}</span>
-                  <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> 수강생 인증 완료
-                  </span>
+                  <span className="font-semibold text-zinc-500">수강 후기 원문</span>
                 </div>
                 <button
                   onClick={() => setSelectedReview(null)}
