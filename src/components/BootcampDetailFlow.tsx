@@ -211,18 +211,34 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({
       <section className="mx-auto max-w-7xl pb-9 pt-0 sm:px-4 sm:pt-5">
         <div className="overflow-hidden border-y border-zinc-800 bg-[#0D0E12] shadow-[0_24px_70px_rgba(0,0,0,0.42)] sm:rounded-[1.75rem] sm:border">
           <h1 className="sr-only">AI를 이기는 리포지셔닝 부트캠프</h1>
-          <picture className="block w-full">
-            <source media="(max-width: 639px)" srcSet={bootcampCoverMobileImg} />
-            <img
-              src={bootcampCoverImg}
-              alt="AI를 이기는 리포지셔닝 부트캠프. 모두가 AI로 그럴듯한 지원서를 쓰는 시대, 스펙은 바꾸지 않고 읽히는 방식을 바꾸는 기획자J의 3주 밀착 과정"
-              className="block h-auto w-full"
-              fetchPriority="high"
+          <div className="relative w-full">
+            <picture className="block w-full">
+              <source media="(max-width: 639px)" srcSet={bootcampCoverMobileImg} />
+              <img
+                src={bootcampCoverImg}
+                alt="AI를 이기는 리포지셔닝 부트캠프. 모두가 AI로 그럴듯한 지원서를 쓰는 시대, 스펙은 바꾸지 않고 읽히는 방식을 바꾸는 기획자J의 3주 밀착 과정"
+                className="block h-auto w-full"
+                fetchPriority="high"
+              />
+            </picture>
+            <a
+              href="https://open.kakao.com/o/sEgVEi0h"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleInquiryClick}
+              aria-label="다음 기수 상담하기"
+              className="absolute bottom-[4.3%] left-[5.8%] h-[7.4%] w-[43.6%] rounded-xl sm:hidden"
             />
-          </picture>
+            <button
+              type="button"
+              onClick={scrollToPricing}
+              aria-label="프로그램과 수강료 보기"
+              className="absolute bottom-[4.3%] right-[5.2%] h-[7.4%] w-[43.1%] rounded-xl sm:hidden"
+            />
+          </div>
 
           <div className="border-t border-zinc-800 bg-[#0D0E12] px-4 py-5 sm:px-7 sm:py-6">
-            <div className="mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="mx-auto hidden max-w-5xl flex-col gap-3 sm:flex sm:flex-row sm:items-center">
               <span className={`self-start rounded-lg border px-2.5 py-1 text-xs font-black sm:mr-auto ${isClosed ? 'border-rose-500/30 bg-rose-500/20 text-rose-400' : 'border-emerald-500/30 bg-emerald-500/15 text-emerald-300'}`}>
                 {isClosed ? '현재 모집 마감' : '현재 모집 중'}
               </span>
