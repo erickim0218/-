@@ -7,6 +7,7 @@ import { supabase } from '../lib/supabase';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
 import { trackAnalyticsEvent, trackInquiryClickAndOpen } from '../lib/analytics';
 import { BootcampReviewsShowcase } from './BootcampReviewsShowcase';
+import { BootcampResultsShowcase } from './BootcampResultsShowcase';
 import { BootcampCoreSections } from './BootcampCoreSections';
 import { BootcampOfferSections } from './BootcampOfferSections';
 
@@ -124,11 +125,12 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({ onApplic
       <nav className="sticky top-16 z-30 border-y border-zinc-800 bg-[#0B0B0E]/95 px-4 py-3 backdrop-blur" aria-label="부트캠프 상세 바로가기">
         <div className="mx-auto flex max-w-6xl gap-2 overflow-x-auto text-sm font-bold text-zinc-300 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {[
-            ['실제 후기', '#actual-reviews'], ['왜 리포지셔닝인가', '#why-repositioning'], ['3주 과정', '#bootcamp-schedule'], ['1:1 컨설팅', '#one-to-one'], ['프로그램 및 수강료', '#pricing-plans'], ['FAQ', '#faq']
+            ['실제 후기', '#actual-reviews'], ['왜 리포지셔닝인가', '#why-repositioning'], ['3주 과정', '#bootcamp-schedule'], ['1:1 컨설팅', '#one-to-one'], ['수강료', '#pricing-plans'], ['FAQ', '#faq']
           ].map(([label, href]) => <a key={href} href={href} className="shrink-0 rounded-full border border-zinc-700 px-4 py-2 transition hover:border-[#FFD600] hover:text-white">{label}</a>)}
         </div>
       </nav>
 
+      <BootcampResultsShowcase reviews={reviewSource} />
       <BootcampReviewsShowcase reviews={reviewSource} />
       <BootcampCoreSections />
       <BootcampOfferSections isClosed={isClosed} remainingSlots={remainingSlots} onInquiry={handleInquiryClick} onOpenPlan={handleOpenPlan} />

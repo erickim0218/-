@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Check, CheckCircle2, Quote } from 'lucide-react';
 import { BOOTCAMP_REVIEWS, BootcampReview } from '../data/bootcampReviews';
 import { trackAnalyticsEvent } from '../lib/analytics';
@@ -28,20 +28,46 @@ function InlineReview({ reviewId, onOpen }: { reviewId: string; onOpen: (review:
 
 export const BootcampCoreSections: React.FC = () => {
   const [selectedReview, setSelectedReview] = useState<BootcampReview | null>(null);
+  const [activeSituation, setActiveSituation] = useState(0);
+  const beforeAfterRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const node = beforeAfterRef.current;
+    if (!node) return;
+    let tracked = false;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !tracked) {
+        tracked = true;
+        void trackAnalyticsEvent({ eventName: 'bootcamp_before_after_view', buttonLocation: 'before_after', bootcampCohort: 9 });
+      }
+    }, { threshold: 0.3 });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   const openReview = (review: BootcampReview) => {
     setSelectedReview(review);
     void trackAnalyticsEvent({ eventName: 'bootcamp_review_open', buttonLocation: `curriculum_${review.id}`, bootcampCohort: 9 });
   };
 
+  const situationReviews = [
+    ['서류 탈락이 반복된다면', '24'],
+    ['면접에서 자신감이 떨어진다면', '14'],
+    ['경력은 있지만 이직이 어렵다면', '9'],
+    ['내 스펙이 약하다고 느낀다면', '15'],
+    ['오랜 준비로 지쳐 있다면', '5'],
+    ['첨삭과 다른 점이 궁금하다면', '8']
+  ] as const;
+  const activeSituationReview = BOOTCAMP_REVIEWS.find((item) => item.id === situationReviews[activeSituation][1]);
+
   return (
     <>
       <section id="why-repositioning" className="scroll-mt-28 bg-white px-4 py-16 text-zinc-950 sm:px-8 sm:py-24">
         <div className="mx-auto max-w-5xl">
           <div className="max-w-3xl">
-            <p className="text-sm font-black text-amber-600">노력의 방향을 다시 봐야 할 때</p>
+            <p className="text-sm font-black text-amber-600">노력의 방향을 다시 볼 때</p>
             <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.045em] sm:text-5xl">
-              아직도 합격하지 못한 이유가<br className="hidden sm:block" /> 스펙 때문이라고 생각하시나요?
+              스펙을 바꾸기 전에,<br />전략부터 바꿔보세요.
             </h2>
           </div>
 
@@ -50,17 +76,17 @@ export const BootcampCoreSections: React.FC = () => {
               <p>자격증을 하나 더 취득하고,</p>
               <p>자기소개서를 수십 번 고쳐보고,</p>
               <p>AI에게 더 좋은 답변을 요청하고,</p>
-              <p>남들의 합격 자소서를 분석하고.</p>
+              <p>그렇게 열심히 준비했는데도.</p>
             </div>
             <div>
               <p className="text-lg leading-8 text-zinc-600">
                 그렇게 열심히 준비했는데도 결과가 달라지지 않았다면, 이제는 노력의 양이 아니라 <strong className="text-zinc-950">노력의 방향</strong>을 점검해야 합니다.
               </p>
               <p className="mt-6 text-lg leading-8 text-zinc-600">
-                기업은 취업 준비를 얼마나 열심히 했는지만으로 사람을 선택하지 않습니다. 자신들에게 필요한 역량을 가진 사람인지, 그 역량을 충분히 증명할 수 있는 사람인지를 평가합니다.
+                기업은 좋은 스펙만을 찾는 것이 아닙니다. 자신들에게 필요한 사람인지, 가진 경험으로 필요한 역량을 증명할 수 있는지를 봅니다.
               </p>
               <p className="mt-6 text-xl font-black leading-8 text-zinc-950">
-                그렇다면 취업 준비도<br />기업이 당신을 선택해야 할 이유에서 시작해야 하지 않을까요?
+                기업이 필요로 하는 역량을 이해하고,<br />내 경험으로 그 역량을 증명하는 것.<br /><span className="text-amber-700">취업 전략은 여기서 시작합니다.</span>
               </p>
             </div>
           </div>
@@ -73,13 +99,13 @@ export const BootcampCoreSections: React.FC = () => {
             <div>
               <p className="text-sm font-black text-[#FFD600]">AI 시대의 취업 전략</p>
               <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.045em] text-white sm:text-5xl">
-                모두가 AI를 쓰는 시대,<br />당신의 경쟁력은 무엇인가요?
+                모두가 AI를 쓴다면,<br />무엇으로 차별화할 것인가.
               </h2>
               <p className="mt-6 text-base leading-8 text-zinc-400 sm:text-lg">
-                AI는 경험을 정리하고 더 좋은 문장을 만들어줄 수 있습니다. 그러나 기업이 왜 당신을 선택해야 하는지, 그 답은 당신의 경험과 기업의 니즈를 연결하는 전략에서 시작합니다.
+                AI는 경험을 정리하고 더 좋은 문장을 만들어줄 수 있습니다. 그러나 모두가 활용할 수 있는 도구만으로는 나만의 경쟁력을 완성할 수 없습니다.
               </p>
               <p className="mt-6 text-xl font-black leading-8 text-white">
-                AI를 더 잘 쓰는 사람을 넘어,<br /><span className="text-[#FFD600]">남들이 따라 할 수 없는 나만의 이야기로.</span>
+                AI를 더 잘 쓰는 사람을 넘어,<br /><span className="text-[#FFD600]">남들이 따라 할 수 없는 나만의 이야기로.</span><br />그것이 리포지셔닝입니다.
               </p>
             </div>
             <img
@@ -98,9 +124,9 @@ export const BootcampCoreSections: React.FC = () => {
               loading="lazy"
             />
             <div className="rounded-2xl border border-zinc-800 bg-[#111114] p-6 sm:p-8">
-              <h3 className="text-2xl font-black text-white">리포지셔닝은 무엇인가요?</h3>
+              <h3 className="text-2xl font-black text-white">AI는 도구입니다.<br />차이를 만드는 것은 전략입니다.</h3>
               <p className="mt-5 text-base leading-8 text-zinc-400">
-                당신의 경험과 역량을 기업의 채용 니즈에 맞춰 재해석하고, 기업이 당신을 선택해야 할 이유를 설계하는 취업·이직 전략입니다.
+                리포지셔닝은 경험과 역량을 기업의 채용 니즈에 맞춰 재해석하고, 기업이 당신을 선택해야 할 이유를 만드는 취업·이직 전략입니다.
               </p>
               <p className="mt-5 text-base leading-8 text-zinc-400">
                 스펙을 과장하거나 새로운 경험을 만들어내지 않습니다. 이미 가지고 있는 가치를 제대로 읽히게 만듭니다.
@@ -111,24 +137,64 @@ export const BootcampCoreSections: React.FC = () => {
             </div>
           </div>
 
+          <div className="mt-14 border-t border-zinc-800 pt-12">
+            <p className="text-sm font-black text-[#FFD600]">접근법의 차이</p>
+            <h3 className="mt-3 text-3xl font-black leading-tight text-white sm:text-4xl">잘 쓰는 것과<br />선택받는 것은 다릅니다.</h3>
+            <div className="mt-7 grid gap-4 md:grid-cols-2">
+              <article className="rounded-2xl border border-zinc-800 bg-[#111114] p-5 sm:p-7">
+                <p className="text-sm font-black text-zinc-400">문장 첨삭 중심 접근</p>
+                <dl className="mt-5 space-y-4 text-sm">
+                  {[['출발점', '작성된 자기소개서'], ['경험', '경험 정리'], ['자소서', '문장 완성도'], ['면접', '예상 답변 준비'], ['목표', '현재 지원서 개선']].map(([term, value]) => <div key={term} className="grid grid-cols-[4.5rem_1fr] gap-3 border-t border-zinc-800 pt-4"><dt className="font-bold text-zinc-600">{term}</dt><dd className="font-bold text-zinc-300">{value}</dd></div>)}
+                </dl>
+              </article>
+              <article className="rounded-2xl border border-[#FFD600]/35 bg-[#FFD600]/5 p-5 sm:p-7">
+                <p className="text-sm font-black text-[#FFD600]">리포지셔닝</p>
+                <dl className="mt-5 space-y-4 text-sm">
+                  {[['출발점', '기업의 채용 니즈'], ['경험', '경험의 전략적 재해석'], ['자소서', '기업 설득 논리'], ['면접', '면접 흐름 설계'], ['목표', '스스로 활용할 지원 전략']].map(([term, value]) => <div key={term} className="grid grid-cols-[4.5rem_1fr] gap-3 border-t border-[#FFD600]/15 pt-4"><dt className="font-bold text-zinc-500">{term}</dt><dd className="font-black text-white">{value}</dd></div>)}
+                </dl>
+              </article>
+            </div>
+            <p className="mt-7 text-center text-lg font-black text-white">이번 지원서만 고치는 것이 아니라,<br /><span className="text-[#FFD600]">앞으로의 지원 방식을 바꿉니다.</span></p>
+          </div>
+
           <div className="mt-12 text-center">
             <p className="text-xl font-black text-white sm:text-2xl">그렇다면 부트캠프에서는 구체적으로 어떤 전략을 배우게 될까요?</p>
           </div>
         </div>
       </section>
 
+      <section ref={beforeAfterRef} id="before-after" className="scroll-mt-28 bg-white px-4 py-16 text-zinc-950 sm:px-8 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <p className="text-sm font-black text-amber-700">교육용 BEFORE &amp; AFTER 예시</p>
+          <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.045em] sm:text-5xl">같은 경험,<br />전혀 다른 설득력.</h2>
+          <p className="mt-5 max-w-3xl text-base leading-8 text-zinc-600 sm:text-lg">실제 개인 자료가 아닌 방법론 설명용 예시입니다. 경험을 과장하지 않고, 기업이 평가할 역량이 보이도록 전달 관점을 바꾸는 과정을 보여드립니다.</p>
+          <div className="mt-10 grid gap-7 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <img src={beforeAfterImg} alt="경험 나열형 자기소개서를 기업 니즈와 연결된 설득형 자기소개서로 바꾸는 교육용 예시" className="h-auto w-full rounded-2xl border border-zinc-200" loading="lazy" />
+            <div className="space-y-3">
+              {[
+                ['BEFORE', '경험을 시간 순서대로 나열하고 성실함을 주장합니다.'],
+                ['REPOSITIONING', '지원 기업이 필요로 하는 역량과 경험 속 행동을 연결합니다.'],
+                ['AFTER', '주장·근거·어필의 구조로 필요한 이유가 읽히게 만듭니다.'],
+                ['WHY', '평범한 경험에서도 기업이 평가할 행동과 역량이 선명해집니다.']
+              ].map(([label, copy]) => <div key={label} className="grid grid-cols-[6.5rem_1fr] gap-3 rounded-xl border border-zinc-200 p-4"><p className="text-xs font-black text-amber-700">{label}</p><p className="text-sm font-bold leading-6 text-zinc-700">{copy}</p></div>)}
+            </div>
+          </div>
+          <p className="mt-9 text-center text-xl font-black">경험을 바꾸는 것이 아니라,<br /><span className="text-amber-700">경험이 읽히는 방식을 바꿉니다.</span></p>
+        </div>
+      </section>
+
       <section id="bootcamp-schedule" className="scroll-mt-28 bg-[#F5F5F3] px-4 py-16 text-zinc-950 sm:px-8 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <p className="text-sm font-black tracking-[0.14em] text-amber-700">YOUR 3-WEEK REPOSITIONING</p>
-          <h2 className="mt-4 text-3xl font-black tracking-[-0.045em] sm:text-5xl">단 3주, 당신의 취업 전략을 다시 설계합니다.</h2>
+          <h2 className="mt-4 text-3xl font-black tracking-[-0.045em] sm:text-5xl">3주,<br />선택받는 이유를 만드는 시간.</h2>
           <p className="mt-5 max-w-3xl text-base leading-8 text-zinc-600 sm:text-lg">
-            듣고 끝나는 강의가 아닙니다. 매주 배운 전략을 실제 경험과 지원 기업에 적용하고, 1:1 컨설팅으로 구체화합니다.
+            듣고 끝나는 강의가 아닙니다. 매주 배운 내용을 당신의 경험과 실제 지원 기업에 적용합니다.
           </p>
 
           <div className="mt-12 grid gap-5 lg:grid-cols-3">
             <article className="flex flex-col rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8">
               <p className="text-sm font-black text-amber-700">WEEK 01 · 자기설득서</p>
-              <h3 className="mt-4 text-2xl font-black leading-8">자신을 소개하지 마세요.<br />필요한 이유를 설득하세요.</h3>
+              <h3 className="mt-4 text-2xl font-black leading-8">자기소개서가 아닌,<br />자기설득서.</h3>
               <p className="mt-5 text-base leading-7 text-zinc-600">기업이 필요로 하는 역량을 파악하고, 경험을 그 역량의 근거로 재구성합니다.</p>
               <ul className="mt-6 space-y-3 border-t border-zinc-200 pt-6 text-sm font-bold text-zinc-700">
                 {['취업 전략의 재정의', '주장·근거·어필 설계', '경험과 강점의 재해석', '자기소개서 → 자기설득서'].map((item) => <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />{item}</li>)}
@@ -149,8 +215,8 @@ export const BootcampCoreSections: React.FC = () => {
             </article>
 
             <article className="flex flex-col rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8">
-              <p className="text-sm font-black text-amber-700">WEEK 03 · 취업 STP / REAL NEEDS</p>
-              <h3 className="mt-4 text-2xl font-black leading-8">뽑고 싶은 사람은<br />채용공고 너머에 있습니다.</h3>
+              <p className="text-sm font-black text-amber-700">WEEK 03 · 취업·이직 리포지셔닝</p>
+              <h3 className="mt-4 text-2xl font-black leading-8">기업이 원하는 사람은<br />채용공고 너머에 있습니다.</h3>
               <p className="mt-5 text-base leading-7 text-zinc-600">기업의 진짜 채용 니즈를 분석하고, 이력서와 포트폴리오를 설득의 도구로 바꿉니다.</p>
               <ul className="mt-6 space-y-3 border-t border-zinc-200 pt-6 text-sm font-bold text-zinc-700">
                 {['취업 STP 전략', '기업 REAL NEEDS 분석', 'REAL NEEDS 이력서', '완벽설득 포트폴리오'].map((item) => <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />{item}</li>)}
@@ -184,20 +250,20 @@ export const BootcampCoreSections: React.FC = () => {
           </div>
 
           <div className="mt-12 text-center">
-            <p className="text-2xl font-black">배우는 것은 전략. 가져가는 것은 당신만의 취업 전략.</p>
-            <p className="mt-3 text-base text-zinc-600">이번 취업뿐 아니라 앞으로의 커리어에서도 스스로 활용할 사고방식을 익힙니다.</p>
+            <p className="text-2xl font-black">배우는 것은 전략.<br />가져가는 것은 당신만의 경쟁력.</p>
+            <p className="mt-3 text-base text-zinc-600">이번 취업뿐 아니라 앞으로의 커리어에서도 활용할 수 있는 사고방식을 익힙니다.</p>
           </div>
         </div>
       </section>
 
       <section id="one-to-one" className="scroll-mt-28 border-y border-zinc-800 bg-[#0D0E12] px-4 py-16 sm:px-8 sm:py-24">
         <div className="mx-auto max-w-6xl">
-          <p className="text-sm font-black tracking-[0.14em] text-[#FFD600]">NOT JUST A CLASS.</p>
+          <p className="text-sm font-black tracking-[0.14em] text-[#FFD600]">1:1 밀착 컨설팅</p>
           <div className="mt-4 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
             <div>
-              <h2 className="text-3xl font-black leading-tight tracking-[-0.045em] text-white sm:text-5xl">강의만 들으러 오셨다면,<br />굳이 부트캠프일 필요는 없습니다.</h2>
-              <p className="mt-6 text-base leading-8 text-zinc-400 sm:text-lg">좋은 전략을 아는 것과 내 상황에 적용하는 것은 전혀 다른 문제입니다. 실제 경험과 지원 기업, 자기소개서와 면접 전략을 기획자J와 함께 점검합니다.</p>
-              <p className="mt-6 border-l-4 border-[#FFD600] pl-5 text-xl font-black leading-8 text-white">당신의 전략을<br />당신 혼자 만들게 하지 않습니다.</p>
+              <h2 className="text-3xl font-black leading-tight tracking-[-0.045em] text-white sm:text-5xl">전략은 강의로 배우고,<br />당신의 것으로 완성합니다.</h2>
+              <p className="mt-6 text-base leading-8 text-zinc-400 sm:text-lg">좋은 방법을 아는 것과 내 상황에 적용하는 것은 전혀 다른 문제입니다. 실제 경험부터 지원 기업, 자기소개서와 면접 답변까지 함께 점검합니다.</p>
+              <p className="mt-6 border-l-4 border-[#FFD600] pl-5 text-xl font-black leading-8 text-white">매주 1:1,<br />당신만의 방향을 함께.</p>
               <ul className="mt-8 grid gap-3 text-sm font-bold text-zinc-200 sm:grid-cols-2">
                 {['주차별 1:1 밀착 컨설팅', '개인별 경험·핵심 강점 분석', '지원 기업·직무 전략 설계', '과제와 실제 지원 서류 피드백', '운영 기간 내 카카오톡 피드백'].map((item) => <li key={item} className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#FFD600]" />{item}</li>)}
               </ul>
@@ -250,45 +316,22 @@ export const BootcampCoreSections: React.FC = () => {
           <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.045em] sm:text-5xl">당신과 같은 고민에서<br />시작했던 사람들.</h2>
           <p className="mt-5 max-w-2xl text-base leading-8 text-zinc-600">서로 다른 스펙과 상황. 직접 리포지셔닝을 경험한 사람들의 이야기를 확인해보세요.</p>
 
-          <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              ['계속되는 서류 탈락이 고민이라면', '24'],
-              ['면접만 가면 자신감이 떨어진다면', '14'],
-              ['경력은 있지만 이직이 어렵다면', '9'],
-              ['내 스펙에 경쟁력이 없다고 느낀다면', '15'],
-              ['오랜 취업 준비로 지쳐 있다면', '5'],
-              ['다른 취업 컨설팅과 무엇이 다른지 궁금하다면', '8']
-            ].map(([situation, reviewId]) => {
-              const review = BOOTCAMP_REVIEWS.find((item) => item.id === reviewId);
-              if (!review) return null;
-              return (
-                <button key={reviewId} type="button" onClick={() => openReview(review)} className="rounded-2xl border border-zinc-200 bg-white p-6 text-left transition hover:border-zinc-400">
-                  <p className="text-sm font-black text-amber-700">{situation}</p>
-                  <h3 className="mt-4 text-lg font-black leading-7">“{review.title}”</h3>
-                  <p className="mt-4 line-clamp-4 text-sm leading-6 text-zinc-600">{review.content}</p>
-                  <p className="mt-5 border-t border-zinc-200 pt-4 text-xs font-bold text-zinc-500">{review.author} · 후기 원문 보기</p>
-                </button>
-              );
-            })}
+          <div className="mt-9 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="tablist" aria-label="수강 전 고민별 후기">
+            {situationReviews.map(([situation], index) => <button key={situation} type="button" role="tab" aria-selected={activeSituation === index} onClick={() => setActiveSituation(index)} className={`min-h-11 shrink-0 rounded-full border px-4 text-sm font-black ${activeSituation === index ? 'border-zinc-950 bg-zinc-950 text-white' : 'border-zinc-300 bg-white text-zinc-600'}`}>{situation}</button>)}
           </div>
+
+          {activeSituationReview && (
+            <button type="button" onClick={() => openReview(activeSituationReview)} className="mt-4 w-full rounded-2xl border border-zinc-200 bg-white p-6 text-left transition hover:border-zinc-400 sm:p-8" role="tabpanel">
+              <p className="text-sm font-black text-amber-700">{situationReviews[activeSituation][0]}</p>
+              <h3 className="mt-4 text-xl font-black leading-8 sm:text-2xl">“{activeSituationReview.title}”</h3>
+              <p className="mt-4 line-clamp-4 text-sm leading-7 text-zinc-600 sm:text-base">{activeSituationReview.content}</p>
+              <p className="mt-5 border-t border-zinc-200 pt-4 text-xs font-bold text-zinc-500">{activeSituationReview.author} · 후기 원문 보기</p>
+            </button>
+          )}
 
           <div className="mt-12 text-center">
             <p className="text-2xl font-black">당신의 이야기도 새롭게 시작할 수 있습니다.</p>
-            <a href="#actual-reviews" className="mt-6 inline-flex min-h-12 items-center rounded-xl border border-zinc-900 px-6 text-sm font-black">실제 수강생 후기 전체 보기</a>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-y border-zinc-800 bg-[#0B0B0E] px-4 py-14 sm:px-8 sm:py-20">
-        <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-          <img src={beforeAfterImg} alt="경험 나열형 자기소개서가 기업의 니즈와 연결된 설득형 자기소개서로 달라지는 과정" className="h-auto w-full rounded-2xl border border-zinc-800" loading="lazy" />
-          <div>
-            <p className="text-sm font-black text-[#FFD600]">수강생 전용 자료실</p>
-            <h2 className="mt-4 text-3xl font-black text-white sm:text-4xl">배운 전략을 바로 꺼내 쓸 수 있도록.</h2>
-            <p className="mt-5 text-base leading-8 text-zinc-400">부트캠프 수강생은 별도 결제 없이 프로자료 전체와 실제 지원에 활용할 프롬프트를 열람할 수 있습니다.</p>
-            <ul className="mt-7 grid gap-3 text-sm font-bold text-zinc-200 sm:grid-cols-2">
-              {['자기설득서', '완벽통제면접', '취업 STP 전략', 'REAL NEEDS 이력서', '완벽설득 포트폴리오', '프로자료 실전 프롬프트'].map((item) => <li key={item} className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#FFD600]" />{item}</li>)}
-            </ul>
+            <a href="#real-reviews" className="mt-6 inline-flex min-h-12 items-center rounded-xl border border-zinc-900 px-6 text-sm font-black">실제 수강생 후기 전체 보기</a>
           </div>
         </div>
       </section>

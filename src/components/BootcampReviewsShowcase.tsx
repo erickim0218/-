@@ -30,10 +30,14 @@ function ReviewStars({ rating }: { rating: number }) {
 }
 
 export function ReviewDetailModal({ review, onClose }: { review: BootcampReview | null; onClose: () => void }) {
+  const closeRef = useRef<HTMLButtonElement | null>(null);
+
   useEffect(() => {
     if (!review) return;
     const previousOverflow = document.body.style.overflow;
+    const previousFocus = document.activeElement as HTMLElement | null;
     document.body.style.overflow = 'hidden';
+    closeRef.current?.focus();
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
     };
@@ -41,6 +45,7 @@ export function ReviewDetailModal({ review, onClose }: { review: BootcampReview 
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', onKeyDown);
+      previousFocus?.focus();
     };
   }, [review, onClose]);
 
@@ -61,6 +66,7 @@ export function ReviewDetailModal({ review, onClose }: { review: BootcampReview 
         className="relative max-h-[88dvh] w-full overflow-y-auto rounded-t-[1.5rem] border border-zinc-700 bg-[#151519] px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-6 shadow-2xl sm:max-w-2xl sm:rounded-[1.5rem] sm:p-8"
       >
         <button
+          ref={closeRef}
           type="button"
           onClick={onClose}
           className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-zinc-800 text-zinc-200 transition hover:bg-zinc-700"
@@ -134,13 +140,13 @@ interface BootcampReviewsShowcaseProps {
 export const BootcampReviewsShowcase: React.FC<BootcampReviewsShowcaseProps> = ({ reviews }) => {
   const reviewSource = reviews?.length ? reviews : BOOTCAMP_REVIEWS;
   const [activeFilter, setActiveFilter] = useState<ReviewFilter>('전체');
-  const [visibleCount, setVisibleCount] = useState(8);
+  const [visibleCount, setVisibleCount] = useState(4);
   const [selectedReview, setSelectedReview] = useState<BootcampReview | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
   const hasTrackedView = useRef(false);
 
   const featured = useMemo(
-    () => ['13', '1'].map((id) => reviewSource.find((review) => review.id === id)).filter((review): review is BootcampReview => Boolean(review)),
+    () => ['5', '6'].map((id) => reviewSource.find((review) => review.id === id)).filter((review): review is BootcampReview => Boolean(review)),
     [reviewSource]
   );
 
@@ -182,36 +188,37 @@ export const BootcampReviewsShowcase: React.FC<BootcampReviewsShowcaseProps> = (
 
   const selectFilter = (filter: ReviewFilter) => {
     setActiveFilter(filter);
-    setVisibleCount(8);
+    setVisibleCount(4);
     void trackAnalyticsEvent({ eventName: 'bootcamp_review_filter', buttonLocation: filter, bootcampCohort: 9 });
   };
 
   return (
-    <section ref={sectionRef} id="actual-reviews" className="scroll-mt-28 border-y border-zinc-800 bg-[#0B0B0E] px-4 py-16 sm:px-8 sm:py-24">
+    <section ref={sectionRef} id="real-reviews" className="scroll-mt-28 border-b border-zinc-800 bg-[#0B0B0E] px-4 py-14 sm:px-8 sm:py-24">
       <div className="mx-auto max-w-6xl">
-        <p className="text-sm font-black tracking-[0.14em] text-[#FFD600]">REAL RESULTS, REAL REVIEWS.</p>
+        <p className="text-sm font-black tracking-[0.14em] text-[#FFD600]">REAL REVIEWS</p>
         <div className="mt-4 grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
-            <h2 className="text-3xl font-black leading-tight tracking-[-0.04em] text-white sm:text-5xl">전략은 결과로 증명되어야 합니다.</h2>
+            <h2 className="text-3xl font-black leading-tight tracking-[-0.04em] text-white sm:text-5xl">직접 경험한 사람들이<br />리포지셔닝을 이야기합니다.</h2>
             <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-400 sm:text-lg sm:leading-8">
-              리포지셔닝의 효과, 기획자J의 설명보다 실제 수강생들의 이야기로 확인해보세요.
+              기획자J의 설명보다 실제 수강생들이 남긴 평가를 먼저 확인해보세요.
             </p>
           </div>
           <div className="flex items-center gap-5 rounded-xl border border-zinc-800 bg-[#111114] px-5 py-4">
             <div>
-              <p className="text-xs font-bold text-zinc-500">등록된 후기</p>
+              <p className="text-xs font-bold text-zinc-500">기존 공개 후기</p>
               <p className="mt-1 text-2xl font-black text-white">{reviewSource.length}<span className="ml-1 text-sm text-zinc-500">건</span></p>
             </div>
             {averageRating !== null && (
               <div className="border-l border-zinc-800 pl-5">
-                <p className="text-xs font-bold text-zinc-500">후기 데이터 평균</p>
+                <p className="text-xs font-bold text-zinc-500">평점 등록 후기 평균</p>
                 <p className="mt-1 text-2xl font-black text-white">{averageRating.toFixed(1)}<span className="ml-1 text-sm text-zinc-500">/ 5.0</span></p>
               </div>
             )}
           </div>
         </div>
 
-        <div className="mt-10 grid gap-4 lg:grid-cols-2">
+        <p className="mt-10 text-xs font-black tracking-[0.12em] text-zinc-500">대표 후기</p>
+        <div className="mt-3 grid gap-4 lg:grid-cols-2">
           {featured.map((review) => <div key={review.id} className="flex"><ReviewCard review={review} featured onOpen={openReview} /></div>)}
         </div>
 
@@ -228,8 +235,11 @@ export const BootcampReviewsShowcase: React.FC<BootcampReviewsShowcaseProps> = (
           ))}
         </div>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {filteredReviews.slice(0, visibleCount).map((review) => <div key={review.id} className="flex"><ReviewCard review={review} onOpen={openReview} /></div>)}
+        <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {filteredReviews.slice(0, visibleCount).map((review) => {
+            const compact = review.content.length < 150;
+            return <div key={review.id} className={`flex ${compact ? 'col-span-1' : 'col-span-2 lg:col-span-1'}`}><ReviewCard review={review} onOpen={openReview} /></div>;
+          })}
         </div>
 
         {visibleCount < filteredReviews.length && (
@@ -237,7 +247,7 @@ export const BootcampReviewsShowcase: React.FC<BootcampReviewsShowcaseProps> = (
             <button
               type="button"
               onClick={() => {
-                setVisibleCount((count) => count + 8);
+                setVisibleCount((count) => count + 6);
                 void trackAnalyticsEvent({ eventName: 'bootcamp_reviews_more', buttonLocation: activeFilter, bootcampCohort: 9 });
               }}
               className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-zinc-700 px-6 text-sm font-black text-white transition hover:border-[#FFD600]"
@@ -248,12 +258,16 @@ export const BootcampReviewsShowcase: React.FC<BootcampReviewsShowcaseProps> = (
           </div>
         )}
 
-        <div className="mt-14 border-t border-zinc-800 pt-12 text-center">
+        <p className="mt-6 text-xs leading-6 text-zinc-500">평점이 등록된 후기만 평균에 포함합니다. 성과 메시지와 구매 인증 여부가 확인되지 않은 자료는 별도 지표로 합산하지 않습니다.</p>
+
+        <div className="mt-12 border-t border-zinc-800 pt-12 text-center">
           <CheckCircle2 className="mx-auto h-7 w-7 text-[#FFD600]" />
-          <h3 className="mt-4 text-2xl font-black text-white sm:text-3xl">이들에게는 도대체 무엇이 달라졌을까요?</h3>
+          <h3 className="mt-4 text-2xl font-black text-white sm:text-3xl">대체 무엇을 바꿨길래,<br />이런 결과가 나오는 걸까요?</h3>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-8 text-zinc-400">
-            같은 경험도 어떻게 해석하고 전달하느냐에 따라 기업이 평가하는 가치는 달라질 수 있습니다. 리포지셔닝은 바로 그 차이에서 시작합니다.
+            경험을 새로 만드는 것이 아니라, 이미 가진 경험을 기업에 전달하는 방식을 다시 설계하는 것.
           </p>
+          <p className="mt-6 text-xl font-black leading-8 text-white">스펙은 바꾸지 않습니다.<br /><span className="text-[#FFD600]">읽히는 방식을 바꿉니다.</span></p>
+          <p className="mt-6 text-sm font-bold text-zinc-500">지금부터 리포지셔닝의 전략을 소개합니다.</p>
         </div>
       </div>
 
