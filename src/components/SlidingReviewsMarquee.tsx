@@ -7,7 +7,6 @@ export const SlidingReviewsMarquee: React.FC = () => {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [selectedReview, setSelectedReview] = useState<BootcampReview | null>(null);
 
-  const pressTimerRef = useRef<NodeJS.Timeout | null>(null);
   const startPosRef = useRef<{ x: number; y: number } | null>(null);
   const hasMovedRef = useRef<boolean>(false);
 
@@ -58,20 +57,10 @@ export const SlidingReviewsMarquee: React.FC = () => {
 
   const playState = (isPaused || reducedMotion || selectedReview) ? 'paused' : 'running';
 
-  const handlePointerDown = (e: React.PointerEvent, review: BootcampReview) => {
+  const handlePointerDown = (e: React.PointerEvent) => {
     startPosRef.current = { x: e.clientX, y: e.clientY };
     hasMovedRef.current = false;
     handlePause();
-
-    if (e.pointerType === 'touch' || e.pointerType === 'pen') {
-      // Mobile / Tablet: long press 450ms
-      if (pressTimerRef.current) clearTimeout(pressTimerRef.current);
-      pressTimerRef.current = setTimeout(() => {
-        if (!hasMovedRef.current) {
-          setSelectedReview(review);
-        }
-      }, 450);
-    }
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
@@ -80,32 +69,27 @@ export const SlidingReviewsMarquee: React.FC = () => {
     const dy = Math.abs(e.clientY - startPosRef.current.y);
     if (dx > 10 || dy > 10) {
       hasMovedRef.current = true;
-      if (pressTimerRef.current) {
-        clearTimeout(pressTimerRef.current);
-        pressTimerRef.current = null;
-      }
     }
   };
 
-  const handlePointerUp = (e: React.PointerEvent, review: BootcampReview) => {
-    if (pressTimerRef.current) {
-      clearTimeout(pressTimerRef.current);
-      pressTimerRef.current = null;
-    }
-
-    // PC (mouse): click opens detail view immediately if not dragged
-    if (e.pointerType === 'mouse' && !hasMovedRef.current) {
+  const handlePointerUp = (review: BootcampReview) => {
+    // Mouse, touch, pen 모두 짧게 한 번 누르면 즉시 전체 후기를 연다.
+    // 화면 스크롤이나 드래그 중에는 열리지 않도록 이동 판정은 유지한다.
+    if (!hasMovedRef.current) {
       setSelectedReview(review);
     }
     startPosRef.current = null;
   };
 
   const handlePointerCancel = () => {
-    if (pressTimerRef.current) {
-      clearTimeout(pressTimerRef.current);
-      pressTimerRef.current = null;
-    }
     startPosRef.current = null;
+  };
+
+  const handleCardKeyDown = (e: React.KeyboardEvent, review: BootcampReview) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setSelectedReview(review);
+    }
   };
 
   return (
@@ -151,7 +135,7 @@ export const SlidingReviewsMarquee: React.FC = () => {
               ))}
             </div>
             <span className="font-bold text-[#FFD600]">5.0 / 5.0</span>
-            <span className="text-zinc-500 text-[11px]">(클릭 또는 길게 눌러 전체보기)</span>
+            <span className="text-zinc-400 text-[11px]">(후기를 누르면 전체 내용이 열립니다)</span>
           </div>
         </div>
 
@@ -169,10 +153,13 @@ export const SlidingReviewsMarquee: React.FC = () => {
               <div
                 key={`row1-${review.id}-${idx}`}
                 tabIndex={0}
-                onPointerDown={(e) => handlePointerDown(e, review)}
+                role="button"
+                aria-label={`${review.title} 후기 전체 보기`}
+                onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
-                onPointerUp={(e) => handlePointerUp(e, review)}
+                onPointerUp={() => handlePointerUp(review)}
                 onPointerCancel={handlePointerCancel}
+                onKeyDown={(e) => handleCardKeyDown(e, review)}
                 className="w-80 sm:w-96 shrink-0 p-4 rounded-2xl bg-[#16161B] border border-zinc-800 hover:border-[#FFD600]/60 transition-all shadow-lg flex flex-col justify-between focus:outline-none focus:border-[#FFD600] cursor-pointer group"
               >
                 <div>
@@ -224,10 +211,13 @@ export const SlidingReviewsMarquee: React.FC = () => {
               <div
                 key={`row2-${review.id}-${idx}`}
                 tabIndex={0}
-                onPointerDown={(e) => handlePointerDown(e, review)}
+                role="button"
+                aria-label={`${review.title} 후기 전체 보기`}
+                onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
-                onPointerUp={(e) => handlePointerUp(e, review)}
+                onPointerUp={() => handlePointerUp(review)}
                 onPointerCancel={handlePointerCancel}
+                onKeyDown={(e) => handleCardKeyDown(e, review)}
                 className="w-80 sm:w-96 shrink-0 p-4 rounded-2xl bg-[#141418] border border-zinc-800/90 hover:border-[#FFD600]/60 transition-all shadow-md flex flex-col justify-between focus:outline-none focus:border-[#FFD600] cursor-pointer group"
               >
                 <div>

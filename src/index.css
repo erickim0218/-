@@ -19,11 +19,11 @@ body {
 .animate-marquee {
   display: flex;
   width: max-content;
-  animation: marquee 38s linear infinite;
+  animation: marquee 70s linear infinite;
 }
 
 .animate-marquee-slow {
   display: flex;
   width: max-content;
-  animation: marquee 48s linear infinite;
+  animation: marquee 84s linear infinite;
 }
