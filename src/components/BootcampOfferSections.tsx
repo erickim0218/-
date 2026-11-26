@@ -61,7 +61,7 @@ export const BootcampOfferSections: React.FC<Props> = ({ isClosed, remainingSlot
     <>
       <section ref={pricingRef} id="pricing-plans" className="scroll-mt-28 bg-white px-4 py-16 text-zinc-950 sm:px-8 sm:py-24">
         <div className="mx-auto max-w-6xl">
-          <div className="max-w-3xl">
+          <div className="mx-auto max-w-3xl text-center [word-break:keep-all]">
             <p className="text-sm font-black text-amber-700">프로그램 및 수강료</p>
             <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.045em] sm:text-5xl">3주 동안,<br />당신이 가져갈 모든 것.</h2>
             <p className="mt-5 text-base leading-8 text-zinc-600 sm:text-lg">자소서부터 면접, 이직까지. 매주 배우고, 내 상황에 직접 적용합니다.</p>
@@ -109,8 +109,10 @@ export const BootcampOfferSections: React.FC<Props> = ({ isClosed, remainingSlot
 
       <section id="faq" className="scroll-mt-28 border-t border-zinc-800 bg-[#0B0B0E] px-4 py-16 sm:px-8 sm:py-24">
         <div className="mx-auto max-w-4xl">
-          <p className="text-sm font-black text-[#FFD600]">FAQ</p>
-          <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.045em] text-white sm:text-5xl">함께하기 전,<br />궁금한 점을 확인해보세요.</h2>
+          <div className="text-center [word-break:keep-all]">
+            <p className="text-sm font-black text-[#FFD600]">FAQ</p>
+            <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.045em] text-white sm:text-5xl">함께하기 전,<br />궁금한 점을 확인해보세요.</h2>
+          </div>
           <div className="mt-10 divide-y divide-zinc-800 border-y border-zinc-800">
             {faqItems.map(([question, answer], index) => (
               <details key={question} className="group" onToggle={(event) => {

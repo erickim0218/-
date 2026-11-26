@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Star, Eye, EyeOff, Award, Trash2, MessageSquareQuote, Flag, CheckCircle2, ShieldAlert, Sparkles, Filter } from 'lucide-react';
 import { UserBootcampReview, BootcampReviewReport, fetchUserReviews, adminUpdateReview, deleteUserReview, fetchReviewReports } from '../../lib/userReviewService';
+import { ResultEvidenceAdminPanel } from './ResultEvidenceAdminPanel';
 
 export const ReviewAdminTab: React.FC = () => {
   const [reviews, setReviews] = useState<UserBootcampReview[]>([]);
@@ -81,6 +82,7 @@ export const ReviewAdminTab: React.FC = () => {
 
   return (
     <div className="space-y-8">
+      <ResultEvidenceAdminPanel />
       {/* Stats Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="bg-[#121216] border border-[#27272A] rounded-2xl p-5 space-y-2">

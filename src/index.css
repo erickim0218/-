@@ -6,6 +6,16 @@ body {
   line-break: strict;
 }
 
+/* 광고형 상세페이지의 핵심 메시지는 중앙에, 카드 내부 정보는 기존 좌측 정렬을 유지합니다. */
+#actual-reviews > div > p:first-child,
+#actual-reviews > div > h2,
+#actual-reviews > div > h2 + p {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  word-break: keep-all;
+}
+
 @keyframes marquee {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-50%); }

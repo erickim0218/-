@@ -8,6 +8,7 @@ import { fetchSiteFeatures } from '../lib/siteFeatures';
 import { trackAnalyticsEvent, trackInquiryClickAndOpen } from '../lib/analytics';
 import { BootcampReviewsShowcase } from './BootcampReviewsShowcase';
 import { BootcampResultsShowcase } from './BootcampResultsShowcase';
+import { PublishedResultEvidenceGallery } from './PublishedResultEvidenceGallery';
 import { BootcampCoreSections } from './BootcampCoreSections';
 import { BootcampOfferSections } from './BootcampOfferSections';
 
@@ -131,6 +132,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({ onApplic
       </nav>
 
       <BootcampResultsShowcase reviews={reviewSource} />
+      <PublishedResultEvidenceGallery />
       <BootcampReviewsShowcase reviews={reviewSource} />
       <BootcampCoreSections />
       <BootcampOfferSections isClosed={isClosed} remainingSlots={remainingSlots} onInquiry={handleInquiryClick} onOpenPlan={handleOpenPlan} />

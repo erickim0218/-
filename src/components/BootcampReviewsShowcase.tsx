@@ -195,15 +195,15 @@ export const BootcampReviewsShowcase: React.FC<BootcampReviewsShowcaseProps> = (
   return (
     <section ref={sectionRef} id="real-reviews" className="scroll-mt-28 border-b border-zinc-800 bg-[#0B0B0E] px-4 py-14 sm:px-8 sm:py-24">
       <div className="mx-auto max-w-6xl">
-        <p className="text-sm font-black tracking-[0.14em] text-[#FFD600]">REAL REVIEWS</p>
-        <div className="mt-4 grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
-          <div>
+        <div className="mx-auto max-w-3xl text-center [word-break:keep-all]">
+          <p className="text-sm font-black tracking-[0.14em] text-[#FFD600]">REAL REVIEWS</p>
+          <div className="mt-4">
             <h2 className="text-3xl font-black leading-tight tracking-[-0.04em] text-white sm:text-5xl">직접 경험한 사람들이<br />리포지셔닝을 이야기합니다.</h2>
-            <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-400 sm:text-lg sm:leading-8">
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-zinc-400 sm:text-lg sm:leading-8">
               기획자J의 설명보다 실제 수강생들이 남긴 평가를 먼저 확인해보세요.
             </p>
           </div>
-          <div className="flex items-center gap-5 rounded-xl border border-zinc-800 bg-[#111114] px-5 py-4">
+          <div className="mx-auto mt-6 flex w-fit items-center gap-5 rounded-xl border border-zinc-800 bg-[#111114] px-5 py-4 text-left">
             <div>
               <p className="text-xs font-bold text-zinc-500">기존 공개 후기</p>
               <p className="mt-1 text-2xl font-black text-white">{reviewSource.length}<span className="ml-1 text-sm text-zinc-500">건</span></p>
