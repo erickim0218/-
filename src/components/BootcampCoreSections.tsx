@@ -82,7 +82,7 @@ export const BootcampCoreSections: React.FC<BootcampCoreSectionsProps> = ({ revi
 
       <section className="border-y border-zinc-800 bg-[#0B0B0E] px-4 py-16 sm:px-8 sm:py-24">
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+          <div className="grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
             <div className="text-center [word-break:keep-all]">
               <p className="text-sm font-black text-[#FFD600]">AI 시대의 취업 전략</p>
               <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.045em] text-white sm:text-5xl">
@@ -90,9 +90,6 @@ export const BootcampCoreSections: React.FC<BootcampCoreSectionsProps> = ({ revi
               </h2>
               <p className="mt-6 text-base leading-8 text-zinc-400 sm:text-lg">
                 AI는 경험을 정리하고 더 좋은 문장을 만들어줄 수 있습니다. 그러나 모두가 활용할 수 있는 도구만으로는 나만의 경쟁력을 완성할 수 없습니다.
-              </p>
-              <p className="mt-6 text-xl font-black leading-8 text-white">
-                AI를 더 잘 쓰는 사람을 넘어,<br /><span className="text-[#FFD600]">남들이 따라 할 수 없는 나만의 이야기로.</span><br />그것이 리포지셔닝입니다.
               </p>
             </div>
             <img
@@ -103,38 +100,35 @@ export const BootcampCoreSections: React.FC<BootcampCoreSectionsProps> = ({ revi
             />
           </div>
 
-          <div className="mt-14 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div className="mt-14">
             <img
               src={strategyPyramidImg}
               alt="일반적인 취업전략, AI 활용 취업전략, 나만의 이야기로 완성되는 3단계 전략"
               className="hidden h-auto w-full rounded-2xl border border-zinc-800 bg-[#101827] sm:block"
               loading="lazy"
             />
-            <div className="space-y-3 sm:hidden" aria-label="리포지셔닝 3단계 전략">
-              {[
-                ['01', '일반적인 취업전략', '누구나 알고 있는 취업 준비 방식'],
-                ['02', 'AI를 활용한 취업전략', 'AI를 활용해 분석·작성·준비의 효율을 높이는 단계'],
-                ['03', '나만의 이야기', '내가 직접 말하고 증명할 수 있는 차별화된 근거']
-              ].map(([step, title, copy], index) => (
-                <article key={step} className={`rounded-2xl border p-5 ${index === 2 ? 'border-[#FFD600]/50 bg-[#FFD600]/10' : 'border-zinc-800 bg-[#111114]'}`}>
-                  <p className="text-xs font-black text-[#FFD600]">{step}</p>
-                  <h3 className="mt-2 text-lg font-black text-white">{title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-zinc-400">{copy}</p>
-                </article>
-              ))}
-              <p className="pt-3 text-center text-xl font-black leading-8 text-white">AI는 도구입니다.<br /><span className="text-[#FFD600]">차이를 만드는 것은 나만의 이야기입니다.</span></p>
-            </div>
-            <div className="rounded-2xl border border-zinc-800 bg-[#111114] p-6 sm:p-8">
-              <h3 className="text-center text-2xl font-black text-white">AI는 도구입니다.<br />차이를 만드는 것은 전략입니다.</h3>
-              <p className="mt-5 text-base leading-8 text-zinc-400">
-                리포지셔닝은 경험과 역량을 기업의 채용 니즈에 맞춰 재해석하고, 기업이 당신을 선택해야 할 이유를 만드는 취업·이직 전략입니다.
-              </p>
-              <p className="mt-5 text-base leading-8 text-zinc-400">
-                스펙을 과장하거나 새로운 경험을 만들어내지 않습니다. 이미 가지고 있는 가치를 제대로 읽히게 만듭니다.
-              </p>
-              <div className="mt-7 border-t border-zinc-800 pt-6 text-lg font-black leading-8 text-white">
-                스펙의 재해석 → 나만 말할 수 있는 스토리 → <span className="text-[#FFD600]">기업이 선택할 이유</span>
+            <div className="sm:hidden" aria-label="리포지셔닝 피라미드 전략">
+              <div className="mx-auto flex max-w-sm flex-col items-center drop-shadow-[0_18px_35px_rgba(0,0,0,0.45)]">
+                <div className="relative z-30 flex min-h-32 w-[68%] flex-col items-center justify-center bg-gradient-to-b from-[#FFF2A6] via-[#FFD600] to-[#D9A700] px-8 pt-3 text-center text-zinc-950 [clip-path:polygon(50%_0,100%_100%,0_100%)]">
+                  <p className="mt-7 text-[11px] font-black tracking-[0.12em]">03 · TOP</p>
+                  <p className="mt-1 text-lg font-black">나만의 이야기</p>
+                </div>
+                <div className="relative z-20 -mt-1 flex min-h-28 w-[86%] flex-col items-center justify-center border border-white/20 bg-gradient-to-b from-[#27374f] to-[#172234] px-8 text-center [clip-path:polygon(13%_0,87%_0,100%_100%,0_100%)]">
+                  <p className="text-[11px] font-black tracking-[0.12em] text-[#FFD600]">02 · AI</p>
+                  <p className="mt-1 text-lg font-black text-white">AI 활용 취업전략</p>
+                  <p className="mt-1 text-xs text-zinc-300">도구를 활용한 효율화</p>
+                </div>
+                <div className="relative z-10 -mt-1 flex min-h-28 w-full flex-col items-center justify-center border border-white/15 bg-gradient-to-b from-[#1c283a] to-[#111827] px-8 text-center [clip-path:polygon(10%_0,90%_0,100%_100%,0_100%)]">
+                  <p className="text-[11px] font-black tracking-[0.12em] text-zinc-400">01 · BASE</p>
+                  <p className="mt-1 text-lg font-black text-white">일반적인 취업전략</p>
+                  <p className="mt-1 text-xs text-zinc-400">누구나 알고 있는 방식</p>
+                </div>
               </div>
+              <p className="mx-auto mt-5 max-w-xs text-center text-sm font-bold leading-6 text-zinc-300">최상단의 ‘나만의 이야기’는<br />내가 직접 말하고 증명할 수 있는 차별화된 근거입니다.</p>
+            </div>
+            <div className="mx-auto mt-8 max-w-3xl text-center [word-break:keep-all]">
+              <h3 className="text-2xl font-black leading-9 text-white sm:text-3xl">전략은 결국<br /><span className="text-[#FFD600]">나만의 이야기에서 완성됩니다.</span></h3>
+              <p className="mt-5 text-base leading-8 text-zinc-400 sm:text-lg">AI를 활용하는 것도 중요하지만, 결국 차이를 만드는 것은 남들이 복제할 수 없는 나의 경험과 이야기입니다.</p>
             </div>
           </div>
 
@@ -173,29 +167,23 @@ export const BootcampCoreSections: React.FC<BootcampCoreSectionsProps> = ({ revi
             <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.045em] sm:text-5xl">같은 경험,<br />전혀 다른 설득력.</h2>
             <p className="mt-5 text-base leading-8 text-zinc-600 sm:text-lg">실제 개인 자료가 아닌 방법론 설명용 예시입니다. 경험을 과장하지 않고, 기업이 평가할 역량이 보이도록 전달 관점을 바꾸는 과정을 보여드립니다.</p>
           </div>
-          <div className="mt-10 grid gap-7 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div className="mt-10">
             <img src={beforeAfterImg} alt="경험 나열형 자기소개서를 기업 니즈와 연결된 설득형 자기소개서로 바꾸는 교육용 예시" className="hidden h-auto w-full rounded-2xl border border-zinc-200 sm:block" loading="lazy" />
-            <div className="hidden grid-cols-2 gap-3 sm:grid">
-              {[
-                ['BEFORE', '경험을 시간 순서대로 나열하고 성실함을 주장합니다.'],
-                ['REPOSITIONING', '지원 기업이 필요로 하는 역량과 경험 속 행동을 연결합니다.'],
-                ['AFTER', '주장·근거·어필의 구조로 필요한 이유가 읽히게 만듭니다.'],
-                ['WHY', '평범한 경험에서도 기업이 평가할 행동과 역량이 선명해집니다.']
-              ].map(([label, copy]) => <div key={label} className="rounded-xl border border-zinc-200 p-4"><p className="text-xs font-black text-amber-700">{label}</p><p className="mt-2 text-sm font-bold leading-6 text-zinc-700">{copy}</p></div>)}
-            </div>
-            <div className="space-y-3 sm:hidden">
-              {[
-                ['BEFORE', ['평범한 경험의 나열', '구체적인 근거 부족', '기업의 채용 니즈와 연결되지 않음']],
-                ['REPOSITIONING', ['기업이 필요로 하는 역량을 먼저 분석', '경험 속 판단과 행동을 역량의 근거로 재해석', '주장·근거·어필 구조로 설계']],
-                ['AFTER', ['기업이 원하는 역량으로 재구성', '설득력 있는 나만의 스토리', '면접까지 이어지는 일관된 핵심 메시지']]
-              ].map(([label, items], index) => (
-                <article key={label as string} className={`rounded-2xl border p-5 ${index === 1 ? 'border-amber-300 bg-amber-50' : 'border-zinc-200 bg-white'}`}>
-                  <p className="text-xs font-black tracking-[0.12em] text-amber-700">{label as string}</p>
-                  <ul className="mt-3 space-y-2 text-[15px] font-bold leading-6 text-zinc-700">
-                    {(items as string[]).map((item) => <li key={item} className="flex gap-2"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-600" />{item}</li>)}
-                  </ul>
-                </article>
-              ))}
+            <div className="space-y-4 sm:hidden" aria-label="자기소개서 Before와 After 그래픽">
+              <figure className="overflow-hidden rounded-2xl bg-[#0c131d] shadow-xl">
+                <div className="border-b border-white/10 px-4 py-3 text-xs font-black tracking-[0.15em] text-zinc-300">BEFORE · 평범한 경험</div>
+                <div className="relative aspect-[1.12/1] overflow-hidden">
+                  <img src={beforeAfterImg} alt="평범한 경험과 구체성 부족이 표시된 기존 자기소개서" className="absolute inset-y-0 left-0 h-full w-[200%] max-w-none object-cover object-left" loading="lazy" />
+                </div>
+              </figure>
+              <div className="flex items-center justify-center gap-3 text-xs font-black tracking-[0.14em] text-amber-700"><span className="h-px w-12 bg-amber-300" />REPOSITIONING<span className="h-px w-12 bg-amber-300" /></div>
+              <figure className="overflow-hidden rounded-2xl bg-[#0c131d] shadow-xl">
+                <div className="border-b border-white/10 px-4 py-3 text-xs font-black tracking-[0.15em] text-[#FFD600]">AFTER · 기업이 원하는 역량</div>
+                <div className="relative aspect-[1.12/1] overflow-hidden">
+                  <img src={beforeAfterImg} alt="기업이 원하는 역량과 설득력 있는 스토리가 표시된 자기소개서" className="absolute inset-y-0 right-0 h-full w-[200%] max-w-none object-cover object-right" loading="lazy" />
+                </div>
+              </figure>
+              <p className="px-2 text-left text-sm font-bold leading-7 text-zinc-600">기업이 필요로 하는 역량을 먼저 읽고, 같은 경험 속 판단과 행동을 주장·근거·어필 구조로 재해석합니다.</p>
             </div>
           </div>
           <p className="mt-9 text-center text-xl font-black">경험을 바꾸는 것이 아니라,<br /><span className="text-amber-700">경험이 읽히는 방식을 바꿉니다.</span></p>

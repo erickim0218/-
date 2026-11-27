@@ -109,25 +109,33 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({ onApplic
   return (
     <div className="w-full overflow-x-clip bg-[#09090B] pb-20 font-sans text-zinc-100 selection:bg-[#FFD600] selection:text-zinc-950 sm:pb-0">
       <section ref={heroSectionRef} className="mx-auto max-w-7xl sm:px-4 sm:pt-5">
-        <div className="overflow-hidden border-y border-zinc-800 bg-[#0D0E12] sm:rounded-[1.75rem] sm:border">
-          <div className="relative isolate overflow-hidden px-5 py-12 sm:px-10 sm:py-16 lg:px-16 lg:py-20">
-            <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_75%_20%,rgba(255,214,0,0.12),transparent_34%),linear-gradient(135deg,#08090d_0%,#11131a_55%,#08090d_100%)]" />
-            <div className="absolute inset-y-0 right-0 -z-10 hidden w-[44%] opacity-55 lg:block">
-              <img src={heroVisualImg} alt="" className="h-full w-full object-cover object-center [mask-image:linear-gradient(to_right,transparent,black_26%)]" fetchPriority="high" />
-            </div>
-            <div className="mx-auto max-w-6xl lg:mx-0 lg:max-w-3xl">
-              <p className="text-center text-xs font-black tracking-[0.18em] text-[#FFD600] sm:text-sm lg:text-left">AI를 이기는 리포지셔닝 부트캠프</p>
-              <h1 className="mt-5 text-center text-[2rem] font-black leading-[1.2] tracking-[-0.055em] text-white [word-break:keep-all] sm:text-5xl lg:text-left lg:text-6xl">
-                스펙은 바꾸지 않습니다.<br /><span className="text-[#FFD600]">읽히는 방식을 바꿉니다.</span>
-              </h1>
-              <p className="mx-auto mt-6 max-w-2xl text-center text-base font-bold leading-7 text-zinc-300 [word-break:keep-all] sm:text-lg sm:leading-8 lg:mx-0 lg:text-left">
-                모두가 AI로 그럴듯한 지원서를 쓰는 시대.<br />그럴듯함만으로는 더 이상 선택받기 어렵습니다.
-              </p>
-              <ul className="mx-auto mt-8 grid max-w-xl grid-cols-2 gap-3 text-sm font-bold text-zinc-200 lg:mx-0">
-                {['3주 라이브 특강', '주차별 1:1 컨설팅', '과제와 상시 피드백', '프로자료 전체 제공'].map((item) => (
-                  <li key={item} className="flex min-h-11 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3"><Check className="h-4 w-4 shrink-0 text-[#FFD600]" />{item}</li>
-                ))}
-              </ul>
+        <div className="overflow-hidden border-y border-zinc-800 bg-[#07101d] sm:rounded-[1.75rem] sm:border">
+          <div className="relative isolate min-h-[640px] overflow-hidden sm:min-h-[620px] lg:min-h-[650px]">
+            <img
+              src={heroVisualImg}
+              alt="산 정상에서 리포지셔닝 깃발을 든 사람"
+              className="absolute inset-0 -z-20 h-full w-full object-cover object-[62%_center] sm:object-[70%_center] lg:object-right"
+              fetchPriority="high"
+            />
+            <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(4,9,17,0.28)_0%,rgba(4,9,17,0.42)_38%,rgba(4,9,17,0.94)_78%,#07101d_100%)] lg:bg-[linear-gradient(90deg,#07101d_0%,rgba(7,16,29,0.96)_36%,rgba(7,16,29,0.54)_63%,rgba(7,16,29,0.08)_100%)]" />
+            <div className="flex min-h-[640px] items-end px-5 pb-9 pt-56 sm:min-h-[620px] sm:px-10 sm:pb-12 sm:pt-48 lg:min-h-[650px] lg:items-center lg:px-16 lg:py-16">
+              <div className="w-full max-w-2xl text-center lg:text-left">
+                <p className="text-xs font-black tracking-[0.18em] text-[#FFD600] sm:text-sm">RE:POSITIONING BOOTCAMP</p>
+                <h1 className="mt-4 text-[2.15rem] font-black leading-[1.13] tracking-[-0.055em] text-white [word-break:keep-all] sm:text-5xl lg:text-6xl">
+                  AI를 이기는<br />리포지셔닝 부트캠프
+                </h1>
+                <p className="mt-5 text-[15px] font-bold leading-7 text-zinc-200 [word-break:keep-all] sm:text-lg sm:leading-8">
+                  모두가 AI로 그럴듯한 지원서를 쓰는 시대.<br />그럴듯함만으로는 더 이상 선택받기 어렵습니다.
+                </p>
+                <p className="mt-5 text-xl font-black leading-8 text-white [word-break:keep-all] sm:text-2xl">
+                  스펙은 바꾸지 않습니다.<br /><span className="text-[#FFD600]">읽히는 방식을 바꿉니다.</span>
+                </p>
+                <ul className="mx-auto mt-6 flex max-w-xl flex-wrap justify-center gap-x-4 gap-y-2 text-xs font-bold text-zinc-200 lg:mx-0 lg:justify-start sm:text-sm">
+                  {['3주 라이브 특강', '주차별 1:1 컨설팅', '과제와 상시 피드백', '프로자료 전체 제공'].map((item) => (
+                    <li key={item} className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 shrink-0 text-[#FFD600]" />{item}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
           <div className="border-t border-zinc-800 px-4 py-4 sm:px-7 sm:py-6">
