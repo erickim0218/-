@@ -5,7 +5,7 @@ import { trackAnalyticsEvent } from '../lib/analytics';
 import { ReviewDetailModal } from './BootcampReviewsShowcase';
 import strategyPyramidImg from '../assets/images/bootcamp-story/strategy-pyramid-v2.webp';
 import aiToolsStrategyImg from '../assets/images/bootcamp-story/ai-tools-strategy.png';
-import beforeAfterImg from '../assets/images/bootcamp-story/before-after.png';
+import beforeAfterImg from '../assets/images/bootcamp-story/before-after-v2.webp';
 import consultingPreviewVideo from '../assets/videos/one-to-one-consulting-preview.mp4';
 import consultingPreviewPoster from '../assets/images/bootcamp-story/consulting-preview-poster.jpg';
 
