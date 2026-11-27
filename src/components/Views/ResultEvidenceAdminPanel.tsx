@@ -37,7 +37,10 @@ export function ResultEvidenceAdminPanel() {
     setMessage('');
     try {
       const result = await importResultEvidenceZip(file);
-      setMessage(`${result.caseCount}개 사례와 ${result.imageCount}개 이미지를 비공개 관리자 자료로 가져왔습니다.`);
+      const excluded = result.excludedCaseKeys.length > 0
+        ? ` 최신 통합본에 없는 기존 사례 ${result.excludedCaseKeys.length}건은 삭제하지 않고 고객 화면 노출만 중단했습니다.`
+        : '';
+      setMessage(`${result.caseCount}개 사례와 ${result.imageCount}개 이미지를 가져왔습니다. 신규 사례는 동의 미확인·비공개 상태입니다.${excluded}`);
       await load();
     } catch (caught: any) {
       setError(caught?.message || 'ZIP 가져오기에 실패했습니다.');
@@ -91,7 +94,7 @@ export function ResultEvidenceAdminPanel() {
         <div className="flex min-h-40 flex-col items-center justify-center rounded-xl border border-dashed border-zinc-700 text-center">
           <FileArchive className="h-8 w-8 text-zinc-600" />
           <p className="mt-3 text-sm font-bold text-zinc-300">아직 가져온 성과 자료가 없습니다.</p>
-          <p className="mt-1 text-xs text-zinc-500">reposition_reviews_upload.zip을 선택하면 8개 사례와 10개 이미지를 검수할 수 있습니다.</p>
+          <p className="mt-1 text-xs text-zinc-500">최신 통합 ZIP을 선택하면 이미지와 사례 데이터를 비공개 저장소에서 검수할 수 있습니다.</p>
         </div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">

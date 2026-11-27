@@ -6,7 +6,6 @@ import { supabase } from '../lib/supabase';
 import { fetchSiteFeatures } from '../lib/siteFeatures';
 import { trackAnalyticsEvent, trackInquiryClickAndOpen } from '../lib/analytics';
 import { BootcampReviewsShowcase } from './BootcampReviewsShowcase';
-import { BootcampResultsShowcase } from './BootcampResultsShowcase';
 import { PublishedResultEvidenceGallery } from './PublishedResultEvidenceGallery';
 import { BootcampCoreSections } from './BootcampCoreSections';
 import { BootcampOfferSections } from './BootcampOfferSections';
@@ -156,13 +155,14 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({ onApplic
         </div>
       </nav>
 
-      <BootcampResultsShowcase reviews={reviewSource} />
+      <PublishedResultEvidenceGallery />
       <section className="border-b border-zinc-800 bg-[#0B0B0E] px-4 py-14 text-center sm:py-20">
         <h2 className="text-3xl font-black leading-tight tracking-[-0.04em] text-white [word-break:keep-all] sm:text-5xl">대체 무엇을 바꿨길래,<br />이런 결과가 나오는 걸까요?</h2>
         <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-zinc-400">경험을 새로 만드는 것이 아니라, 이미 가진 경험을 기업에 전달하는 방식을 다시 설계하는 것.</p>
         <p className="mt-6 text-2xl font-black leading-9 text-[#FFD600]">스펙은 바꾸지 않습니다.<br />읽히는 방식을 바꿉니다.</p>
+        <p className="mt-6 text-sm font-black tracking-[0.04em] text-white">지금부터 리포지셔닝의 전략을 소개합니다.</p>
       </section>
-      <BootcampCoreSections reviewsSection={<><PublishedResultEvidenceGallery /><BootcampReviewsShowcase reviews={reviewSource} /></>} />
+      <BootcampCoreSections reviewsSection={<BootcampReviewsShowcase reviews={reviewSource} />} />
       <BootcampOfferSections isClosed={isClosed} remainingSlots={remainingSlots} onInquiry={handleInquiryClick} onOpenPlan={handleOpenPlan} />
 
       {showMobileBottomBar && (
