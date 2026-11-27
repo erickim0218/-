@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Check, CheckCircle2, Quote } from 'lucide-react';
+import { Check, CheckCircle2 } from 'lucide-react';
 import { BOOTCAMP_REVIEWS, BootcampReview } from '../data/bootcampReviews';
 import { trackAnalyticsEvent } from '../lib/analytics';
 import { ReviewDetailModal } from './BootcampReviewsShowcase';
@@ -9,24 +9,11 @@ import beforeAfterImg from '../assets/images/bootcamp-story/before-after.png';
 import consultingPreviewVideo from '../assets/videos/one-to-one-consulting-preview.mp4';
 import consultingPreviewPoster from '../assets/images/bootcamp-story/consulting-preview-poster.jpg';
 
-function InlineReview({ reviewId, onOpen }: { reviewId: string; onOpen: (review: BootcampReview) => void }) {
-  const review = BOOTCAMP_REVIEWS.find((item) => item.id === reviewId);
-  if (!review) return null;
-  return (
-    <button
-      type="button"
-      onClick={() => onOpen(review)}
-      className="mt-6 w-full rounded-xl border border-zinc-200 bg-zinc-50 p-5 text-left transition hover:border-zinc-400"
-      aria-label={`${review.title} 후기 원문 보기`}
-    >
-      <Quote className="h-5 w-5 text-amber-500" />
-      <p className="mt-3 line-clamp-3 text-sm font-bold leading-6 text-zinc-800">“{review.title}”</p>
-      <p className="mt-3 text-xs font-bold text-zinc-500">{review.author} · 원문 보기</p>
-    </button>
-  );
+interface BootcampCoreSectionsProps {
+  reviewsSection?: React.ReactNode;
 }
 
-export const BootcampCoreSections: React.FC = () => {
+export const BootcampCoreSections: React.FC<BootcampCoreSectionsProps> = ({ reviewsSection }) => {
   const [selectedReview, setSelectedReview] = useState<BootcampReview | null>(null);
   const [activeSituation, setActiveSituation] = useState(0);
   const beforeAfterRef = useRef<HTMLElement | null>(null);
@@ -120,11 +107,25 @@ export const BootcampCoreSections: React.FC = () => {
             <img
               src={strategyPyramidImg}
               alt="일반적인 취업전략, AI 활용 취업전략, 나만의 이야기로 완성되는 3단계 전략"
-              className="h-auto w-full rounded-2xl border border-zinc-800 bg-[#101827]"
+              className="hidden h-auto w-full rounded-2xl border border-zinc-800 bg-[#101827] sm:block"
               loading="lazy"
             />
+            <div className="space-y-3 sm:hidden" aria-label="리포지셔닝 3단계 전략">
+              {[
+                ['01', '일반적인 취업전략', '누구나 알고 있는 취업 준비 방식'],
+                ['02', 'AI를 활용한 취업전략', 'AI를 활용해 분석·작성·준비의 효율을 높이는 단계'],
+                ['03', '나만의 이야기', '내가 직접 말하고 증명할 수 있는 차별화된 근거']
+              ].map(([step, title, copy], index) => (
+                <article key={step} className={`rounded-2xl border p-5 ${index === 2 ? 'border-[#FFD600]/50 bg-[#FFD600]/10' : 'border-zinc-800 bg-[#111114]'}`}>
+                  <p className="text-xs font-black text-[#FFD600]">{step}</p>
+                  <h3 className="mt-2 text-lg font-black text-white">{title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-zinc-400">{copy}</p>
+                </article>
+              ))}
+              <p className="pt-3 text-center text-xl font-black leading-8 text-white">AI는 도구입니다.<br /><span className="text-[#FFD600]">차이를 만드는 것은 나만의 이야기입니다.</span></p>
+            </div>
             <div className="rounded-2xl border border-zinc-800 bg-[#111114] p-6 sm:p-8">
-              <h3 className="text-2xl font-black text-white">AI는 도구입니다.<br />차이를 만드는 것은 전략입니다.</h3>
+              <h3 className="text-center text-2xl font-black text-white">AI는 도구입니다.<br />차이를 만드는 것은 전략입니다.</h3>
               <p className="mt-5 text-base leading-8 text-zinc-400">
                 리포지셔닝은 경험과 역량을 기업의 채용 니즈에 맞춰 재해석하고, 기업이 당신을 선택해야 할 이유를 만드는 취업·이직 전략입니다.
               </p>
@@ -173,14 +174,28 @@ export const BootcampCoreSections: React.FC = () => {
             <p className="mt-5 text-base leading-8 text-zinc-600 sm:text-lg">실제 개인 자료가 아닌 방법론 설명용 예시입니다. 경험을 과장하지 않고, 기업이 평가할 역량이 보이도록 전달 관점을 바꾸는 과정을 보여드립니다.</p>
           </div>
           <div className="mt-10 grid gap-7 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-            <img src={beforeAfterImg} alt="경험 나열형 자기소개서를 기업 니즈와 연결된 설득형 자기소개서로 바꾸는 교육용 예시" className="h-auto w-full rounded-2xl border border-zinc-200" loading="lazy" />
-            <div className="grid grid-cols-2 gap-3">
+            <img src={beforeAfterImg} alt="경험 나열형 자기소개서를 기업 니즈와 연결된 설득형 자기소개서로 바꾸는 교육용 예시" className="hidden h-auto w-full rounded-2xl border border-zinc-200 sm:block" loading="lazy" />
+            <div className="hidden grid-cols-2 gap-3 sm:grid">
               {[
                 ['BEFORE', '경험을 시간 순서대로 나열하고 성실함을 주장합니다.'],
                 ['REPOSITIONING', '지원 기업이 필요로 하는 역량과 경험 속 행동을 연결합니다.'],
                 ['AFTER', '주장·근거·어필의 구조로 필요한 이유가 읽히게 만듭니다.'],
                 ['WHY', '평범한 경험에서도 기업이 평가할 행동과 역량이 선명해집니다.']
               ].map(([label, copy]) => <div key={label} className="rounded-xl border border-zinc-200 p-4"><p className="text-xs font-black text-amber-700">{label}</p><p className="mt-2 text-sm font-bold leading-6 text-zinc-700">{copy}</p></div>)}
+            </div>
+            <div className="space-y-3 sm:hidden">
+              {[
+                ['BEFORE', ['평범한 경험의 나열', '구체적인 근거 부족', '기업의 채용 니즈와 연결되지 않음']],
+                ['REPOSITIONING', ['기업이 필요로 하는 역량을 먼저 분석', '경험 속 판단과 행동을 역량의 근거로 재해석', '주장·근거·어필 구조로 설계']],
+                ['AFTER', ['기업이 원하는 역량으로 재구성', '설득력 있는 나만의 스토리', '면접까지 이어지는 일관된 핵심 메시지']]
+              ].map(([label, items], index) => (
+                <article key={label as string} className={`rounded-2xl border p-5 ${index === 1 ? 'border-amber-300 bg-amber-50' : 'border-zinc-200 bg-white'}`}>
+                  <p className="text-xs font-black tracking-[0.12em] text-amber-700">{label as string}</p>
+                  <ul className="mt-3 space-y-2 text-[15px] font-bold leading-6 text-zinc-700">
+                    {(items as string[]).map((item) => <li key={item} className="flex gap-2"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-600" />{item}</li>)}
+                  </ul>
+                </article>
+              ))}
             </div>
           </div>
           <p className="mt-9 text-center text-xl font-black">경험을 바꾸는 것이 아니라,<br /><span className="text-amber-700">경험이 읽히는 방식을 바꿉니다.</span></p>
@@ -206,7 +221,6 @@ export const BootcampCoreSections: React.FC = () => {
                 {['취업 전략의 재정의', '주장·근거·어필 설계', '경험과 강점의 재해석', '자기소개서 → 자기설득서'].map((item) => <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />{item}</li>)}
               </ul>
               <p className="mt-6 rounded-lg bg-zinc-100 p-4 text-sm font-bold leading-6 text-zinc-700">무엇을 선택하고 어떤 역량을 증명해야 하는지 판단할 수 있게 됩니다.</p>
-              <InlineReview reviewId="17" onOpen={openReview} />
             </article>
 
             <article className="flex flex-col rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8">
@@ -217,7 +231,6 @@ export const BootcampCoreSections: React.FC = () => {
                 {['퍼스트임팩트', '꼬리물기', '임팩트5', '프레임전환'].map((item) => <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />{item}</li>)}
               </ul>
               <p className="mt-6 rounded-lg bg-zinc-100 p-4 text-sm font-bold leading-6 text-zinc-700">예상 질문이 아니라, 반드시 전달할 핵심 메시지를 중심으로 준비합니다.</p>
-              <InlineReview reviewId="14" onOpen={openReview} />
             </article>
 
             <article className="flex flex-col rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8">
@@ -228,31 +241,26 @@ export const BootcampCoreSections: React.FC = () => {
                 {['취업 STP 전략', '기업 REAL NEEDS 분석', 'REAL NEEDS 이력서', '완벽설득 포트폴리오'].map((item) => <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />{item}</li>)}
               </ul>
               <p className="mt-6 rounded-lg bg-zinc-100 p-4 text-sm font-bold leading-6 text-zinc-700">기업이 필요한 역량을 분석하고, 내 경험을 그에 맞춰 전달합니다.</p>
-              <InlineReview reviewId="9" onOpen={openReview} />
             </article>
           </div>
 
           <div className="mt-10 rounded-2xl bg-zinc-950 p-6 text-white sm:p-8">
-            <div className="grid gap-6 md:grid-cols-[0.65fr_1.35fr] md:items-center">
-              <div>
-                <p className="text-sm font-black text-[#FFD600]">9기 실제 운영 일정</p>
-                <h3 className="mt-3 text-2xl font-black">강의 → 과제 → 1:1 컨설팅</h3>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-3">
-                {[
-                  ['1주차', '10월 24일', '4시간 강의 · 1차 컨설팅'],
-                  ['2주차', '10월 31일', '2시간 강의 · 2차 컨설팅'],
-                  ['3주차', '11월 7일', '1시간 강의 · 3차 컨설팅']
-                ].map(([week, date, detail]) => (
-                  <div key={week} className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-                    <p className="text-xs font-black text-[#FFD600]">{week}</p>
-                    <p className="mt-2 text-lg font-black">{date}</p>
-                    <p className="mt-1 text-sm text-zinc-400">{detail}</p>
-                  </div>
-                ))}
-              </div>
+            <div className="mx-auto max-w-4xl text-center [word-break:keep-all]">
+              <p className="text-sm font-black text-[#FFD600]">프로그램 운영 구조</p>
+              <h3 className="mt-3 text-2xl font-black leading-8 sm:text-3xl">강의로 배우고, 과제로 적용하고,<br />1:1로 완성합니다.</h3>
             </div>
-            <p className="mt-5 border-t border-zinc-800 pt-5 text-sm leading-6 text-zinc-400">과제 및 피드백: 10월 25일~30일, 11월 1일~6일 · 다음 기수 일정은 상담 시 별도 안내</p>
+            <ol className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {['강의', '과제 적용', '1:1 컨설팅', '피드백'].map((item, index) => (
+                <li key={item} className="relative rounded-xl border border-zinc-800 bg-zinc-900 p-4 text-center">
+                  <p className="text-xs font-black text-[#FFD600]">0{index + 1}</p>
+                  <p className="mt-2 text-sm font-black sm:text-base">{item}</p>
+                </li>
+              ))}
+            </ol>
+            <div className="mx-auto mt-7 max-w-3xl border-t border-zinc-800 pt-6 text-left text-sm leading-7 text-zinc-400 sm:text-center sm:text-base">
+              <p>매주 배운 전략을 자신의 경험과 실제 지원 기업에 적용합니다.</p>
+              <p className="mt-2">정해진 답을 받는 과정이 아니라, 스스로 지원 전략을 설계할 수 있도록 만드는 과정입니다.</p>
+            </div>
           </div>
 
           <div className="mt-12 text-center">
@@ -317,6 +325,8 @@ export const BootcampCoreSections: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {reviewsSection}
 
       <section id="situation-reviews" className="scroll-mt-28 bg-[#F5F5F3] px-4 py-16 text-zinc-950 sm:px-8 sm:py-24">
         <div className="mx-auto max-w-6xl">

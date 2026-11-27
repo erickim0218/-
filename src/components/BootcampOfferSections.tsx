@@ -132,7 +132,7 @@ export const BootcampOfferSections: React.FC<Props> = ({ isClosed, remainingSlot
         <div className="mx-auto max-w-3xl">
           <p className="text-3xl font-black leading-tight tracking-[-0.045em] text-white sm:text-5xl">당신의 가치는<br />아직 제대로 읽히지 않았을지도 모릅니다.</p>
           <p className="mx-auto mt-7 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">수많은 경험과 노력에도 기업으로부터 선택받지 못했다면, 이제는 그 가치를 전달하는 방식을 바꿔보세요.</p>
-          <p className="mt-7 text-2xl font-black text-[#FFD600]">당신을 뽑아야 할 이유, 함께 만들겠습니다.</p>
+          <p className="mt-7 text-2xl font-black text-[#FFD600]">기업이 당신을 선택할 이유,<br />함께 만들겠습니다.</p>
           <p className="mt-3 text-sm font-bold text-zinc-500">기획자J와 함께하는 3주간의 취업·이직 전략 과정</p>
           {isClosed ? (
             <a href="https://open.kakao.com/o/sEgVEi0h" target="_blank" rel="noopener noreferrer" onClick={onInquiry} className="mx-auto mt-8 flex min-h-14 max-w-sm items-center justify-center rounded-xl bg-[#FFD600] px-6 text-base font-black text-zinc-950">다음 기수 상담하기</a>

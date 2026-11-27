@@ -649,6 +649,7 @@ export default function App() {
       <Footer
         onTabChange={handleTabChange}
         siteFeatures={siteFeatures}
+        isAdmin={Boolean(userProfile.isAdmin)}
       />
 
       <BootcampCampaignPopup

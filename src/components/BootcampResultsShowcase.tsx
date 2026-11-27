@@ -152,7 +152,7 @@ export function BootcampResultsShowcase({ reviews = BOOTCAMP_REVIEWS }: { review
       <div className="mx-auto max-w-6xl">
         <p className="text-sm font-black tracking-[0.14em] text-[#FFD600]">REAL RESULTS</p>
         <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.045em] text-white sm:text-5xl">전략이 달라지자,<br />결과가 달라지기 시작했습니다.</h2>
-        <p className="mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">서류합격부터 최종합격까지. 기존에 공개된 수강 후기에서 확인되는 변화와 결과를 먼저 보여드립니다.</p>
+        <p className="mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">서류합격부터 최종합격까지.<br />리포지셔닝을 경험한 수강생들의 실제 결과입니다.</p>
 
         {featured && (
           <button type="button" onClick={() => openCase(featured)} className="mt-9 w-full rounded-2xl border border-zinc-700 bg-[#141417] p-5 text-left transition hover:border-[#FFD600] sm:p-8" aria-label={`${featured.headline} 원문 확인`}>
@@ -177,7 +177,7 @@ export function BootcampResultsShowcase({ reviews = BOOTCAMP_REVIEWS }: { review
         )}
 
         <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {rest.map((item) => (
+          {rest.slice(0, 3).map((item) => (
             <button key={item.id} type="button" onClick={() => openCase(item)} className="flex min-h-56 flex-col rounded-xl border border-zinc-800 bg-[#111114] p-4 text-left transition hover:border-zinc-600 sm:p-5" aria-label={`${item.headline} 원문 확인`}>
               <div className="flex items-center gap-2 text-xs font-black text-[#FFD600]"><ResultIcon stage={item.stage} />{item.stage}</div>
               <p className="mt-3 text-xs font-bold leading-5 text-zinc-500">{item.profile}</p>

@@ -4,9 +4,10 @@ import { BRAND_INFO } from '../data/mockData';
 interface FooterProps {
   onTabChange: (tab: string, subTab?: 'resources' | 'persuasion' | 'interview') => void;
   siteFeatures?: Record<string, boolean>;
+  isAdmin?: boolean;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onTabChange, siteFeatures }) => {
+export const Footer: React.FC<FooterProps> = ({ onTabChange, siteFeatures, isAdmin = false }) => {
   const isClassDisabled = siteFeatures?.repositioning_class !== true;
   const isPracticalDisabled = siteFeatures?.practical_tools !== true;
 
@@ -137,10 +138,12 @@ export const Footer: React.FC<FooterProps> = ({ onTabChange, siteFeatures }) => 
               <button onClick={() => onTabChange('mylms')} className="text-left text-zinc-400 hover:text-white transition">
                 내 콘텐츠
               </button>
-              <button onClick={() => onTabChange('admin')} className="text-left text-amber-300 hover:text-[#FFD600] font-bold transition flex items-center gap-1">
-                <span>관리자 콘솔</span>
-                <span className="text-[9px] bg-amber-400/20 text-[#FFD600] px-1 rounded">ADMIN</span>
-              </button>
+              {isAdmin && (
+                <button onClick={() => onTabChange('admin')} className="text-left text-amber-300 hover:text-[#FFD600] font-bold transition flex items-center gap-1">
+                  <span>관리자 콘솔</span>
+                  <span className="text-[9px] bg-amber-400/20 text-[#FFD600] px-1 rounded">ADMIN</span>
+                </button>
+              )}
             </div>
           </div>
 

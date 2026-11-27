@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { CheckCircle2, ChevronDown, Star, X } from 'lucide-react';
+import { ChevronDown, Star, X } from 'lucide-react';
 import { BOOTCAMP_REVIEWS, BootcampReview } from '../data/bootcampReviews';
 import { trackAnalyticsEvent } from '../lib/analytics';
 
@@ -260,15 +260,6 @@ export const BootcampReviewsShowcase: React.FC<BootcampReviewsShowcaseProps> = (
 
         <p className="mt-6 text-xs leading-6 text-zinc-500">평점이 등록된 후기만 평균에 포함합니다. 성과 메시지와 구매 인증 여부가 확인되지 않은 자료는 별도 지표로 합산하지 않습니다.</p>
 
-        <div className="mt-12 border-t border-zinc-800 pt-12 text-center">
-          <CheckCircle2 className="mx-auto h-7 w-7 text-[#FFD600]" />
-          <h3 className="mt-4 text-2xl font-black text-white sm:text-3xl">대체 무엇을 바꿨길래,<br />이런 결과가 나오는 걸까요?</h3>
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-8 text-zinc-400">
-            경험을 새로 만드는 것이 아니라, 이미 가진 경험을 기업에 전달하는 방식을 다시 설계하는 것.
-          </p>
-          <p className="mt-6 text-xl font-black leading-8 text-white">스펙은 바꾸지 않습니다.<br /><span className="text-[#FFD600]">읽히는 방식을 바꿉니다.</span></p>
-          <p className="mt-6 text-sm font-bold text-zinc-500">지금부터 리포지셔닝의 전략을 소개합니다.</p>
-        </div>
       </div>
 
       <ReviewDetailModal review={selectedReview} onClose={() => setSelectedReview(null)} />
