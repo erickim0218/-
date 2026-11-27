@@ -31,7 +31,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({ onApplic
   const [applicantMotivation, setApplicantMotivation] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showMobileBottomBar, setShowMobileBottomBar] = useState(false);
-  const heroCtaRef = useRef<HTMLDivElement | null>(null);
+  const heroSectionRef = useRef<HTMLElement | null>(null);
 
   const checkFeatures = async () => {
     const features = await fetchSiteFeatures();
@@ -66,7 +66,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({ onApplic
   }, []);
 
   useEffect(() => {
-    const node = heroCtaRef.current;
+    const node = heroSectionRef.current;
     if (!node) return;
     const observer = new IntersectionObserver(([entry]) => {
       setShowMobileBottomBar(!entry.isIntersecting);
@@ -108,7 +108,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({ onApplic
 
   return (
     <div className="w-full overflow-x-clip bg-[#09090B] pb-20 font-sans text-zinc-100 selection:bg-[#FFD600] selection:text-zinc-950 sm:pb-0">
-      <section className="mx-auto max-w-7xl sm:px-4 sm:pt-5">
+      <section ref={heroSectionRef} className="mx-auto max-w-7xl sm:px-4 sm:pt-5">
         <div className="overflow-hidden border-y border-zinc-800 bg-[#0D0E12] sm:rounded-[1.75rem] sm:border">
           <div className="relative isolate overflow-hidden px-5 py-12 sm:px-10 sm:py-16 lg:px-16 lg:py-20">
             <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_75%_20%,rgba(255,214,0,0.12),transparent_34%),linear-gradient(135deg,#08090d_0%,#11131a_55%,#08090d_100%)]" />
@@ -130,7 +130,7 @@ export const BootcampDetailFlow: React.FC<BootcampDetailFlowProps> = ({ onApplic
               </ul>
             </div>
           </div>
-          <div ref={heroCtaRef} className="border-t border-zinc-800 px-4 py-4 sm:px-7 sm:py-6">
+          <div className="border-t border-zinc-800 px-4 py-4 sm:px-7 sm:py-6">
             <div className="mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-center">
               <span className={`self-start rounded-full border px-3 py-1 text-xs font-black sm:mr-auto ${isClosed ? 'border-rose-500/30 bg-rose-500/10 text-rose-300' : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'}`}>{isClosed ? '현재 모집 마감' : `현재 모집 중 · 잔여 ${remainingSlots}자리`}</span>
               <a href="https://open.kakao.com/o/sEgVEi0h" target="_blank" rel="noopener noreferrer" onClick={handleInquiryClick} className="flex min-h-12 items-center justify-center rounded-xl bg-[#FFD600] px-6 text-sm font-black text-zinc-950">부트캠프 상담 신청하기</a>
